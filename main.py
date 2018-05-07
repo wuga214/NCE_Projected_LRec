@@ -10,8 +10,6 @@ PATH = '/media/wuga/Storage/python_project/lrec/data/'
 TRAIN_NPY = PATH+'R_train.npz'
 VALID_NPY = PATH+'R_valid.npz'
 ROWS_NPY = PATH+'validRows.npy'
-RANK = 200
-
 
 def check_positive(value):
     ivalue = int(value)
@@ -24,7 +22,8 @@ def main(args):
     progress = WorkSplitter()
 
     progress.section("Parameter Setting")
-    print("Rank: {0}".format(RANK))
+    print("Rank: {0}".format(args.rank))
+    print("Lambda: {0}".format(args.lamb))
     if args.item == True:
         mode = "Item based"
     else:
@@ -43,26 +42,28 @@ def main(args):
     print("Valid U-I Dimensions: {0}".format(R_valid.shape))
 
     if args.item == True:
-        RQ, Y = embedded_lirec_items(R_train, embeded_matrix=np.empty((0)), iteration=args.iter, lam=80, rank=RANK)
+        RQ, Y = embedded_lirec_items(R_train, embeded_matrix=np.empty((0)),
+                                     iteration=args.iter, lam=args.lamb, rank=args.rank)
         print type(RQ)
         print RQ.shape
         print type(Y)
         print Y.shape
-        progress.section("Selected Save U-V Matrix")
+        progress.section("Save U-V Matrix")
         start_time = time.time()
-        save_npz(PATH + 'U_{0}.npy'.format(RANK), RQ)
-        save_npz(PATH + 'V_{0}.npy'.format(RANK), Y)
+        save_npz(PATH + 'U_{0}.npy'.format(args.rank), RQ)
+        save_npz(PATH + 'V_{0}.npy'.format(args.rank), Y)
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
     else:
-        PtR, Y = embedded_lirec_users(R_train, embeded_matrix=np.empty((0)), iteration=args.iter, lam=80, rank=RANK)
+        PtR, Y = embedded_lirec_users(R_train, embeded_matrix=np.empty((0)),
+                                      iteration=args.iter, lam=args.lamb, rank=args.rank)
         print type(PtR)
         print PtR.shape
         print type(Y)
         print Y.shape
         progress.section("Save U-V Matrix")
         start_time = time.time()
-        save_npz(PATH + 'U_{0}.npy'.format(RANK), Y)
-        save_npz(PATH + 'V_{0}.npy'.format(RANK), PtR)
+        save_npz(PATH + 'U_{0}.npy'.format(args.rank), Y)
+        save_npz(PATH + 'V_{0}.npy'.format(args.rank), PtR)
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
 
@@ -70,7 +71,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Projected LRec")
 
     parser.add_argument('--disable-item-item', dest='item', action='store_false')
-    parser.add_argument('-i', dest='iter', type=check_positive)
+    parser.add_argument('-i', dest='iter', type=check_positive, default=1)
+    parser.add_argument('-l', dest='lamb', type=check_positive, default=100)
+    parser.add_argument('-r', dest='rank', type=check_positive, default=100)
     args = parser.parse_args()
 
     main(args)
