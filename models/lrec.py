@@ -21,7 +21,7 @@ def embedded_lirec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4
     if embeded_matrix.shape[0] > 0:
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
-    progress.section("Randomized SVD with {0} iterations".format(iteration))
+    progress.section("Randomized SVD")
     start_time = time.time()
     P, sigma, Qt = randomized_svd(matrix_input,
                                   n_components=rank,
@@ -53,7 +53,7 @@ def embedded_lirec_users(matrix_train, embeded_matrix=np.empty((0)), iteration=4
     matrix_input = matrix_train
     if embeded_matrix.shape[0] > 0:
         matrix_input = hstack((matrix_input, embeded_matrix))
-    progress.section("Randomized SVD with {0} iterations".format(iteration))
+    progress.section("Randomized SVD")
     start_time = time.time()
     P, sigma, Qt = randomized_svd(matrix_input,
                                   n_components=rank,

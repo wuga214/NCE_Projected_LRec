@@ -22,6 +22,16 @@ def check_positive(value):
 
 def main(args):
     progress = WorkSplitter()
+
+    progress.section("Parameter Setting")
+    print("Rank: {0}".format(RANK))
+    if args.item == True:
+        mode = "Item based"
+    else:
+        mode = "User based"
+    print("Mode: {0}".format(mode))
+    print("SVD Iteration: {0}".format(args.iter))
+
     progress.section("Loading Data")
     start_time = time.time()
     R_train = load_npz(TRAIN_NPY).tocsr()
@@ -33,19 +43,17 @@ def main(args):
     print("Valid U-I Dimensions: {0}".format(R_valid.shape))
 
     if args.item == True:
-        progress.section("Item-Item Similarity")
         RQ, Y = embedded_lirec_items(R_train, embeded_matrix=np.empty((0)), iteration=args.iter, lam=80, rank=RANK)
         print type(RQ)
         print RQ.shape
         print type(Y)
         print Y.shape
-        progress.section("Save U-V Matrix")
+        progress.section("Selected Save U-V Matrix")
         start_time = time.time()
         save_npz(PATH + 'U_{0}.npy'.format(RANK), RQ)
         save_npz(PATH + 'V_{0}.npy'.format(RANK), Y)
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
     else:
-        progress.section("User-User Similarity")
         PtR, Y = embedded_lirec_users(R_train, embeded_matrix=np.empty((0)), iteration=args.iter, lam=80, rank=RANK)
         print type(PtR)
         print PtR.shape
