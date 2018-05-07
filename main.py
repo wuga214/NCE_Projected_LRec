@@ -50,8 +50,8 @@ def main(args):
         print Y.shape
         progress.section("Save U-V Matrix")
         start_time = time.time()
-        save_npz(PATH + 'U_{0}.npy'.format(args.rank), RQ)
-        save_npz(PATH + 'V_{0}.npy'.format(args.rank), Y)
+        save_npz(PATH + 'U_{0}'.format(args.rank), RQ)
+        save_npz(PATH + 'V_{0}'.format(args.rank), Y)
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
     else:
         PtR, Y = embedded_lirec_users(R_train, embeded_matrix=np.empty((0)),
@@ -62,8 +62,8 @@ def main(args):
         print Y.shape
         progress.section("Save U-V Matrix")
         start_time = time.time()
-        save_npz(PATH + 'U_{0}.npy'.format(args.rank), Y)
-        save_npz(PATH + 'V_{0}.npy'.format(args.rank), PtR)
+        save_npz(PATH + 'U_{0}'.format(args.rank), Y)
+        save_npz(PATH + 'V_{0}'.format(args.rank), PtR)
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
 
