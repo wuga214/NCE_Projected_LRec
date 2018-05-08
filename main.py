@@ -6,12 +6,14 @@ import argparse
 import time
 from utils.io import save_csr
 
-
+# Constants
 PATH = '/media/wuga/Storage/python_project/lrec/data/'
 TRAIN_NPY = PATH+'R_train.npz'
 VALID_NPY = PATH+'R_valid.npz'
 ROWS_NPY = PATH+'validRows.npy'
 
+
+# Commandline parameter constrains
 def check_positive(value):
     ivalue = int(value)
     if ivalue <= 0:
@@ -20,8 +22,10 @@ def check_positive(value):
 
 
 def main(args):
+    # Progress bar
     progress = WorkSplitter()
 
+    # Show hyper parameter settings
     progress.section("Parameter Setting")
     print("Rank: {0}".format(args.rank))
     print("Lambda: {0}".format(args.lamb))
@@ -32,6 +36,7 @@ def main(args):
     print("Mode: {0}".format(mode))
     print("SVD Iteration: {0}".format(args.iter))
 
+    # Load Data
     progress.section("Loading Data")
     start_time = time.time()
     R_train = load_npz(TRAIN_NPY).tocsr()
@@ -42,10 +47,12 @@ def main(args):
     print("Train U-I Dimensions: {0}".format(R_train.shape))
     print("Valid U-I Dimensions: {0}".format(R_valid.shape))
 
+    # Item-Item or User-User
     if args.item == True:
         RQ, Y = embedded_lirec_items(R_train, embeded_matrix=np.empty((0)),
                                      iteration=args.iter, lam=args.lamb, rank=args.rank)
 
+        # Save Files
         progress.section("Save U-V Matrix")
         start_time = time.time()
         save_csr(matrix=RQ, path=PATH, name='U_{0}'.format(args.rank), format='MXNET')
@@ -55,6 +62,7 @@ def main(args):
         PtR, Y = embedded_lirec_users(R_train, embeded_matrix=np.empty((0)),
                                       iteration=args.iter, lam=args.lamb, rank=args.rank)
 
+        # Save Files
         progress.section("Save U-V Matrix")
         start_time = time.time()
         save_csr(matrix=Y, path=PATH, name='U_{0}'.format(args.rank), format='MXNET')
@@ -63,6 +71,7 @@ def main(args):
 
 
 if __name__ == "__main__":
+    # Commandline arguments
     parser = argparse.ArgumentParser(description="Projected LRec")
 
     parser.add_argument('--disable-item-item', dest='item', action='store_false')
