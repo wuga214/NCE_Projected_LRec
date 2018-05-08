@@ -4,6 +4,7 @@ from models.lrec import embedded_lirec_items, embedded_lirec_users
 from utils.progress import WorkSplitter, inhour
 import argparse
 import time
+from utils.io import save_csr
 
 
 PATH = '/media/wuga/Storage/python_project/lrec/data/'
@@ -44,26 +45,20 @@ def main(args):
     if args.item == True:
         RQ, Y = embedded_lirec_items(R_train, embeded_matrix=np.empty((0)),
                                      iteration=args.iter, lam=args.lamb, rank=args.rank)
-        print type(RQ)
-        print RQ.shape
-        print type(Y)
-        print Y.shape
+
         progress.section("Save U-V Matrix")
         start_time = time.time()
-        save_npz(PATH + 'U_{0}'.format(args.rank), RQ)
-        save_npz(PATH + 'V_{0}'.format(args.rank), Y)
+        save_csr(matrix=RQ, path=PATH, name='U_{0}'.format(args.rank), format='MXNET')
+        save_csr(matrix=Y.T, path=PATH, name='V_{0}'.format(args.rank), format='MXNET')
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
     else:
         PtR, Y = embedded_lirec_users(R_train, embeded_matrix=np.empty((0)),
                                       iteration=args.iter, lam=args.lamb, rank=args.rank)
-        print type(PtR)
-        print PtR.shape
-        print type(Y)
-        print Y.shape
+
         progress.section("Save U-V Matrix")
         start_time = time.time()
-        save_npz(PATH + 'U_{0}'.format(args.rank), Y)
-        save_npz(PATH + 'V_{0}'.format(args.rank), PtR)
+        save_csr(matrix=Y, path=PATH, name='U_{0}'.format(args.rank), format='MXNET')
+        save_csr(matrix=PtR.T, path=PATH, name='V_{0}'.format(args.rank), format='MXNET')
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
 
