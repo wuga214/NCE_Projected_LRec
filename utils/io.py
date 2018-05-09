@@ -17,3 +17,19 @@ def load_csr(path, name, format="MXNET"):
         return mx.nd.load(path+name)
     else:
         return load_npz(path+name)
+
+# def save_csr(matrix, path, name, format="MXNET"):
+#     print(name+" Shape: {0}".format(matrix.shape))
+#     matrix = matrix.todense()
+#     if format == "MXNET":
+#         SPLIT = 100
+#         _, dim = matrix.shape
+#         batch_size = dim/SPLIT
+#         mx_array = mx.nd.array(matrix)
+#         map = dict()
+#         for i in xrange(batch_size):
+#             map[str(i)] = mx_array[:, SPLIT*i:SPLIT*(i+1)]
+#
+#         mx.nd.save(path+name, map)
+#     else:
+#         save_npz(path + name, matrix)
