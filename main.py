@@ -62,8 +62,8 @@ def main(args):
         # Save Files
         progress.section("Save U-V Matrix")
         start_time = time.time()
-        save_csr(matrix=RQ, path=args.path+mode, name='U_{0}_{1}'.format(args.rank, args.lamb), format='MXNET')
-        save_csr(matrix=Y.T, path=args.path+mode, name='V_{0}_{1}'.format(args.rank, args.lamb), format='MXNET')
+        save_csr(matrix=RQ, path=args.path+mode+'/', name='U_{0}_{1}'.format(args.rank, args.lamb), format='MXNET')
+        save_csr(matrix=Y.T, path=args.path+mode+'/', name='V_{0}_{1}'.format(args.rank, args.lamb), format='MXNET')
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
     else:
         PtR, Y = embedded_lirec_users(R_train, embeded_matrix=np.empty((0)),
@@ -72,8 +72,8 @@ def main(args):
         # Save Files
         progress.section("Save U-V Matrix")
         start_time = time.time()
-        save_csr(matrix=Y, path=args.path+mode, name='U_{0}_{1}'.format(args.rank, args.lamb), format='MXNET')
-        save_csr(matrix=PtR.T, path=args.path+mode, name='V_{0}_{1}'.format(args.rank, args.lamb), format='MXNET')
+        save_csr(matrix=Y, path=args.path+mode+'/', name='U_{0}_{1}'.format(args.rank, args.lamb), format='MXNET')
+        save_csr(matrix=PtR.T, path=args.path+mode+'/', name='V_{0}_{1}'.format(args.rank, args.lamb), format='MXNET')
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
 
