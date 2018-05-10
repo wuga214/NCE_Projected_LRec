@@ -28,8 +28,8 @@ def main(args):
 
     # Constants
     train_npy = args.path + 'R_train.npz'
-    valid_npy = args.path + 'R_valid.npz'
-    rows_npy = args.path + 'validRows.npy'
+    # valid_npy = args.path + 'R_valid.npz'
+    # rows_npy = args.path + 'validRows.npy'
 
     # Show hyper parameter settings
     progress.section("Parameter Setting")
@@ -47,12 +47,12 @@ def main(args):
     progress.section("Loading Data")
     start_time = time.time()
     R_train = load_npz(train_npy).tocsr()
-    R_valid = load_npz(valid_npy).tocsr()
-    valid_rows = np.load(rows_npy)
+    # R_valid = load_npz(valid_npy).tocsr()
+    # valid_rows = np.load(rows_npy)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     print("Train U-I Dimensions: {0}".format(R_train.shape))
-    print("Valid U-I Dimensions: {0}".format(R_valid.shape))
+    # print("Valid U-I Dimensions: {0}".format(R_valid.shape))
 
     # Item-Item or User-User
     if args.item == True:
