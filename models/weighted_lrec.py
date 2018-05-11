@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.sparse as sparse
 from scipy.sparse import vstack, hstack
-from scipy.sparse.linalg import inv
+from scipy.linalg import inv
 from sklearn.utils.extmath import randomized_svd
 from utils.progress import WorkSplitter, inhour
 from tqdm import tqdm
@@ -9,9 +9,8 @@ import time
 
 
 def per_item(matrix_A, matrix_B, matrix_BT, vector_c, vector_r):
-    matrix_C = sparse.spdiags(vector_c, 0, vector_c.shape[0], vector_c.shape[0])
-    denominator = inv(matrix_A+(matrix_BT.dot(matrix_C)).dot(matrix_B))
-    return (denominator.dot(matrix_BT)).dot(matrix_C.dot(vector_r)+vector_r)
+    denominator = inv(matrix_A+(matrix_BT*vector_c).dot(matrix_B))
+    return (denominator.dot(matrix_BT))*(vector_c*vector_r+vector_r)
 
 
 
@@ -31,17 +30,13 @@ def weighted_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
 
     progress.section("Randomized SVD")
     start_time = time.time()
-    P, sigma, Qt = randomized_svd(matrix_input,
-                                  n_components=rank,
-                                  n_iter=iteration,
-                                  random_state=None)
+    P, sigma, Qt = randomized_svd(matrix_input, n_components=rank, n_iter=iteration, random_state=None)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     start_time = time.time()
     progress.section("Create Cacheable Matrices")
-    Sigma = sparse.spdiags(sigma, 0, sigma.size, sigma.size)
-    matrix_A = Sigma.T.dot(Sigma) - lam*sparse.identity(rank)
-    matrix_B = P.dot(Sigma)
+    matrix_A = sparse.diags(sigma*sigma-lam)#Sigma.T.dot(Sigma) - lam*sparse.identity(rank)
+    matrix_B = P*sigma
     matrix_BT = matrix_B.T
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
@@ -49,8 +44,11 @@ def weighted_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
     progress.section("Item-wised Optimization")
     start_time = time.time()
 
+    m, n = matrix_train.shape
+
     for i in tqdm(range(1)): #change back to n!!!
-        vector_r = matrix_train[:, i]
+        vector_r = matrix_train[:, i].toarray().ravel()
         vector_c = alpha*vector_r
         vector_y = per_item(matrix_A, matrix_B, matrix_BT, vector_c, vector_r)
+        print(vector_y.shape)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
