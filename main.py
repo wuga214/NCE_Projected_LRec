@@ -56,6 +56,7 @@ def main(args):
 
     # Item-Item or User-User
     if args.item == True:
+        import ipdb; ipdb.set_trace()
         RQ, Y = embedded_lirec_items(R_train, embeded_matrix=np.empty((0)),
                                      iteration=args.iter, lam=args.lamb, rank=args.rank)
 
