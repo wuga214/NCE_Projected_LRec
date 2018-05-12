@@ -1,7 +1,7 @@
 import mxnet as mx
 from scipy.sparse import save_npz, load_npz
 from scipy.sparse import csr_matrix
-from numpy import genfromtxt
+import numpy as np
 
 
 def save_csr(matrix, path, name, format="MXNET"):
@@ -14,10 +14,13 @@ def save_csr(matrix, path, name, format="MXNET"):
         save_npz(path + name, matrix)
 
 
-def load_csr(path, name, format="NYZ", shape=(1010000, 2262292)):
+def load_csr(path, name, shape=(1010000, 2262292)):
     #NYZ or Sparse CSV
-    if format == "NYZ":
-        return load_npz(path+name)
+    if name.endswith('.npz'):
+        return load_npz(path+name).tocsr()
     else:
-        data = genfromtxt(path+name, delimiter=',')
-        return csr_matrix((data[:, 2], (data[:, 0], data[:, 1])), shape=shape)
+        data = np.genfromtxt(path+name, delimiter=',')
+        matrix = csr_matrix((data[:, 2], (data[:, 0], data[:, 1])), shape=shape)
+        # create npz for later convenience
+        # save_npz(path + "rating.npz", matrix)
+        return matrix

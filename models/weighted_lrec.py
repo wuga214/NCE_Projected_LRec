@@ -21,7 +21,7 @@ def per_item(vector_r, matrix_A, matrix_B, matrix_BT, alpha):
     vector_c = alpha * vector_r
     denominator = inv(matrix_A+(matrix_BT*vector_c).dot(matrix_B))
     # Change to return if pool
-    yield (denominator.dot(matrix_BT)).dot(vector_c*vector_r+vector_r)
+    return (denominator.dot(matrix_BT)).dot(vector_c*vector_r+vector_r)
 
 def weighted_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, alpha=100):
     """
@@ -45,7 +45,7 @@ def weighted_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
     start_time = time.time()
     progress.section("Create Cacheable Matrices")
     RQ = matrix_input * Qt.T
-    matrix_A = sparse.diags(sigma*sigma-lam)#Sigma.T.dot(Sigma) - lam*sparse.identity(rank)
+    matrix_A = cp.array(sparse.diags(sigma*sigma-lam).todense())#Sigma.T.dot(Sigma) - lam*sparse.identity(rank)
     matrix_B = cp.array(P*sigma)
     matrix_BT = cp.array(matrix_B.T)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
@@ -59,12 +59,11 @@ def weighted_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
     gpu_memory = cp.get_default_memory_pool()
     Y = []
     for i in tqdm(xrange(n)): #change back to n!!!
-        vector_r = matrix_train[:, i].toarray()
-        vector_r = cp.array(vector_r)
+        vector_r = cp.array(matrix_train[:, i].toarray())
         vector_y = per_item(vector_r, matrix_A, matrix_B, matrix_BT, alpha)
         y_i_gpu = cp.asnumpy(vector_y)
         y_i_cpu = np.copy(y_i_gpu)
-        Y = Y+y_i_cpu
+        Y.append(y_i_cpu)
     Y = scipy.vstack(Y)
 
 
