@@ -17,11 +17,14 @@ from pyspark.mllib.linalg import Vectors
 
 
 def per_item(vector_r, matrix_A, matrix_B, matrix_BT, alpha):
-    vector_r = vector_r.ravel()
+    vector_r_index = vector_r.nonzero()[0]
+    vector_r = cp.array(vector_r.todense().ravel())
     vector_c = alpha * vector_r
-    denominator = inv(matrix_A+(matrix_BT*vector_c).dot(matrix_B))
-    # Change to return if pool
-    return (denominator.dot(matrix_BT)).dot(vector_c*vector_r+vector_r)
+    matrix_B_small = cp.take(matrix_B, vector_r_index, axis=0)
+    matrix_BT_small = cp.take(matrix_BT, vector_r_index, axis=1)
+    vector_c_small = cp.take(vector_c, vector_r_index)
+    denominator = inv(matrix_A+(matrix_BT_small*vector_c_small).dot(matrix_B_small))
+    return (denominator.dot(matrix_BT)).dot((vector_c*vector_r+vector_r).T).flatten()
 
 def weighted_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, alpha=100):
     """
@@ -56,10 +59,10 @@ def weighted_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
 
     # For loop
     m, n = matrix_train.shape
-    gpu_memory = cp.get_default_memory_pool()
     Y = []
+    alpha = cp.array(alpha)
     for i in tqdm(xrange(n)): #change back to n!!!
-        vector_r = cp.array(matrix_train[:, i].toarray())
+        vector_r = matrix_train[:, i]
         vector_y = per_item(vector_r, matrix_A, matrix_B, matrix_BT, alpha)
         y_i_gpu = cp.asnumpy(vector_y)
         y_i_cpu = np.copy(y_i_gpu)
