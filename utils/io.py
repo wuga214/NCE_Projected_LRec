@@ -7,7 +7,8 @@ import numpy as np
 def save_csr(matrix, path, name, format="MXNET"):
     print(name+" Shape: {0}".format(matrix.shape))
     if format == "MXNET":
-        matrix = matrix.todense()
+        if not isinstance(matrix, np.ndarray):
+            matrix = matrix.todense()
         mx_array = mx.nd.array(matrix)
         mx.nd.save(path+name, mx_array)
     else:

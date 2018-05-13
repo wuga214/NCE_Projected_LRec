@@ -1,15 +1,17 @@
 import numpy as np
-from models.lrec import embedded_lrec_items
 from utils.progress import WorkSplitter, inhour
 import argparse
 import time
 from utils.io import save_csr, load_csr
+from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
+from models.pure_svd import pure_svd
 
 
 models = {
     "PLRec": embedded_lrec_items,
     "WPLRec": weighted_lrec_items,
+    "PureSVD": pure_svd,
 }
 
 
@@ -68,11 +70,11 @@ def main(args):
     # Item-Item or User-User
     if args.item == True:
         RQ, Yt = models[args.model](R_train, embeded_matrix=np.empty((0)),
-                                    iteration=args.iter, lam=args.lamb, rank=args.rank, alpha=args.alpha)
+                                    iteration=args.iter, rank=args.rank, lam=args.lamb, alpha=args.alpha)
         Y = Yt.T
     else:
         Y, RQt = models[args.model](R_train.T, embeded_matrix=np.empty((0)),
-                                    iteration=args.iter, lam=args.lamb, rank=args.rank, alpha=args.alpha)
+                                    iteration=args.iter, rank=args.rank, lam=args.lamb, alpha=args.alpha)
         RQ = RQt.T
 
 
