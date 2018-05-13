@@ -8,23 +8,22 @@ from sklearn.utils.extmath import randomized_svd
 from utils.progress import WorkSplitter, inhour
 from tqdm import tqdm
 import time
-from functools import partial
-from multiprocessing import Pool
-from pyspark import SparkContext
-from pyspark.sql import SparkSession
-from pyspark.mllib.linalg import Vectors
+# from functools import partial
+# from multiprocessing import Pool
+# from pyspark import SparkContext
+# from pyspark.sql import SparkSession
+# from pyspark.mllib.linalg import Vectors
 
 
 
 def per_item(vector_r, matrix_A, matrix_B, matrix_BT, alpha):
     vector_r_index = vector_r.nonzero()[0]
-    vector_r = cp.array(vector_r.todense().ravel())
-    vector_c = alpha * vector_r
+    vector_r_small = cp.array(vector_r.data)
+    vector_c_small = alpha * vector_r_small
     matrix_B_small = cp.take(matrix_B, vector_r_index, axis=0)
     matrix_BT_small = cp.take(matrix_BT, vector_r_index, axis=1)
-    vector_c_small = cp.take(vector_c, vector_r_index)
     denominator = inv(matrix_A+(matrix_BT_small*vector_c_small).dot(matrix_B_small))
-    return (denominator.dot(matrix_BT)).dot((vector_c*vector_r+vector_r).T).flatten()
+    return (denominator.dot(matrix_BT_small)).dot((vector_c_small*vector_r_small+vector_r_small).T).flatten()
 
 def weighted_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, alpha=100):
     """
