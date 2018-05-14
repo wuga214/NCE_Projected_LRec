@@ -5,13 +5,14 @@ import time
 from utils.io import save_csr, load_csr
 from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
-from models.pure_svd import pure_svd
+from models.pure_svd import pure_svd, eigen_boosted_pure_svd
 
 
 models = {
     "PLRec": embedded_lrec_items,
     "WPLRec": weighted_lrec_items,
     "PureSVD": pure_svd,
+    "EBPureSVD": eigen_boosted_pure_svd,
 }
 
 
