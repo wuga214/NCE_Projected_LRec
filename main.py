@@ -90,14 +90,14 @@ def main(args):
              name='V_{0}_{1}_{2}'.format(args.rank, args.lamb, args.model), format='MXNET')
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
-    progress.section("Create Metrics")
-    #start_time = time.time()
-
-    metric_names = ['R-Precision', 'NDCG', 'Clicks']
-    R_valid = load_csr(path=args.path, name='RValid.npz')
-    from evaluation.metrics import evaluate
-    evaluate(RQ, Y, R_train, R_valid, 500, metric_names)
-    #print "Elapsed: {0}".format(inhour(time.time() - start_time))
+    # progress.section("Create Metrics")
+    # start_time = time.time()
+    #
+    # metric_names = ['R-Precision', 'NDCG', 'Clicks']
+    # R_valid = load_csr(path=args.path, name='RValid.npz')
+    # from evaluation.metrics import evaluate
+    # evaluate(RQ, Y, R_train, R_valid, 500, metric_names)
+    # print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
 
 
