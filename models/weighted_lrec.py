@@ -104,4 +104,4 @@ def weighted_lrec_items(matrix_train,
             Y.append(y_i_cpu)
         Y = scipy.vstack(Y)
 
-    return RQ, Y
+    return RQ, Y.T
