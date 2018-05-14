@@ -23,5 +23,5 @@ def load_csr(path, name, shape=(1010000, 2262292)):
         data = np.genfromtxt(path+name, delimiter=',')
         matrix = csr_matrix((data[:, 2], (data[:, 0], data[:, 1])), shape=shape)
         # create npz for later convenience
-        # save_npz(path + "rating.npz", matrix)
+        save_npz(path + "rating.npz", matrix)
         return matrix
