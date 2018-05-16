@@ -36,9 +36,7 @@ def click(hits, **unused):
     return first_hit/10
 
 
-
 def evaluate(matrix_U, matrix_V, matrix_Train, matrix_Test, k, metric_names):
-
     metrics = {
         "R-Precision": r_precision,
         "NDCG": ndcg,
@@ -55,10 +53,12 @@ def evaluate(matrix_U, matrix_V, matrix_Train, matrix_Test, k, metric_names):
                                                               vector_train,
                                                               vector_true,
                                                               k=k)
-        for name in metric_names:
-            results[name] = metrics[name](vector_true_dense=vector_true_dense,
-                                          vector_predict=vector_predict,
-                                          hits=hits)
+
+        if vector_true_dense.size is not 0:
+            for name in metric_names:
+                results[name] = metrics[name](vector_true_dense=vector_true_dense,
+                                              vector_predict=vector_predict,
+                                              hits=hits)
 
     output = dict()
     for name in metric_names:
