@@ -37,6 +37,7 @@ def main(args):
     print("Rank: {0}".format(args.rank))
     print("Lambda: {0}".format(args.lamb))
     print("SVD Iteration: {0}".format(args.iter))
+    print("Evaluation Ranking Topk: {0}".format(args.topk))
 
     # Load Data
     progress.section("Loading Data")
@@ -78,7 +79,8 @@ def main(args):
         metric_names = ['R-Precision', 'NDCG', 'Clicks']
         R_valid = load_numpy(path=args.path, name=args.valid)
         from evaluation.metrics import evaluate
-        result = evaluate(RQ, Y, R_train, R_valid, 50, metric_names)
+        result = evaluate(RQ, Y, R_train, R_valid, args.topk, metric_names)
+        print("-")
         for key in result.keys():
             print("{0} :{1}".format(key, result[key]))
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
@@ -99,6 +101,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', dest='path', default="/media/wuga/Storage/python_project/lrec/data/")
     parser.add_argument('-t', dest='train', default='R_train.npz')
     parser.add_argument('-v', dest='valid', default='R_valid.npz')
+    parser.add_argument('-k', dest='topk', type=check_int_positive, default=50)
     parser.add_argument('--shape', help="CSR Shape", dest="shape", type=shape, nargs=2)
     args = parser.parse_args()
 
