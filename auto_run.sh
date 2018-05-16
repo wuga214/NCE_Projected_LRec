@@ -1,10 +1,14 @@
 #!/bin/bash
 
-ranks=(100 200 300 500)
+ranks=(50 100)
 lambdas=(0.1 1 10)
+alphas=(1 5 10)
+path=/media/wuga/Experiments/Recsys-18/IMPLEMENTATION_Projected_LRec/data/movielens/
 
 for rank in "${ranks[@]}"; do
     for lamb in "${lambdas[@]}"; do
-        python main.py -r "$rank" -l "$lamb" -i 7 --disable-item-item
+        for alpha in "${alphas[@]}"; do
+            python main.py -d "$path" -t Rtrain.npz -v Rvalid.npz -i 4 -a "$alpha" -r "$rank" -l "$lamb" -m "WPLRec" --disable-item-item
+        done
     done
 done
