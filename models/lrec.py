@@ -27,7 +27,7 @@ def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
                                   n_components=rank,
                                   n_iter=iteration,
                                   random_state=None)
-    RQ = matrix_input * sparse.csr_matrix(Qt).T
+    RQ = matrix_input * sparse.csc_matrix(Qt).T
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     progress.section("Closed-Form Linear Optimization")
@@ -36,7 +36,7 @@ def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
     inverse = inv(pre_inv)
     Y = inverse.dot(RQ.T).dot(matrix_input)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
-    return RQ, Y
+    return np.array(RQ.todense()), np.array(Y.todense())
 
 
 # def embedded_lrec_users(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200):

@@ -39,7 +39,7 @@ def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
     RQ = matrix_input * sparse.csr_matrix(Qt).T
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
-    return RQ, Qt
+    return np.array(RQ.todense()), Qt
 
 
 # boost pureSVD with multiplying Sigma for multiple times. Let the similarity matrix to be sharp!

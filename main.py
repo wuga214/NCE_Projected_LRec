@@ -7,6 +7,7 @@ from utils.argument import check_float_positive, check_int_positive, shape
 from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
 from models.pure_svd import pure_svd, eigen_boosted_pure_svd
+from evaluation.metrics import evaluate
 
 
 models = {
@@ -55,12 +56,10 @@ def main(args):
         RQ, Yt = models[args.model](R_train, embeded_matrix=np.empty((0)),
                                     iteration=args.iter, rank=args.rank, lam=args.lamb, alpha=args.alpha)
         Y = Yt.T
-        RQ = np.asarray(RQ.todense())
     else:
         Y, RQt = models[args.model](R_train.T, embeded_matrix=np.empty((0)),
                                     iteration=args.iter, rank=args.rank, lam=args.lamb, alpha=args.alpha)
         RQ = RQt.T
-        Y = np.asarray(Y.todense())
 
 
     # Save Files
@@ -78,7 +77,6 @@ def main(args):
 
         metric_names = ['R-Precision', 'NDCG', 'Clicks']
         R_valid = load_numpy(path=args.path, name=args.valid)
-        from evaluation.metrics import evaluate
         result = evaluate(RQ, Y, R_train, R_valid, args.topk, metric_names)
         print("-")
         for key in result.keys():
