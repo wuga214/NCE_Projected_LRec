@@ -1,8 +1,8 @@
 #!/bin/bash
 
-ranks=(50 100)
-lambdas=(0.1 1 10)
-alphas=(1 5 10)
+ranks=(50)
+lambdas=(0.1)
+alphas=(0 0.1 0.2 0.3)
 path=/media/wuga/Experiments/Recsys-18/IMPLEMENTATION_Projected_LRec/data/movielens/
 
 for rank in "${ranks[@]}"; do

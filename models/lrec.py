@@ -26,7 +26,7 @@ def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
     P, sigma, Qt = randomized_svd(matrix_input,
                                   n_components=rank,
                                   n_iter=iteration,
-                                  random_state=None)
+                                  random_state=42)
     RQ = matrix_input * sparse.csc_matrix(Qt).T
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
