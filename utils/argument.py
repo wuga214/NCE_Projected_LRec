@@ -4,7 +4,7 @@ import argparse
 # Commandline parameter constrains
 def check_int_positive(value):
     ivalue = int(value)
-    if ivalue <= 0:
+    if ivalue < 0:
          raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
     return ivalue
 

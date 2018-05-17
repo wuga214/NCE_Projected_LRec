@@ -2,8 +2,8 @@
 
 ranks=(50 100)
 lambdas=(0.1 1 10)
-alphas=(1 5 10)
-path=/media/wuga/Experiments/Recsys-18/IMPLEMENTATION_Projected_LRec/data/movielens/
+alphas=(0 1 5 10)
+path=/media/wuga/Storage/python_project/wlrec/IMPLEMENTATION_Projected_LRec/datax/
 
 for rank in "${ranks[@]}"; do
     for lamb in "${lambdas[@]}"; do
