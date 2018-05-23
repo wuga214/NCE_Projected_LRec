@@ -50,7 +50,7 @@ def main(args):
                                   n_components=args.rank,
                                   n_iter=args.iter,
                                   random_state=None)
-    print("Save U,S,VT")
+    print("Save U,S,V")
     save_mxnet(P, args.path, args.user)
     save_mxnet(Qt.T, args.path, args.item)
     save_mxnet(sigma, args.path, args.sigm)

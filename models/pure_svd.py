@@ -36,7 +36,7 @@ def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
                                       power_iteration_normalizer='QR',
                                       random_state=None)
 
-    RQ = matrix_input * sparse.csr_matrix(Qt).T
+    RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     return np.array(RQ.todense()), Qt

@@ -62,7 +62,7 @@ def weighted_lrec_items(matrix_train,
     start_time = time.time()
     if gpu:
         progress.section("Create Cacheable Matrices")
-        RQ = matrix_input * Qt.T
+        RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
         matrix_A = cp.array(sparse.diags(sigma*sigma-lam).todense())
         matrix_B = cp.array(P*sigma)
         matrix_BT = cp.array(matrix_B.T)
@@ -86,7 +86,7 @@ def weighted_lrec_items(matrix_train,
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
     else:
         progress.section("Create Cacheable Matrices")
-        RQ = matrix_input * Qt.T
+        RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
         matrix_A = sparse.diags(sigma * sigma - lam).todense()
         matrix_B = P * sigma
         matrix_BT = matrix_B.T
