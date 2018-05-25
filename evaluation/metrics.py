@@ -3,7 +3,7 @@ from tqdm import tqdm
 import scipy.sparse as sparse
 
 def sub_routine(vector_u, matrix_V, vector_train, vector_true, k=500):
-    #import ipdb;ipdb.set_trace()
+    # import ipdb;ipdb.set_trace()
     train_index = vector_train.nonzero()[1]
     vector_predict = matrix_V.dot(vector_u).argsort()[-(k+len(train_index)):][::-1]
     vector_predict = np.delete(vector_predict, np.isin(vector_predict, train_index).nonzero()[0])
@@ -32,8 +32,9 @@ def ndcg(vector_true_dense, vector_predict, hits):
 def click(hits, **unused):
     first_hit = next((i for i, x in enumerate(hits) if x), None)
     if first_hit is None:
-        first_hit = 5
-    return first_hit/10
+        return 5
+    else:
+        return first_hit/10
 
 
 def evaluate(matrix_U, matrix_V, matrix_Train, matrix_Test, k, metric_names):

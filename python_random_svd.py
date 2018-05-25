@@ -46,14 +46,20 @@ def main(args):
     print("Reading CSV")
     matrix_input = load_csv(path=args.path, name=args.train, shape=args.shape)
     print("Perform SVD")
-    P, sigma, Qt = randomized_svd(matrix_input,
+
+    boosted_matrix = matrix_input*(1 + args.boost*matrix_input)
+
+    P, sigma, Qt = randomized_svd(boosted_matrix,
                                   n_components=args.rank,
                                   n_iter=args.iter,
                                   random_state=None)
+
+    RQ = matrix_input.dot(csc_matrix(Qt).T)
     print("Save U,S,V")
     save_mxnet(P, args.path, args.user)
     save_mxnet(Qt.T, args.path, args.item)
     save_mxnet(sigma, args.path, args.sigm)
+    save_mxnet(RQ, args.path, args.rv)
     print("Python Job Done")
 
 
@@ -67,6 +73,8 @@ if __name__ == "__main__":
     parser.add_argument('-u', dest='user', default='U.nd')
     parser.add_argument('-v', dest='item', default='V.nd')
     parser.add_argument('-s', dest='sigm', default='S.nd')
+    parser.add_argument('-rv', dest='rv', default='RV.nd')
+    parser.add_argument('--boost', dest='boost', type=check_float_positive, default=1)
     parser.add_argument('--shape', help="CSR Shape", dest="shape", type=shape, nargs=2)
     args = parser.parse_args()
 

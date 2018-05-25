@@ -17,6 +17,7 @@ def per_item_gpu(vector_r, matrix_A, matrix_B, matrix_BT, alpha):
     vector_c_small = alpha * vector_r_small
     matrix_B_small = cp.take(matrix_B, vector_r_index, axis=0)
     matrix_BT_small = cp.take(matrix_BT, vector_r_index, axis=1)
+
     denominator = gpu_inv(matrix_A+(matrix_BT_small*vector_c_small).dot(matrix_B_small))
     return (denominator.dot(matrix_BT_small)).dot((vector_c_small*vector_r_small+vector_r_small)).flatten()
 
@@ -62,7 +63,7 @@ def weighted_lrec_items(matrix_train,
     start_time = time.time()
     if gpu:
         progress.section("Create Cacheable Matrices")
-        RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
+        RQ = matrix_input.dot(sparse.csc_matrix(Qt).T).toarray()
         matrix_A = cp.array(sparse.diags(sigma*sigma-lam).todense())
         matrix_B = cp.array(P*sigma)
         matrix_BT = cp.array(matrix_B.T)
@@ -86,7 +87,7 @@ def weighted_lrec_items(matrix_train,
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
     else:
         progress.section("Create Cacheable Matrices")
-        RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
+        RQ = matrix_input.dot(sparse.csc_matrix(Qt).T).toarray()
         matrix_A = sparse.diags(sigma * sigma - lam).todense()
         matrix_B = P * sigma
         matrix_BT = matrix_B.T

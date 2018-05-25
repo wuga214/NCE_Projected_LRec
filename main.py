@@ -61,7 +61,6 @@ def main(args):
                                     iteration=args.iter, rank=args.rank, lam=args.lamb, alpha=args.alpha)
         RQ = RQt.T
 
-
     # Save Files
     progress.section("Save U-V Matrix")
     start_time = time.time()
@@ -82,7 +81,6 @@ def main(args):
         for key in result.keys():
             print("{0} :{1}".format(key, result[key]))
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
-
 
 
 if __name__ == "__main__":

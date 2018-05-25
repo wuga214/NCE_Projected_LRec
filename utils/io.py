@@ -20,8 +20,9 @@ def load_numpy(path, name):
     return load_npz(path+name).tocsr()
 
 
-def load_pandas(path, name, row_name='userId', col_name='movieId', value_name='rating', shape=(138494, 131263)):
-    df = pd.read_csv(path + name)
+def load_pandas(path, name, row_name='userId', col_name='movieId',
+                value_name='rating', shape=(138494, 131263), sep=','):
+    df = pd.read_csv(path + name, sep=sep)
     rows = df[row_name]
     cols = df[col_name]
     values = df[value_name]
