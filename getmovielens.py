@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument('--random-split', dest='random', action='store_true')
     parser.add_argument('-r', dest='ratio', type=check_float_positive, default=0.3)
     parser.add_argument('-d', dest='path',
-                        default="/media/wuga/Experiments/Recsys-18/IMPLEMENTATION_Projected_LRec/data/movielens/")
+                        default="/media/wuga/Storage/python_project/wlrec/IMPLEMENTATION_Projected_LRec/datax/")
     parser.add_argument('-n', dest='name', default='ml-20m/ratings.csv')
     parser.add_argument('--shape', help="CSR Shape", dest="shape", type=shape, nargs=2)
     args = parser.parse_args()

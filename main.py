@@ -61,7 +61,6 @@ def main(args):
                                     iteration=args.iter, rank=args.rank, lam=args.lamb, alpha=args.alpha)
         RQ = RQt.T
 
-
     # Save Files
     progress.section("Save U-V Matrix")
     start_time = time.time()
@@ -84,7 +83,6 @@ def main(args):
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
 
-
 if __name__ == "__main__":
     # Commandline arguments
     parser = argparse.ArgumentParser(description="LRec")
@@ -92,7 +90,7 @@ if __name__ == "__main__":
     parser.add_argument('--disable-item-item', dest='item', action='store_false')
     parser.add_argument('--disable-validation', dest='validation', action='store_false')
     parser.add_argument('-i', dest='iter', type=check_int_positive, default=1)
-    parser.add_argument('-a', dest='alpha', type=check_float_positive, default=100.0)
+    parser.add_argument('-a', dest='alpha', type=check_int_positive, default=100.0)
     parser.add_argument('-l', dest='lamb', type=check_float_positive, default=100.0)
     parser.add_argument('-r', dest='rank', type=check_int_positive, default=100)
     parser.add_argument('-m', dest='model', default="PLRec")

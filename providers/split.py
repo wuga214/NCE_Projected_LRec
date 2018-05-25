@@ -25,7 +25,7 @@ def split(matrix, ratio=0.3, implicit=True, random=True):
             if random:
                 perm = permutation(num_nonzeros)
                 item_indexes = item_indexes[perm]
-                data = item_indexes[perm]
+                data = data[perm]
 
             rtrain = rtrain + sparse.csr_matrix((data[:num_train], (np.full(num_train, i), item_indexes[:num_train])),
                                                 shape=(user_num, item_num))
