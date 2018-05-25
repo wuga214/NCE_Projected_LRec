@@ -2,56 +2,71 @@ Weighted Projected LRec(AAAI-18)
 ================================
 
 # Data
+Movielens 1M,
 Movielens 20M and
 Spotify RecSys 2018 Competition Dataset.
 
 Data is not suit to submit on github, so please prepare it yourself. It should be numpy npy file directly 
 dumped from csr sparse matrix. It should be easy.. 
 
-# Command for Movielens 20M
+# Command for Movielens 1M
+Process data
 ```
-$ python main.py -i 4 -a 100 -l 10 -r 100 -m WPLRec
--d /media/user/Experiments/Recsys-18/IMPLEMENTATION_Projected_LRec/data/movielens/
--n raw/ratings.csv --shape 138494 131263
+python getmovielens.py --implicit --random-split -r 0.3 -d datax/ -n ml-1m/ratings.csv --shape 6041 3953
+```
+
+Run Weighted Projected LRec
+```
+$ python main.py -i 4 -l 1.0 -r 100 -a 10 -m WPLRec -d datax/ -t Rtrain.npz -v Rvalid.npz -k 10
 ```
 
 # Run-time
 This model needs only 3 mins to process MovieLens 20M!
 
-The entire running time is around half hour.  Note: this does not count the prediction step, 
-where we need to multiply RQ and Y
+# Result
+Note: reproduce this result is easy, but you need to tune the hyperparameter alpha to
+see the improvement, since for even same dataset, the split of the dataset could cause
+huge difference of the hyper-parameter requirement. We suggest to use 50% of the training
+data to train and validation on the others. We also suggest to sue small alpha in order
+to avoid poor generalization issue.
  
 ```
 ================================================================================
 |                              Parameter Setting                               |
 ================================================================================
 
-Data Path: /media/wuga/Experiments/IMPLEMENTATION_Projected_LRec/data/
+Data Path: datax/
 Train File Name: Rtrain.npz
 Valid File Name: Rvalid.npz
-Algorithm: PLRec
+Algorithm: WPLRec
 Mode: Item-based
-Alpha: 50
-Rank: 50
+Alpha: 10
+Rank: 100
 Lambda: 1.0
-SVD Iteration: 1
-Evaluation Ranking Topk: 50
+SVD Iteration: 4
+Evaluation Ranking Topk: 10
 ================================================================================
 |                                 Loading Data                                 |
 ================================================================================
 
 Elapsed: 00:00:00
-Train U-I Dimensions: (138494, 131263)
+Train U-I Dimensions: (6041, 3953)
 ================================================================================
 |                                Randomized SVD                                |
 ================================================================================
 
-Elapsed: 00:00:10
+Elapsed: 00:00:01
 ================================================================================
-|                       Closed-Form Linear Optimization                        |
+|                          Create Cacheable Matrices                           |
 ================================================================================
 
-Elapsed: 00:00:08
+Elapsed: 00:00:00
+================================================================================
+|                           Item-wised Optimization                            |
+================================================================================
+
+100%|██████████████████████████████████████| 3953/3953 [00:17<00:00, 223.06it/s]
+Elapsed: 00:00:17
 ================================================================================
 |                               Save U-V Matrix                                |
 ================================================================================
@@ -61,11 +76,11 @@ Elapsed: 00:00:00
 |                                Create Metrics                                |
 ================================================================================
 
-100%|██████████████████████████████████| 138494/138494 [15:18<00:00, 150.71it/s]
-
-NDCG :0.172037321697
-R-Precision :0.117117117117
+100%|██████████████████████████████████████| 6041/6041 [00:08<00:00, 694.76it/s]
+-
+NDCG :0.182108679494
+R-Precision :0.078431372549
 Clicks :0.0
-Elapsed: 00:15:19
+Elapsed: 00:00:08
 
 ```
