@@ -57,7 +57,7 @@ def weighted_lrec_items(matrix_train,
 
     progress.section("Randomized SVD")
     start_time = time.time()
-    P, sigma, Qt = randomized_svd(matrix_input, n_components=rank, n_iter=iteration, random_state=None)
+    P, sigma, Qt = randomized_svd(matrix_input, n_components=rank, n_iter=iteration, random_state=1)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     start_time = time.time()
