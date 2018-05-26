@@ -14,6 +14,8 @@ def curve_weighting(lrec_result, wlrec_results, weights, metric, name):
     plt.plot(weights, scores, sns.xkcd_rgb["denim blue"], label='Weighted Projected LRec')
     plt.legend()
     plt.xscale('log')
+    plt.xlabel('Alpha')
+    plt.ylabel(metric)
 
     plt.savefig('figures/{0}.pdf'.format(name), format='pdf')
     plt.show()

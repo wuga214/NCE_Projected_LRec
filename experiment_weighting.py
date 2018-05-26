@@ -8,8 +8,8 @@ from utils.io import load_numpy
 
 params = {
     'models': {"PLRec": embedded_lrec_items, "WPLRec": weighted_lrec_items},
-    'alphas':  [0.] + np.logspace(-2, 2.0, num=3).tolist(),
-    'rank': 200,
+    'alphas':  [0.] + np.logspace(-2, 2.0, num=25).tolist(),
+    'rank': 100,
     'lambda': 1,
     'topK': 10,
     'iter': 4,
@@ -21,8 +21,8 @@ def main(args):
     R_train = load_numpy(path=args.path, name=args.train)
     R_valid = load_numpy(path=args.path, name=args.valid)
     lrec_result, wlrec_results = weighting(R_train, R_valid, params)
-    curve_weighting(lrec_result, wlrec_results, params['alphas'], metric='R-Precision', name="weighting")
-    curve_weighting(lrec_result, wlrec_results, params['alphas'], metric='NDCG', name="weighting")
+    curve_weighting(lrec_result, wlrec_results, params['alphas'], metric='R-Precision', name="R-Precision")
+    curve_weighting(lrec_result, wlrec_results, params['alphas'], metric='NDCG', name="NDCG")
 
 
 if __name__ == "__main__":
