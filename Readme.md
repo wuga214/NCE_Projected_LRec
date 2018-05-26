@@ -27,7 +27,7 @@ This model needs only 3 mins to process MovieLens 20M!
 Note: reproduce this result is easy, but you need to tune the hyperparameter alpha to
 see the improvement, since for even same dataset, the split of the dataset could cause
 huge difference of the hyper-parameter requirement. We suggest to use 50% of the training
-data to train and validation on the others. We also suggest to sue small alpha in order
+data to train and validation on the others. We also suggest to apply small alpha in order
 to avoid poor generalization issue.
  
 ```
@@ -83,6 +83,16 @@ R-Precision :0.078431372549
 Clicks :0.0
 Elapsed: 00:00:08
 
+```
+
+Effect of Weighting
+===================
+The following result shows Weighted Projected LRec outperforms Projected LRec when
+ using reasonable hyper-parameters.
+
+To reproduce this result, run
+```
+python experiment_weighting.py -d datax/ -t Rtrain.npz -v Rvalid.npz
 ```
 
 ![NDCG](figures/NDCG.png) <!-- .element height="50%" width="50%" -->
