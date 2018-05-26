@@ -84,3 +84,6 @@ Clicks :0.0
 Elapsed: 00:00:08
 
 ```
+
+![NDCG](figures/NDCG.png) <!-- .element height="50%" width="50%" -->
+![R-Precision](figures/R-Precision.png) <!-- .element height="50%" width="50%" -->
