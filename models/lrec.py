@@ -21,7 +21,7 @@ def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
     if embeded_matrix.shape[0] > 0:
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
-    progress.section("Randomized SVD")
+    progress.subsection("Randomized SVD")
     start_time = time.time()
     P, sigma, Qt = randomized_svd(matrix_input,
                                   n_components=rank,
@@ -30,7 +30,7 @@ def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
     RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
-    progress.section("Closed-Form Linear Optimization")
+    progress.subsection("Closed-Form Linear Optimization")
     start_time = time.time()
     pre_inv = RQ.T.dot(RQ) + lam * sparse.identity(rank)
     inverse = inv(pre_inv)

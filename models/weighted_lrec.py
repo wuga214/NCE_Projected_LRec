@@ -56,14 +56,14 @@ def weighted_lrec_items(matrix_train,
     if embeded_matrix.shape[0] > 0:
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
-    progress.section("Randomized SVD")
+    progress.subsection("Randomized SVD")
     start_time = time.time()
     P, sigma, Qt = randomized_svd(matrix_input, n_components=rank, n_iter=iteration, random_state=seed)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     start_time = time.time()
     if gpu:
-        progress.section("Create Cacheable Matrices")
+        progress.subsection("Create Cacheable Matrices")
         RQ = matrix_input.dot(sparse.csc_matrix(Qt).T).toarray()
 
         # Exact
@@ -78,7 +78,7 @@ def weighted_lrec_items(matrix_train,
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
 
-        progress.section("Item-wised Optimization")
+        progress.subsection("Item-wised Optimization")
         start_time = time.time()
 
         # For loop
@@ -94,7 +94,7 @@ def weighted_lrec_items(matrix_train,
         Y = scipy.vstack(Y)
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
     else:
-        progress.section("Create Cacheable Matrices")
+        progress.subsection("Create Cacheable Matrices")
         RQ = matrix_input.dot(sparse.csc_matrix(Qt).T).toarray()
 
         # Exact
@@ -108,7 +108,7 @@ def weighted_lrec_items(matrix_train,
         # matrix_A = sparse.diags(sigma * sigma - lam).todense()
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
-        progress.section("Item-wised Optimization")
+        progress.subsection("Item-wised Optimization")
         start_time = time.time()
 
         # For loop

@@ -12,8 +12,17 @@ def save_mxnet(matrix, path, name):
     mx.nd.save(path + name, mx_array)
 
 
-def save_numpy(matrix, path, name):
-    save_npz(path + name, matrix)
+def save_dataframe_csv(df, path, name):
+    df.to_csv(path+name)
+
+
+def save_datafram_latex(df, path, model):
+    with open('{0}{1}_parameter_tuning.tex'.format(path, model), 'w') as handle:
+        handle.write(df.to_latex(index=False))
+
+
+def save_numpy(matrix, path, model):
+    save_npz('{0}{1}_parameter_tuning.csv'.format(path, model), matrix)
 
 
 def load_numpy(path, name):
