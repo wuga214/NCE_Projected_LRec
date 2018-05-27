@@ -38,7 +38,8 @@ def weighted_lrec_items(matrix_train,
                         lam=80,
                         rank=200,
                         alpha=100,
-                        gpu=True):
+                        gpu=True,
+                        seed=1):
     """
     Function used to achieve generalized projected lrec w/o item-attribute embedding
     :param matrix_train: user-item matrix with shape m*n
@@ -57,7 +58,7 @@ def weighted_lrec_items(matrix_train,
 
     progress.section("Randomized SVD")
     start_time = time.time()
-    P, sigma, Qt = randomized_svd(matrix_input, n_components=rank, n_iter=iteration, random_state=1)
+    P, sigma, Qt = randomized_svd(matrix_input, n_components=rank, n_iter=iteration, random_state=seed)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     start_time = time.time()

@@ -56,11 +56,13 @@ def main(args):
     # Item-Item or User-User
     if args.item == True:
         RQ, Yt = models[args.model](R_train, embeded_matrix=np.empty((0)),
-                                    iteration=args.iter, rank=args.rank, lam=args.lamb, alpha=args.alpha)
+                                    iteration=args.iter, rank=args.rank,
+                                    lam=args.lamb, alpha=args.alpha, seed=args.seed)
         Y = Yt.T
     else:
         Y, RQt = models[args.model](R_train.T, embeded_matrix=np.empty((0)),
-                                    iteration=args.iter, rank=args.rank, lam=args.lamb, alpha=args.alpha)
+                                    iteration=args.iter, rank=args.rank,
+                                    lam=args.lamb, alpha=args.alpha, seed=args.seed)
         RQ = RQt.T
 
     # Save Files
@@ -95,6 +97,7 @@ if __name__ == "__main__":
     parser.add_argument('-a', dest='alpha', type=check_int_positive, default=100.0)
     parser.add_argument('-l', dest='lamb', type=check_float_positive, default=100.0)
     parser.add_argument('-r', dest='rank', type=check_int_positive, default=100)
+    parser.add_argument('-s', dest='seed', type=check_int_positive, default=1)
     parser.add_argument('-m', dest='model', default="PLRec")
     parser.add_argument('-d', dest='path', default="/media/wuga/Storage/python_project/lrec/data/")
     parser.add_argument('-t', dest='train', default='R_train.npz')

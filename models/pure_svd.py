@@ -8,7 +8,7 @@ import time
 
 
 def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
-             iteration=4, rank=200, fb=True, **unused):
+             iteration=4, rank=200, fb=True, seed=1, **unused):
     """
     Function used to achieve generalized projected lrec w/o item-attribute embedding
     :param matrix_train: user-item matrix with shape m*n
@@ -34,7 +34,7 @@ def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
                                       n_components=rank,
                                       n_iter=iteration,
                                       power_iteration_normalizer='QR',
-                                      random_state=None)
+                                      random_state=seed)
 
     RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
@@ -44,7 +44,7 @@ def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
 
 # boost pureSVD with multiplying Sigma for multiple times. Let the similarity matrix to be sharp!
 def eigen_boosted_pure_svd(matrix_train, embeded_matrix=np.empty((0)),
-                           iteration=4, rank=200, fb=True, alpha=1, **unused):
+                           iteration=4, rank=200, fb=True, alpha=1, seed=1, **unused):
     """
     Function used to achieve generalized projected lrec w/o item-attribute embedding
     :param matrix_train: user-item matrix with shape m*n
@@ -70,7 +70,7 @@ def eigen_boosted_pure_svd(matrix_train, embeded_matrix=np.empty((0)),
                                       n_components=rank,
                                       n_iter=iteration,
                                       power_iteration_normalizer='QR',
-                                      random_state=None)
+                                      random_state=seed)
 
     PS = P*(sigma*alpha)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
