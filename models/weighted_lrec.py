@@ -68,10 +68,10 @@ def weighted_lrec_items(matrix_train,
         # Exact
         matrix_B = cp.array(RQ)
         matrix_BT = matrix_B.T
-        matrix_A = matrix_BT.dot(matrix_B) - cp.array((lam * sparse.identity(rank)).toarray())
+        matrix_A = matrix_BT.dot(matrix_B) + cp.array((lam * sparse.identity(rank)).toarray())
 
         # Approx
-        # matrix_A = cp.array(sparse.diags(sigma * sigma - lam).todense())
+        # matrix_A = cp.array(sparse.diags(sigma * sigma + lam).todense())
         # matrix_B = cp.array(P*sigma)
         # matrix_BT = cp.array(matrix_B.T)
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
@@ -99,7 +99,7 @@ def weighted_lrec_items(matrix_train,
         # Exact
         matrix_B = RQ
         matrix_BT = RQ.T
-        matrix_A = matrix_BT.dot(matrix_B) - (lam * sparse.identity(rank)).toarray()
+        matrix_A = matrix_BT.dot(matrix_B) + (lam * sparse.identity(rank)).toarray()
 
         # Approx
         # matrix_B = P * sigma
