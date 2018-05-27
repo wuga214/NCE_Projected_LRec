@@ -22,7 +22,7 @@ def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
     if embeded_matrix.shape[0] > 0:
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
-    progress.section("Randomized SVD")
+    progress.subsection("Randomized SVD")
     start_time = time.time()
     if fb:
         P, sigma, Qt = pca(matrix_input,
@@ -58,7 +58,7 @@ def eigen_boosted_pure_svd(matrix_train, embeded_matrix=np.empty((0)),
     if embeded_matrix.shape[0] > 0:
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
-    progress.section("Randomized SVD")
+    progress.subsection("Randomized SVD")
     start_time = time.time()
     if fb:
         P, sigma, Qt = pca(matrix_input,

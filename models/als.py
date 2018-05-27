@@ -68,7 +68,7 @@ def als(matrix_train,
         seed=1):
 
     progress = WorkSplitter()
-    progress.section("Alternative Item-wised Optimization")
+    progress.subsection("Alternative Item-wised Optimization")
     matrix_input = matrix_train
     if embeded_matrix.shape[0] > 0:
         matrix_input = vstack((matrix_input, embeded_matrix.T))
@@ -80,7 +80,7 @@ def als(matrix_train,
     V = np.random.normal(0, 0.01, size=(n, rank))
 
     for i in xrange(iteration):
-        progress.subsection("Iteration: {0}".format(i))
+        progress.subsubsection("Iteration: {0}".format(i))
         solve(matrix_input.T, U, V, lam=lam, rank=rank, alpha=alpha, gpu=gpu)
         solve(matrix_input, V, U, lam=lam, rank=rank, alpha=alpha, gpu=gpu)
 
