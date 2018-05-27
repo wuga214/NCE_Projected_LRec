@@ -7,6 +7,7 @@ from utils.argument import check_float_positive, check_int_positive, shape
 from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
 from models.pure_svd import pure_svd, eigen_boosted_pure_svd
+from models.als import als
 from evaluation.metrics import evaluate
 
 
@@ -15,6 +16,7 @@ models = {
     "WPLRec": weighted_lrec_items,
     "PureSVD": pure_svd,
     "EBPureSVD": eigen_boosted_pure_svd,
+    "ALS": als
 }
 
 
