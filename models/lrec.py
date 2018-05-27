@@ -7,7 +7,7 @@ from utils.progress import WorkSplitter, inhour
 import time
 
 
-def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, **unused):
+def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, seed=1, **unused):
     """
     Function used to achieve generalized projected lrec w/o item-attribute embedding
     :param matrix_train: user-item matrix with shape m*n
@@ -26,7 +26,7 @@ def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
     P, sigma, Qt = randomized_svd(matrix_input,
                                   n_components=rank,
                                   n_iter=iteration,
-                                  random_state=1)
+                                  random_state=seed)
     RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 

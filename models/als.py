@@ -64,7 +64,8 @@ def als(matrix_train,
         lam=80,
         rank=200,
         alpha=100,
-        gpu=True):
+        gpu=True,
+        seed=1):
 
     progress = WorkSplitter()
     progress.section("Alternative Item-wised Optimization")
@@ -74,6 +75,7 @@ def als(matrix_train,
 
     m, n =matrix_train.shape
 
+    np.random.seed(1)
     U = np.random.normal(0, 0.01, size=(m, rank))
     V = np.random.normal(0, 0.01, size=(n, rank))
 
