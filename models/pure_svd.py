@@ -10,12 +10,16 @@ import time
 def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
              iteration=4, rank=200, fb=True, seed=1, **unused):
     """
-    Function used to achieve generalized projected lrec w/o item-attribute embedding
-    :param matrix_train: user-item matrix with shape m*n
-    :param embeded_matrix: item-attribute matrix with length n (each row represents one item)
-    :param lam: parameter of penalty
-    :param k_factor: ratio of the latent dimension/number of items
-    :return: prediction in sparse matrix
+    PureSVD algorithm
+
+    :param matrix_train: rating matrix
+    :param embeded_matrix: item or user embedding matrix(side info)
+    :param iteration: number of random SVD iterations
+    :param rank: SVD top K eigenvalue ranks
+    :param fb: facebook package or sklearn package. boolean
+    :param seed: Random initialization seed
+    :param unused: args that not applicable for this algorithm
+    :return:
     """
     progress = WorkSplitter()
     matrix_input = matrix_train
@@ -46,12 +50,17 @@ def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
 def eigen_boosted_pure_svd(matrix_train, embeded_matrix=np.empty((0)),
                            iteration=4, rank=200, fb=True, alpha=1, seed=1, **unused):
     """
-    Function used to achieve generalized projected lrec w/o item-attribute embedding
-    :param matrix_train: user-item matrix with shape m*n
-    :param embeded_matrix: item-attribute matrix with length n (each row represents one item)
-    :param lam: parameter of penalty
-    :param k_factor: ratio of the latent dimension/number of items
-    :return: prediction in sparse matrix
+    PureSVD algorithm
+
+    :param matrix_train: rating matrix
+    :param embeded_matrix: item or user embedding matrix(side info)
+    :param iteration: number of random SVD iterations
+    :param rank: SVD top K eigenvalue ranks
+    :param fb: facebook package or sklearn package. boolean
+    :param seed: Random initialization seed
+    :param unused: args that not applicable for this algorithm
+    :param alpha: the re-weighting parameter
+    :return:
     """
     progress = WorkSplitter()
     matrix_input = matrix_train

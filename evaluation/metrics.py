@@ -2,11 +2,26 @@ import numpy as np
 from tqdm import tqdm
 import scipy.sparse as sparse
 
+
 def sub_routine(vector_u, matrix_V, vector_train, vector_true, k=500):
-    # import ipdb;ipdb.set_trace()
+    """
+    :param vector_u: latent representation vector of user u
+    :param matrix_V: item latent representation matrix, shape  N x K
+    :param vector_train: rating made by user u for training
+    :param vector_true: rating made by user u for testing
+    :param k: Top K retrieval
+    :return: predicted top K, true positive ratings, hits
+    """
+
     train_index = vector_train.nonzero()[1]
+
+    # Return top k+h items by prediction, where h is the total number of items rated by the user
     vector_predict = matrix_V.dot(vector_u).argsort()[-(k+len(train_index)):][::-1]
+
+    # Remove items from training data, the remaining should more than k items
     vector_predict = np.delete(vector_predict, np.isin(vector_predict, train_index).nonzero()[0])
+
+    # Extract rated items from true label vector
     vector_true_dense = vector_true.nonzero()[1]
     return vector_predict[:k], vector_true_dense, np.isin(vector_predict[:k], vector_true_dense)
 
@@ -38,6 +53,16 @@ def click(hits, **unused):
 
 
 def evaluate(matrix_U, matrix_V, matrix_Train, matrix_Test, k, metric_names):
+    """
+
+    :param matrix_U: Latent representations of users, for LRecs it is RQ, for ALSs it is U
+    :param matrix_V: Latent representations of items, for LRecs it is Q, for ALSs it is V
+    :param matrix_Train: Rating matrix for training, features.
+    :param matrix_Test: Rating matrix for evaluation, true labels.
+    :param k: Top K retrieval
+    :param metric_names: Evaluation metrics
+    :return:
+    """
     metrics = {
         "R-Precision": r_precision,
         "NDCG": ndcg,
