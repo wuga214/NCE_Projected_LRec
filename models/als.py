@@ -31,6 +31,9 @@ def per_item_gpu(vector_r, matrix_A, matrix_B, matrix_BT, alpha):
 
 
 def solve(R, X, H, lam, rank, alpha, gpu):
+    """
+    Linear function solver, in the form R = XH^T with weighted loss
+    """
 
     if gpu:
         H = cp.array(H)
@@ -66,6 +69,18 @@ def als(matrix_train,
         alpha=100,
         gpu=True,
         seed=1):
+    """
+
+    :param matrix_train: rating matrix
+    :param embeded_matrix: item or user embedding matrix(side info)
+    :param iteration: number of random SVD iterations
+    :param lam: regularization parameter
+    :param rank: SVD top K eigenvalue ranks
+    :param alpha: re-weighting parameter
+    :param gpu: GPU computation or CPU computation. GPU usually does 2X speed of CPU
+    :param seed: Random initialization seed
+    :return:
+    """
 
     progress = WorkSplitter()
     progress.subsection("Alternative Item-wised Optimization")

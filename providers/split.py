@@ -4,6 +4,7 @@ from numpy.random import permutation
 from tqdm import tqdm
 
 
+# This function need time stamp based refactoring. Random split is not right!
 def split(matrix, ratio=0.3, implicit=True, random=True):
     if implicit:
         matrix[matrix.nonzero()] = 1

@@ -53,6 +53,16 @@ def click(hits, **unused):
 
 
 def evaluate(matrix_U, matrix_V, matrix_Train, matrix_Test, k, metric_names):
+    """
+
+    :param matrix_U: Latent representations of users, for LRecs it is RQ, for ALSs it is U
+    :param matrix_V: Latent representations of items, for LRecs it is Q, for ALSs it is V
+    :param matrix_Train: Rating matrix for training, features.
+    :param matrix_Test: Rating matrix for evaluation, true labels.
+    :param k: Top K retrieval
+    :param metric_names: Evaluation metrics
+    :return:
+    """
     metrics = {
         "R-Precision": r_precision,
         "NDCG": ndcg,
