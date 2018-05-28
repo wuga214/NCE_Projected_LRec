@@ -47,9 +47,7 @@ def main(args):
     matrix_input = load_csv(path=args.path, name=args.train, shape=args.shape)
     print("Perform SVD")
 
-    boosted_matrix = matrix_input*(1 + args.boost*matrix_input)
-
-    P, sigma, Qt = randomized_svd(boosted_matrix,
+    P, sigma, Qt = randomized_svd(matrix_input,
                                   n_components=args.rank,
                                   n_iter=args.iter,
                                   random_state=None)
@@ -74,7 +72,6 @@ if __name__ == "__main__":
     parser.add_argument('-v', dest='item', default='V.nd')
     parser.add_argument('-s', dest='sigm', default='S.nd')
     parser.add_argument('-rv', dest='rv', default='RV.nd')
-    parser.add_argument('--boost', dest='boost', type=check_float_positive, default=1)
     parser.add_argument('--shape', help="CSR Shape", dest="shape", type=shape, nargs=2)
     args = parser.parse_args()
 
