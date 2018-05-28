@@ -22,7 +22,7 @@ def save_datafram_latex(df, path, model):
 
 
 def save_numpy(matrix, path, model):
-    save_npz('{0}{1}.csv'.format(path, model), matrix)
+    save_npz('{0}{1}'.format(path, model), matrix)
 
 
 def load_numpy(path, name):

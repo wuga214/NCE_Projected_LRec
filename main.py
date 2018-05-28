@@ -94,7 +94,7 @@ if __name__ == "__main__":
     parser.add_argument('--disable-item-item', dest='item', action='store_false')
     parser.add_argument('--disable-validation', dest='validation', action='store_false')
     parser.add_argument('-i', dest='iter', type=check_int_positive, default=1)
-    parser.add_argument('-a', dest='alpha', type=check_int_positive, default=100.0)
+    parser.add_argument('-a', dest='alpha', type=check_float_positive, default=100.0)
     parser.add_argument('-l', dest='lamb', type=check_float_positive, default=100.0)
     parser.add_argument('-r', dest='rank', type=check_int_positive, default=100)
     parser.add_argument('-s', dest='seed', type=check_int_positive, default=1)

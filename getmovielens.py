@@ -17,7 +17,7 @@ def main(args):
     progress.section("Save NPZ")
     save_numpy(rtrain, args.path, "Rtrain")
     save_numpy(rvalid, args.path, "Rvalid")
-    save_numpy(rtest, args.path, "Rvtest")
+    save_numpy(rtest, args.path, "Rtest")
 
 if __name__ == "__main__":
     # Commandline arguments
