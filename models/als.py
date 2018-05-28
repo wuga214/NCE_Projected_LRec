@@ -58,7 +58,21 @@ def solve(R, X, H, lam, rank, alpha, gpu):
             y_i_cpu = vector_x
             X[i] = y_i_cpu
 
+def get_cold(matrix_csr):
+    matrix_coo = matrix_csr.tocoo()
+    m, n = matrix_csr.shape
+    warm_rows = np.unique(matrix_coo.row)
+    warm_cols = np.unique(matrix_coo.col)
 
+    mask = np.ones(m, np.bool)
+    mask[warm_rows] = 0
+    cold_rows = np.nonzero(mask)
+
+    mask = np.ones(n, np.bool)
+    mask[warm_cols] = 0
+    cold_cols = np.nonzero(mask)
+
+    return cold_rows, cold_cols
 
 
 def als(matrix_train,
@@ -93,6 +107,10 @@ def als(matrix_train,
     np.random.seed(1)
     U = np.random.normal(0, 0.01, size=(m, rank))
     V = np.random.normal(0, 0.01, size=(n, rank))
+
+    cold_rows, cold_cols = get_cold(matrix_train)
+    U[cold_rows] = 0
+    V[cold_cols] = 0
 
     for i in xrange(iteration):
         progress.subsubsection("Iteration: {0}".format(i))
