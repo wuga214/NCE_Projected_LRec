@@ -12,12 +12,16 @@ dumped from csr sparse matrix. It should be easy..
 # Command for Movielens 1M
 Process data
 ```
-python getmovielens.py --implicit --random-split -r 0.3 -d datax/ -n ml-1m/ratings.csv --shape 6041 3953
+python getmovielens.py --implicit -r 0.5,0.2,0.3 -d /media/wuga/Stora
+ge/python_project/wlrec_update/IMPLEMENTATION_Projected_LRec/datax/ \
+-n ml-1m/ratings.csv --shape 6041 3953
+
 ```
 
 Run Weighted Projected LRec
 ```
-$ python main.py -i 4 -l 1.0 -r 100 -a 10 -m WPLRec -d datax/ -t Rtrain.npz -v Rvalid.npz -k 10
+$ python main.py -i 4 -l 1.0 -r 100 -a 10 -m WPLRec -d datax/ \
+-t Rtrain.npz -v Rvalid.npz -k 10
 ```
 
 # Run-time
@@ -29,6 +33,7 @@ see the improvement, since for even same dataset, the split of the dataset could
 huge difference of the hyper-parameter requirement. We suggest to use 50% of the training
 data to train and validation on the others. We also suggest to apply small alpha in order
 to avoid poor generalization issue.
+
  
 ```
 ================================================================================
