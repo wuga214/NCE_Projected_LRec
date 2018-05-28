@@ -21,11 +21,11 @@ models = {
 def main(args):
     params = {
         'models': {args.model: models[args.model]},
-        'alphas': [0.] + np.logspace(-2, 2.0, num=25).tolist(),
+        'alphas': [0.] + np.logspace(-2, 2.0, num=5).tolist(),
         'rank': [50, 100, 200, 400],
         'lambda': [1, 10, 100],
         'topK': 10,
-        'iter': 4,
+        'iter': 7,
         'metric': ['R-Precision', 'NDCG'],
     }
 

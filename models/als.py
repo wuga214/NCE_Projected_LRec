@@ -73,7 +73,7 @@ def als(matrix_train,
 
     :param matrix_train: rating matrix
     :param embeded_matrix: item or user embedding matrix(side info)
-    :param iteration: number of random SVD iterations
+    :param iteration: number of alternative solving
     :param lam: regularization parameter
     :param rank: SVD top K eigenvalue ranks
     :param alpha: re-weighting parameter
