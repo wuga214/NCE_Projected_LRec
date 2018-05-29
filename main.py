@@ -39,7 +39,7 @@ def main(args):
     print("Alpha: {0}".format(args.alpha))
     print("Rank: {0}".format(args.rank))
     print("Lambda: {0}".format(args.lamb))
-    print("SVD Iteration: {0}".format(args.iter))
+    print("SVD/Alter Iteration: {0}".format(args.iter))
     print("Evaluation Ranking Topk: {0}".format(args.topk))
 
     # Load Data

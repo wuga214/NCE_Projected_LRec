@@ -1,8 +1,9 @@
 import numpy as np
 from tqdm import tqdm
+import heapq
 import scipy.sparse as sparse
 
-
+# Do we need gpu evaluation?
 def sub_routine(vector_u, matrix_V, vector_train, vector_true, k=500):
     """
     :param vector_u: latent representation vector of user u
@@ -16,7 +17,17 @@ def sub_routine(vector_u, matrix_V, vector_train, vector_true, k=500):
     train_index = vector_train.nonzero()[1]
 
     # Return top k+h items by prediction, where h is the total number of items rated by the user
-    vector_predict = matrix_V.dot(vector_u).argsort()[-(k+len(train_index)):][::-1]
+
+    # argsort solution
+    #vector_predict = matrix_V.dot(vector_u).argsort()[-(k+len(train_index)):][::-1]
+
+    # heapq solution
+    # vector_predict = heapq.nlargest(k+len(train_index), matrix_V.dot(vector_u))
+
+    # partial sort solution
+    vector_predict = matrix_V.dot(vector_u)
+    candidate_index = np.argpartition(-vector_predict, k+len(train_index))[:k+len(train_index)]
+    vector_predict = candidate_index[vector_predict[candidate_index].argsort()[::-1]]
 
     # Remove items from training data, the remaining should more than k items
     vector_predict = np.delete(vector_predict, np.isin(vector_predict, train_index).nonzero()[0])
