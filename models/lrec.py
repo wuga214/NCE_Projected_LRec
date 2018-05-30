@@ -27,7 +27,12 @@ def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
                                   n_components=rank,
                                   n_iter=iteration,
                                   random_state=seed)
+    # Plain
     RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
+
+    # sqrt sigma injection
+    # RQ = matrix_input.dot(sparse.csc_matrix(Qt.T*np.sqrt(sigma)))
+
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     progress.subsection("Closed-Form Linear Optimization")

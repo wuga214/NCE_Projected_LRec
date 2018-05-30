@@ -64,7 +64,10 @@ def weighted_lrec_items(matrix_train,
     start_time = time.time()
     if gpu:
         progress.subsection("Create Cacheable Matrices")
-        RQ = matrix_input.dot(sparse.csc_matrix(Qt).T).toarray()
+        # RQ = matrix_input.dot(sparse.csc_matrix(Qt).T).toarray()
+
+        # sqrt sigma injection
+        RQ = matrix_input.dot(sparse.csc_matrix(Qt.T * np.sqrt(sigma))).toarray()
 
         # Exact
         matrix_B = cp.array(RQ)
