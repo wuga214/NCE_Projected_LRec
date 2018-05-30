@@ -1,8 +1,10 @@
+import os
 import mxnet as mx
 from scipy.sparse import save_npz, load_npz
 from scipy.sparse import csr_matrix
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 
 def save_mxnet(matrix, path, name):
@@ -44,3 +46,29 @@ def load_csv(path, name, shape=(1010000, 2262292)):
     # create npz for later convenience
     save_npz(path + "rating.npz", matrix)
     return matrix
+
+
+# Special cases
+def load_netflix(path, shape=(2649430, 17771)):
+    # Cautious: This function will reindex the user-item IDs, only for experiment usage
+    frames = []
+    print("Load Files")
+    for file in tqdm(os.listdir(path)):
+        if file.endswith(".txt"):
+            movie_path = os.path.join(path, file)
+            with open(movie_path) as f:
+                movie_index = f.readline().split(':')[0]
+            df = pd.read_csv(movie_path, skiprows=1, header=None, names=['userID', 'rating', 'timestamp'])
+            df['movieId'] = int(movie_index)
+            frames.append(df)
+
+    df = pd.concat(frames)
+    ratings = df['rating']
+    rows = df['userID']
+    cols = df['movieId']
+    timestamps = df['timestamp']
+    tqdm.pandas()
+    print("Transform timestamps")
+    timestamps = timestamps.str.replace('-', '').progress_apply(int)
+    print("Create Sparse Matrices")
+    return csr_matrix((ratings, (rows, cols)), shape=shape), csr_matrix((timestamps, (rows, cols)), shape=shape)
