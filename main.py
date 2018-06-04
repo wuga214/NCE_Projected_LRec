@@ -8,12 +8,14 @@ from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
 from models.pure_svd import pure_svd, eigen_boosted_pure_svd
 from models.als import als
+from models.pmi_lrec import pmi_lrec_items
 from evaluation.metrics import evaluate
 
 
 models = {
     "PLRec": embedded_lrec_items,
     "WPLRec": weighted_lrec_items,
+    "PmiPLRec": pmi_lrec_items,
     "PureSVD": pure_svd,
     "EBPureSVD": eigen_boosted_pure_svd,
     "ALS": als
