@@ -17,7 +17,12 @@ def get_pmi_matrix(matrix):
     for i in tqdm(xrange(size)):
         row_index, col_index = matrix[i].nonzero()
         values = np.asarray(item_rated[i].dot(user_rated)[:, col_index]).flatten()
-        values = size/values
+
+        # PMI
+        values = size / values
+
+        # SPPMI
+        # values = np.maximum(np.log(size/values)-np.log(5), 0)
         row_index.fill(i)
         pmi_matrix = pmi_matrix + sparse.csr_matrix((values, (row_index, col_index)), shape=matrix.shape)
 
