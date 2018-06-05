@@ -6,24 +6,38 @@ from sklearn.utils.extmath import randomized_svd
 from utils.progress import WorkSplitter, inhour
 import time
 from tqdm import tqdm
+import cupy as cp
 
 
 def get_pmi_matrix(matrix):
 
-    size = matrix.shape[0]
+    rows, cols = matrix.shape
     user_rated = matrix.sum(axis=0)
     item_rated = matrix.sum(axis=1)
-    pmi_matrix = sparse.csr_matrix(matrix.shape)
-    for i in tqdm(xrange(size)):
+    pmi_matrix = []
+    for i in tqdm(xrange(rows)):
         row_index, col_index = matrix[i].nonzero()
-        values = np.asarray(item_rated[i].dot(user_rated)[:, col_index]).flatten()
-        values = size/values
-        row_index.fill(i)
-        pmi_matrix = pmi_matrix + sparse.csr_matrix((values, (row_index, col_index)), shape=matrix.shape)
+        if len(row_index) > 0:
+            values = np.asarray(item_rated[i].dot(user_rated)[:, col_index]).flatten()
+            values = np.log(rows/values)-np.log(15)
+            pmi_matrix.append(sparse.coo_matrix((values, (row_index, col_index)), shape=(1, cols)))
+        else:
+            pmi_matrix.append(sparse.coo_matrix((1, cols)))
 
-    return pmi_matrix
+    return sparse.vstack(pmi_matrix)
 
-
+def get_pmi_matrix_gpu(matrix):
+    rows, cols = matrix.shape
+    user_rated = cp.array(matrix.sum(axis=0))
+    item_rated = cp.array(matrix.sum(axis=1))
+    pmi_matrix = []
+    for i in tqdm(xrange(rows)):
+        row_index, col_index = matrix[i].nonzero()
+        if len(row_index) > 0:
+            values = cp.asarray(item_rated[i].dot(user_rated)[col_index]).flatten()
+            values = cp.log(rows/values)
+            pmi_matrix.append(sparse.coo_matrix((cp.asnumpy(values), (row_index, col_index)), shape=matrix.shape))
+    return sparse.vstack(pmi_matrix)
 
 
 def pmi_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, seed=1, **unused):

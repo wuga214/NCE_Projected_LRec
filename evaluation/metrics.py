@@ -84,18 +84,19 @@ def evaluate(matrix_U, matrix_V, matrix_Train, matrix_Test, k, metric_names):
     for user_index in tqdm(range(matrix_U.shape[0])):
         vector_u = matrix_U[user_index]
         vector_train = matrix_Train[user_index]
-        vector_true = matrix_Test[user_index]
-        vector_predict, vector_true_dense, hits = sub_routine(vector_u,
-                                                              matrix_V,
-                                                              vector_train,
-                                                              vector_true,
-                                                              k=k)
+        if len(vector_train.nonzero()[0]) > 0:
+            vector_true = matrix_Test[user_index]
+            vector_predict, vector_true_dense, hits = sub_routine(vector_u,
+                                                                  matrix_V,
+                                                                  vector_train,
+                                                                  vector_true,
+                                                                  k=k)
 
-        if vector_true_dense.size is not 0:
-            for name in metric_names:
-                results[name] = metrics[name](vector_true_dense=vector_true_dense,
-                                              vector_predict=vector_predict,
-                                              hits=hits)
+            if vector_true_dense.size is not 0:
+                for name in metric_names:
+                    results[name] = metrics[name](vector_true_dense=vector_true_dense,
+                                                  vector_predict=vector_predict,
+                                                  hits=hits)
 
     output = dict()
     for name in metric_names:
