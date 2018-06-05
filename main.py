@@ -101,7 +101,7 @@ if __name__ == "__main__":
     parser.add_argument('-r', dest='rank', type=check_int_positive, default=100)
     parser.add_argument('-s', dest='seed', type=check_int_positive, default=1)
     parser.add_argument('-m', dest='model', default="PLRec")
-    parser.add_argument('-d', dest='path', default="/media/wuga/Storage/python_project/lrec/data/")
+    parser.add_argument('-d', dest='path', default="data/")
     parser.add_argument('-t', dest='train', default='R_train.npz')
     parser.add_argument('-v', dest='valid', default='R_valid.npz')
     parser.add_argument('-k', dest='topk', type=check_int_positive, default=50)
