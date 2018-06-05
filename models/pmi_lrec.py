@@ -12,14 +12,16 @@ import cupy as cp
 def get_pmi_matrix(matrix):
 
     rows, cols = matrix.shape
-    user_rated = matrix.sum(axis=0)
-    item_rated = matrix.sum(axis=1)
+    item_rated = matrix.sum(axis=0)
+    # user_rated = matrix.sum(axis=1)
     pmi_matrix = []
     for i in tqdm(xrange(rows)):
         row_index, col_index = matrix[i].nonzero()
         if len(row_index) > 0:
-            values = np.asarray(item_rated[i].dot(user_rated)[:, col_index]).flatten()
-            values = np.log(rows/values)-np.log(15)
+            # import ipdb; ipdb.set_trace()
+            # values = np.asarray(user_rated[i].dot(item_rated)[:, col_index]).flatten()
+            values = np.asarray(item_rated[:, col_index]).flatten()
+            values = np.maximum(np.log(rows/values)-np.log(1), 0)
             pmi_matrix.append(sparse.coo_matrix((values, (row_index, col_index)), shape=(1, cols)))
         else:
             pmi_matrix.append(sparse.coo_matrix((1, cols)))
