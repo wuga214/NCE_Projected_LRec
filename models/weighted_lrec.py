@@ -39,7 +39,8 @@ def weighted_lrec_items(matrix_train,
                         rank=200,
                         alpha=100,
                         gpu=True,
-                        seed=1):
+                        seed=1,
+                        **unused):
     """
     Function used to achieve generalized projected lrec w/o item-attribute embedding
     :param matrix_train: user-item matrix with shape m*n

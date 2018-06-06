@@ -1,40 +1,5 @@
 import numpy as np
 from tqdm import tqdm
-import heapq
-import scipy.sparse as sparse
-
-# Do we need gpu evaluation?
-def sub_routine(vector_u, matrix_V, vector_train, vector_true, k=500):
-    """
-    :param vector_u: latent representation vector of user u
-    :param matrix_V: item latent representation matrix, shape  N x K
-    :param vector_train: rating made by user u for training
-    :param vector_true: rating made by user u for testing
-    :param k: Top K retrieval
-    :return: predicted top K, true positive ratings, hits
-    """
-
-    train_index = vector_train.nonzero()[1]
-
-    # Return top k+h items by prediction, where h is the total number of items rated by the user
-
-    # argsort solution
-    #vector_predict = matrix_V.dot(vector_u).argsort()[-(k+len(train_index)):][::-1]
-
-    # heapq solution
-    # vector_predict = heapq.nlargest(k+len(train_index), matrix_V.dot(vector_u))
-
-    # partial sort solution
-    vector_predict = matrix_V.dot(vector_u)
-    candidate_index = np.argpartition(-vector_predict, k+len(train_index))[:k+len(train_index)]
-    vector_predict = candidate_index[vector_predict[candidate_index].argsort()[::-1]]
-
-    # Remove items from training data, the remaining should more than k items
-    vector_predict = np.delete(vector_predict, np.isin(vector_predict, train_index).nonzero()[0])
-
-    # Extract rated items from true label vector
-    vector_true_dense = vector_true.nonzero()[1]
-    return vector_predict[:k], vector_true_dense, np.isin(vector_predict[:k], vector_true_dense)
 
 
 def r_precision(vector_true_dense, hits, **unused):
@@ -60,10 +25,10 @@ def click(hits, **unused):
     if first_hit is None:
         return 5
     else:
-        return first_hit/10
+        return first_hit/10.
 
 
-def evaluate(matrix_U, matrix_V, matrix_Train, matrix_Test, k, metric_names):
+def evaluate(matrix_Predict, matrix_Test, metric_names, atK):
     """
 
     :param matrix_U: Latent representations of users, for LRecs it is RQ, for ALSs it is U
@@ -80,28 +45,29 @@ def evaluate(matrix_U, matrix_V, matrix_Train, matrix_Test, k, metric_names):
         "Clicks": click
     }
 
-    results = {name: [] for name in metric_names}
-    for user_index in tqdm(range(matrix_U.shape[0])):
-        vector_u = matrix_U[user_index]
-        vector_train = matrix_Train[user_index]
-        if len(vector_train.nonzero()[0]) > 0:
-            vector_true = matrix_Test[user_index]
-            vector_predict, vector_true_dense, hits = sub_routine(vector_u,
-                                                                  matrix_V,
-                                                                  vector_train,
-                                                                  vector_true,
-                                                                  k=k)
-
-            if vector_true_dense.size is not 0:
-                for name in metric_names:
-                    results[name] = metrics[name](vector_true_dense=vector_true_dense,
-                                                  vector_predict=vector_predict,
-                                                  hits=hits)
-
     output = dict()
-    for name in metric_names:
-        output[name] = np.average(results[name])
 
+    for k in atK:
+        results = {name: [] for name in metric_names}
+
+        for user_index in tqdm(range(matrix_Predict.shape[0])):
+            vector_predict = matrix_Predict[user_index]
+            if len(vector_predict.nonzero()[0]) > 0:
+                vector_true = matrix_Test[user_index]
+                vector_true_dense = vector_true.nonzero()[1]
+                hits = np.isin(vector_predict, vector_true_dense)
+
+                if vector_true_dense.size > 0:
+                    for name in metric_names:
+                        results[name] = metrics[name](vector_true_dense=vector_true_dense,
+                                                      vector_predict=vector_predict,
+                                                      hits=hits)
+
+        results_summary = dict()
+        for name in metric_names:
+            results_summary[name] = np.average(results[name])
+
+        output[str(k)] = results_summary
     return output
 
 
