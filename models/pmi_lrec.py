@@ -28,17 +28,17 @@ def get_pmi_matrix(matrix):
 
     return sparse.vstack(pmi_matrix)
 
+
 def get_pmi_matrix_gpu(matrix):
     rows, cols = matrix.shape
-    user_rated = cp.array(matrix.sum(axis=0))
-    item_rated = cp.array(matrix.sum(axis=1))
+    item_rated = cp.array(matrix.sum(axis=0))
     pmi_matrix = []
     for i in tqdm(xrange(rows)):
         row_index, col_index = matrix[i].nonzero()
         if len(row_index) > 0:
-            values = cp.asarray(item_rated[i].dot(user_rated)[col_index]).flatten()
-            values = cp.log(rows/values)
-            pmi_matrix.append(sparse.coo_matrix((cp.asnumpy(values), (row_index, col_index)), shape=matrix.shape))
+            values = cp.asarray(item_rated[:, col_index]).flatten()
+            values = cp.maximum(cp.log(rows/values)-cp.log(1), 0)
+            pmi_matrix.append(sparse.coo_matrix((cp.asnumpy(values), (row_index, col_index)), shape=(1, cols)))
     return sparse.vstack(pmi_matrix)
 
 
@@ -58,7 +58,6 @@ def pmi_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=
 
     progress.subsection("Create PMI matrix")
     pmi_matrix = get_pmi_matrix(matrix_input)
-    #import ipdb; ipdb.set_trace()
 
     progress.subsection("Randomized SVD")
     start_time = time.time()
