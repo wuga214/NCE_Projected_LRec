@@ -39,9 +39,9 @@ if __name__ == "__main__":
     # Commandline arguments
     parser = argparse.ArgumentParser(description="LRec")
     parser.add_argument('-m', dest='model', default="PLRec")
-    parser.add_argument('-d', dest='path', default="/media/wuga/Storage/python_project/lrec/data/")
-    parser.add_argument('-t', dest='train', default='R_train.npz')
-    parser.add_argument('-v', dest='valid', default='R_valid.npz')
+    parser.add_argument('-d', dest='path', default="datax/")
+    parser.add_argument('-t', dest='train', default='Rtrain.npz')
+    parser.add_argument('-v', dest='valid', default='Rvalid.npz')
     args = parser.parse_args()
 
     main(args)

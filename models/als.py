@@ -82,7 +82,8 @@ def als(matrix_train,
         rank=200,
         alpha=100,
         gpu=True,
-        seed=1):
+        seed=1,
+        **unused):
     """
 
     :param matrix_train: rating matrix

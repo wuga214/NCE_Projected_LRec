@@ -9,6 +9,7 @@ from models.weighted_lrec import weighted_lrec_items
 from models.pure_svd import pure_svd, eigen_boosted_pure_svd
 from models.als import als
 from models.pmi_lrec import pmi_lrec_items
+from models.predictor import predict
 from evaluation.metrics import evaluate
 
 
@@ -67,6 +68,9 @@ def main(args):
                                     lam=args.lamb, alpha=args.alpha, seed=args.seed)
         RQ = RQt.T
 
+    progress.section("Predict")
+    prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=True)
+
     # Save Files
     progress.section("Save U-V Matrix")
     start_time = time.time()
@@ -82,10 +86,12 @@ def main(args):
 
         metric_names = ['R-Precision', 'NDCG', 'Clicks']
         R_valid = load_numpy(path=args.path, name=args.valid)
-        result = evaluate(RQ, Y, R_train, R_valid, args.topk, metric_names)
+        result = evaluate(prediction, R_valid, metric_names, [args.topk])
         print("-")
-        for key in result.keys():
-            print("{0} :{1}".format(key, result[key]))
+        for atK in result.keys():
+            print("@{0}".format(atK))
+            for metric in result[atK].keys():
+                print("{0}:{1}".format(metric, result[atK][metric]))
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
 
