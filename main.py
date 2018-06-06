@@ -2,13 +2,14 @@ import numpy as np
 from utils.progress import WorkSplitter, inhour
 import argparse
 import time
-from utils.io import save_mxnet, load_numpy, load_pandas
+from utils.io import save_mxnet, load_numpy, load_pandas, load_csv
 from utils.argument import check_float_positive, check_int_positive, shape
 from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
 from models.pure_svd import pure_svd, eigen_boosted_pure_svd
 from models.als import als
 from models.pmi_lrec import pmi_lrec_items
+from models.chainitemitem import chain_item_item
 from models.predictor import predict
 from evaluation.metrics import evaluate
 
@@ -19,7 +20,8 @@ models = {
     "PmiPLRec": pmi_lrec_items,
     "PureSVD": pure_svd,
     "EBPureSVD": eigen_boosted_pure_svd,
-    "ALS": als
+    "ALS": als,
+    "CII": chain_item_item,
 }
 
 
@@ -51,7 +53,8 @@ def main(args):
     if args.shape is None:
         R_train = load_numpy(path=args.path, name=args.train)
     else:
-        R_train = load_pandas(path=args.path, name=args.train, shape=args.shape)
+        # R_train = load_pandas(path=args.path, name=args.train, shape=args.shape)
+        R_train = load_csv(path=args.path, name=args.train, shape=args.shape)
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     print("Train U-I Dimensions: {0}".format(R_train.shape))
@@ -68,9 +71,6 @@ def main(args):
                                     lam=args.lamb, alpha=args.alpha, seed=args.seed)
         RQ = RQt.T
 
-    progress.section("Predict")
-    prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=True)
-
     # Save Files
     progress.section("Save U-V Matrix")
     start_time = time.time()
@@ -79,6 +79,9 @@ def main(args):
     save_mxnet(matrix=Y, path=args.path+mode+'/',
                name='V_{0}_{1}_{2}'.format(args.rank, args.lamb, args.model))
     print "Elapsed: {0}".format(inhour(time.time() - start_time))
+
+    progress.section("Predict")
+    prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=True)
 
     if args.validation:
         progress.section("Create Metrics")

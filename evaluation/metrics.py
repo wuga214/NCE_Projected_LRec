@@ -25,7 +25,7 @@ def click(hits, **unused):
     if first_hit is None:
         return 5
     else:
-        return first_hit/10.
+        return first_hit/10
 
 
 def evaluate(matrix_Predict, matrix_Test, metric_names, atK):
