@@ -21,7 +21,7 @@ def get_pmi_matrix(matrix):
             # import ipdb; ipdb.set_trace()
             # values = np.asarray(user_rated[i].dot(item_rated)[:, col_index]).flatten()
             values = np.asarray(item_rated[:, col_index]).flatten()
-            values = np.maximum(np.log(rows/values)-np.log(1), 0)
+            values = np.maximum(np.log(rows/np.power(values, 1.3))-np.log(1), 0)
             pmi_matrix.append(sparse.coo_matrix((values, (row_index, col_index)), shape=(1, cols)))
         else:
             pmi_matrix.append(sparse.coo_matrix((1, cols)))
@@ -39,6 +39,8 @@ def get_pmi_matrix_gpu(matrix):
             values = cp.asarray(item_rated[:, col_index]).flatten()
             values = cp.maximum(cp.log(rows/values)-cp.log(1), 0)
             pmi_matrix.append(sparse.coo_matrix((cp.asnumpy(values), (row_index, col_index)), shape=(1, cols)))
+        else:
+            pmi_matrix.append(sparse.coo_matrix((1, cols)))
     return sparse.vstack(pmi_matrix)
 
 
