@@ -19,3 +19,15 @@ def curve_weighting(lrec_result, wlrec_results, weights, metric, name):
 
     plt.savefig('figures/{0}.pdf'.format(name), format='pdf')
     plt.show()
+
+
+def scatter_plot(data, weight, name, folder='figures/latent', save=False):
+    fig, ax = plt.subplots(figsize=(4, 3))
+    sc = ax.scatter(data[:, 0], data[:, 1], s=10, c=weight)
+    plt.colorbar(sc, orientation='horizontal', pad=0.2)
+    plt.xlabel("1st-axis")
+    plt.ylabel("2ed-axis")
+    plt.tight_layout()
+    if save:
+        plt.savefig("{0}/latent_{1}.pdf".format(folder, name), format="pdf")
+    plt.show()

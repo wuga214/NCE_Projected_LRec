@@ -9,7 +9,7 @@ from tqdm import tqdm
 import cupy as cp
 
 
-def get_pmi_matrix(matrix):
+def get_pmi_matrix(matrix, root):
 
     rows, cols = matrix.shape
     item_rated = matrix.sum(axis=0)
@@ -21,7 +21,7 @@ def get_pmi_matrix(matrix):
             # import ipdb; ipdb.set_trace()
             # values = np.asarray(user_rated[i].dot(item_rated)[:, col_index]).flatten()
             values = np.asarray(item_rated[:, col_index]).flatten()
-            values = np.maximum(np.log(rows/np.power(values, 1.3))-np.log(1), 0)
+            values = np.maximum(np.log(rows/np.power(values, root))-np.log(1), 0)
             pmi_matrix.append(sparse.coo_matrix((values, (row_index, col_index)), shape=(1, cols)))
         else:
             pmi_matrix.append(sparse.coo_matrix((1, cols)))
@@ -44,7 +44,7 @@ def get_pmi_matrix_gpu(matrix):
     return sparse.vstack(pmi_matrix)
 
 
-def pmi_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, seed=1, **unused):
+def pmi_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, seed=1, root=3, **unused):
     """
     Function used to achieve generalized projected lrec w/o item-attribute embedding
     :param matrix_train: user-item matrix with shape m*n
@@ -59,7 +59,7 @@ def pmi_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
     progress.subsection("Create PMI matrix")
-    pmi_matrix = get_pmi_matrix(matrix_input)
+    pmi_matrix = get_pmi_matrix(matrix_input, root)
 
     progress.subsection("Randomized SVD")
     start_time = time.time()
