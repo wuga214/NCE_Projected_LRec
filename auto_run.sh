@@ -12,3 +12,4 @@ for rank in "${ranks[@]}"; do
         done
     done
 done
+bash cleanup.sh
