@@ -50,8 +50,10 @@ def evaluate(matrix_Predict, matrix_Test, metric_names, atK):
     for k in atK:
         results = {name: [] for name in metric_names}
 
-        for user_index in tqdm(range(matrix_Predict.shape[0])):
-            vector_predict = matrix_Predict[user_index]
+        topK_Predict = matrix_Predict[:, :k]
+
+        for user_index in tqdm(range(topK_Predict.shape[0])):
+            vector_predict = topK_Predict[user_index]
             if len(vector_predict.nonzero()[0]) > 0:
                 vector_true = matrix_Test[user_index]
                 vector_true_dense = vector_true.nonzero()[1]
