@@ -61,9 +61,9 @@ def evaluate(matrix_Predict, matrix_Test, metric_names, atK):
 
                 if vector_true_dense.size > 0:
                     for name in metric_names:
-                        results[name] = metrics[name](vector_true_dense=vector_true_dense,
-                                                      vector_predict=vector_predict,
-                                                      hits=hits)
+                        results[name].append(metrics[name](vector_true_dense=vector_true_dense,
+                                                           vector_predict=vector_predict,
+                                                           hits=hits))
 
         results_summary = dict()
         for name in metric_names:
