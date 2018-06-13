@@ -18,7 +18,7 @@ def save_dataframe_csv(df, path, name):
     df.to_csv(path+name)
 
 
-def save_datafram_latex(df, path, model):
+def save_dataframe_latex(df, path, model):
     with open('{0}{1}_parameter_tuning.tex'.format(path, model), 'w') as handle:
         handle.write(df.to_latex(index=False))
 

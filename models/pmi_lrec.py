@@ -44,7 +44,7 @@ def get_pmi_matrix_gpu(matrix):
     return sparse.vstack(pmi_matrix)
 
 
-def pmi_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, seed=1, root=3, **unused):
+def pmi_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=80, rank=200, seed=1, root=1.1, **unused):
     """
     Function used to achieve generalized projected lrec w/o item-attribute embedding
     :param matrix_train: user-item matrix with shape m*n
