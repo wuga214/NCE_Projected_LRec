@@ -6,9 +6,12 @@ from utils.progress import WorkSplitter
 import inspect
 from models.predictor import predict
 
+
 def hyper_parameter_tuning(train, validation, params):
     progress = WorkSplitter()
-    df = pd.DataFrame(columns=['model', 'rank', 'alpha', 'root', 'topK', 'R-Precision', 'NDCG'])
+    df = pd.DataFrame(columns=['model', 'rank', 'alpha', 'root', 'topK'])
+
+    num_user = train.shape[0]
 
     for algorithm in params['models']:
 
@@ -45,14 +48,13 @@ def hyper_parameter_tuning(train, validation, params):
 
                     result = evaluate(prediction, validation, params['metric'], params['topK'])
 
+                    result_dict = {'model': algorithm, 'rank': rank, 'root': root, 'alpha': alpha}
+
                     for k in params['topK']:
-                        df = df.append({'model': algorithm,
-                                        'rank': rank,
-                                        'root': root,
-                                        'alpha': alpha,
-                                        'topK': k,
-                                        'R-Precision': result[str(k)]['R-Precision'],
-                                        'NDCG': result[str(k)]['NDCG']
-                                        },
-                                       ignore_index=True)
+                        result_dict['R-Precision@{0}'.format(k)] = round(result[str(k)]['R-Precision'], 5)
+                        result_dict['RP-CI@{0}'.format(k)] = round(1.96*result[str(k)]['R-Precision_std']/np.sqrt(num_user), 5)
+                        result_dict['NDCG@{0}'.format(k)] = round(result[str(k)]['NDCG'], 5)
+                        result_dict['NDCG-CI@{0}'.format(k)] = round(1.96*result[str(k)]['NDCG_std']/np.sqrt(num_user), 5)
+
+                    df = df.append(result_dict, ignore_index=True)
     return df
