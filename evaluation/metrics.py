@@ -68,7 +68,7 @@ def evaluate(matrix_Predict, matrix_Test, metric_names, atK):
         results_summary = dict()
         for name in metric_names:
             results_summary[name] = np.average(results[name])
-
+            results_summary[name+"_std"] = np.std(results[name])
         output[str(k)] = results_summary
     return output
 
