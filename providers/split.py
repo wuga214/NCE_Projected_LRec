@@ -3,9 +3,17 @@ import numpy as np
 from tqdm import tqdm
 
 
-def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], implicit=True):
+def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], implicit=True, remove_empty=True):
     if implicit:
         rating_matrix[rating_matrix.nonzero()] = 1
+
+    nonzero_index = None
+
+    if remove_empty:
+        # Remove empty columns. record original item index
+        nonzero_index = np.unique(rating_matrix.nonzero()[1])
+        rating_matrix = rating_matrix[:, nonzero_index]
+        timestamp_matrix = timestamp_matrix[:, nonzero_index]
 
     user_num, item_num = rating_matrix.shape
 
@@ -41,5 +49,5 @@ def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], i
                                                 item_indexes[test_offset:])),
                                               shape=(user_num, item_num))
 
-    return rtrain, rvalid, rtest
+    return rtrain, rvalid, rtest, nonzero_index
 
