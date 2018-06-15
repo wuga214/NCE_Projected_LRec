@@ -14,7 +14,7 @@ def precisionk(vector_predict, hits, **unused):
 
 def r_precision(vector_true_dense, vector_predict, **unused):
     vector_predict_short = vector_predict[:len(vector_true_dense)]
-    hits = len(np.isin(vector_predict_short, vector_true_dense).nonzero())
+    hits = len(np.isin(vector_predict_short, vector_true_dense).nonzero()[0])
     return float(hits)/len(vector_true_dense)
 
 
