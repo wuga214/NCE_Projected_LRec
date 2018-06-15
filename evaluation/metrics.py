@@ -2,8 +2,19 @@ import numpy as np
 from tqdm import tqdm
 
 
-def r_precision(vector_true_dense, hits, **unused):
+def recallk(vector_true_dense, hits, **unused):
     hits = len(hits.nonzero()[0])
+    return float(hits)/len(vector_true_dense)
+
+
+def precisionk(vector_predict, hits, **unused):
+    hits = len(hits.nonzero()[0])
+    return float(hits)/len(vector_predict)
+
+
+def r_precision(vector_true_dense, vector_predict, **unused):
+    vector_predict_short = vector_predict[:len(vector_true_dense)]
+    hits = len(np.isin(vector_predict_short, vector_true_dense).nonzero()[0])
     return float(hits)/len(vector_true_dense)
 
 
@@ -39,17 +50,25 @@ def evaluate(matrix_Predict, matrix_Test, metric_names, atK):
     :param metric_names: Evaluation metrics
     :return:
     """
-    metrics = {
+    global_metrics = {
         "R-Precision": r_precision,
         "NDCG": ndcg,
         "Clicks": click
     }
 
+    local_metrics = {
+        "Precision": precisionk,
+        "Recall": recallk
+    }
+
     output = dict()
 
-    for k in atK:
-        results = {name: [] for name in metric_names}
+    num_users = matrix_Predict.shape[0]
 
+    for k in atK:
+
+        local_metric_names = list(set(metric_names).intersection(local_metrics.keys()))
+        results = {name: [] for name in local_metric_names}
         topK_Predict = matrix_Predict[:, :k]
 
         for user_index in tqdm(range(topK_Predict.shape[0])):
@@ -60,16 +79,45 @@ def evaluate(matrix_Predict, matrix_Test, metric_names, atK):
                 hits = np.isin(vector_predict, vector_true_dense)
 
                 if vector_true_dense.size > 0:
-                    for name in metric_names:
-                        results[name].append(metrics[name](vector_true_dense=vector_true_dense,
-                                                           vector_predict=vector_predict,
-                                                           hits=hits))
+                    for name in local_metric_names:
+                        results[name].append(local_metrics[name](vector_true_dense=vector_true_dense,
+                                                                 vector_predict=vector_predict,
+                                                                 hits=hits))
 
         results_summary = dict()
-        for name in metric_names:
-            results_summary[name] = np.average(results[name])
-            results_summary[name+"_std"] = np.std(results[name])
-        output[str(k)] = results_summary
+        for name in local_metric_names:
+            results_summary['{0}@{1}'.format(name, k)] = (np.average(results[name]),
+                                                          1.96*np.std(results[name])/np.sqrt(num_users))
+        output.update(results_summary)
+
+    global_metric_names = list(set(metric_names).intersection(global_metrics.keys()))
+    results = {name: [] for name in global_metric_names}
+
+    topK_Predict = matrix_Predict[:]
+
+    for user_index in tqdm(range(topK_Predict.shape[0])):
+        vector_predict = topK_Predict[user_index]
+
+        if len(vector_predict.nonzero()[0]) > 0:
+            vector_true = matrix_Test[user_index]
+            vector_true_dense = vector_true.nonzero()[1]
+            hits = np.isin(vector_predict, vector_true_dense)
+
+            # if user_index == 1:
+            #     import ipdb;
+            #     ipdb.set_trace()
+
+            if vector_true_dense.size > 0:
+                for name in global_metric_names:
+                    results[name].append(global_metrics[name](vector_true_dense=vector_true_dense,
+                                                              vector_predict=vector_predict,
+                                                              hits=hits))
+
+    results_summary = dict()
+    for name in global_metric_names:
+        results_summary[name] = (np.average(results[name]), 1.96*np.std(results[name])/np.sqrt(num_users))
+    output.update(results_summary)
+
     return output
 
 

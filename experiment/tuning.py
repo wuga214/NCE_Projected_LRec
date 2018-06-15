@@ -43,18 +43,19 @@ def hyper_parameter_tuning(train, validation, params):
                                                          alpha=alpha)
                     Y = Yt.T
 
+                    progress.subsection("Prediction")
+
                     prediction = predict(matrix_U=RQ, matrix_V=Y,
                                          topK=params['topK'][-1], matrix_Train=train, gpu=True)
+
+                    progress.subsection("Evaluation")
 
                     result = evaluate(prediction, validation, params['metric'], params['topK'])
 
                     result_dict = {'model': algorithm, 'rank': rank, 'root': root, 'alpha': alpha}
 
-                    for k in params['topK']:
-                        result_dict['R-Precision@{0}'.format(k)] = round(result[str(k)]['R-Precision'], 5)
-                        result_dict['RP-CI@{0}'.format(k)] = round(1.96*result[str(k)]['R-Precision_std']/np.sqrt(num_user), 5)
-                        result_dict['NDCG@{0}'.format(k)] = round(result[str(k)]['NDCG'], 5)
-                        result_dict['NDCG-CI@{0}'.format(k)] = round(1.96*result[str(k)]['NDCG_std']/np.sqrt(num_user), 5)
+                    for name in result.keys():
+                        result_dict[name] = [round(result[name][0], 5), round(result[name][1], 5)]
 
                     df = df.append(result_dict, ignore_index=True)
     return df
