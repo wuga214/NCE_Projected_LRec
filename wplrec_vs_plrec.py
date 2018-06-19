@@ -4,7 +4,7 @@ from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
 from experiment.weighting import weighting
 from plot.plot import curve_weighting
-from utils.io import load_numpy
+from utils.io import load_numpy, save_pickle, load_pickle
 
 params = {
     'models': {"PLRec": embedded_lrec_items, "WPLRec": weighted_lrec_items},
@@ -21,6 +21,9 @@ def main(args):
     R_train = load_numpy(path=args.path, name=args.train)
     R_valid = load_numpy(path=args.path, name=args.valid)
     lrec_result, wlrec_results = weighting(R_train, R_valid, params)
+
+    save_pickle("cache", "weighting", (lrec_result, wlrec_results))
+    lrec_result, wlrec_results = load_pickle("cache", "weighting")
 
     curve_weighting(lrec_result, wlrec_results, params['alphas'], metric='R-Precision', name="R-Precision")
     curve_weighting(lrec_result, wlrec_results, params['alphas'], metric='NDCG', name="NDCG")
