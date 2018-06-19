@@ -5,7 +5,12 @@ from tqdm import tqdm
 
 def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], implicit=True):
     if implicit:
-        rating_matrix[rating_matrix.nonzero()] = 1
+        # rating_matrix[rating_matrix.nonzero()] = 1
+
+        temp_rating_matrix = sparse.csr_matrix(rating_matrix.shape)
+        temp_rating_matrix[(rating_matrix > 3).nonzero()] = 1
+        rating_matrix = temp_rating_matrix
+        timestamp_matrix = timestamp_matrix.multiply(rating_matrix)
 
     user_num, item_num = rating_matrix.shape
 
