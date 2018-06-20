@@ -1,9 +1,13 @@
 import numpy as np
 from tqdm import tqdm
 from evaluation.metrics import evaluate
+from models.predictor import predict
+from utils.progress import WorkSplitter, inhour
 
 
 def weighting(train, validation, params):
+    progress = WorkSplitter()
+    progress.section("PLRec")
     RQ, Yt = params['models']['PLRec'](train,
                                        embeded_matrix=np.empty((0)),
                                        iteration=params['iter'],
@@ -11,7 +15,9 @@ def weighting(train, validation, params):
                                        lam=params['lambda'])
     Y = Yt.T
 
-    lrec_result = evaluate(RQ, Y, train, validation, params['topK'], params['metric'])
+    lrec_prediction = predict(matrix_U=RQ, matrix_V=Y, topK=params['topK'][-1], matrix_Train=train, gpu=True)
+
+    lrec_result = evaluate(lrec_prediction, validation, params['metric'], params['topK'])
     print("-")
     print("Rank: {0}".format(params['rank']))
     print("Lambda: {0}".format(params['lambda']))
@@ -22,6 +28,7 @@ def weighting(train, validation, params):
 
     wlrec_results = dict()
     for alpha in tqdm(params['alphas']):
+        progress.section("WPLRec, Alpha: "+str(alpha))
         RQ, Yt = params['models']['WPLRec'](train,
                                             embeded_matrix=np.empty((0)),
                                             iteration=params['iter'],
@@ -30,7 +37,10 @@ def weighting(train, validation, params):
                                             alpha=alpha)
         Y = Yt.T
 
-        result = evaluate(RQ, Y, train, validation, params['topK'], params['metric'])
+        prediction = predict(matrix_U=RQ, matrix_V=Y, topK=params['topK'][-1], matrix_Train=train, gpu=True)
+
+        result = evaluate(prediction, validation, params['metric'], params['topK'])
+
         wlrec_results[alpha] = result
         print("-")
         print("Alpha: {0}".format(alpha))
