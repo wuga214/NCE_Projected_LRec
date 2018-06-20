@@ -1,4 +1,4 @@
-from utils.io import save_numpy, load_pandas
+from utils.io import save_numpy, load_pandas, save_array
 from utils.argument import shape, ratio
 from providers.split import time_ordered_split
 import argparse
@@ -20,7 +20,7 @@ def main(args):
     save_numpy(rtrain, args.path, "Rtrain")
     save_numpy(rvalid, args.path, "Rvalid")
     save_numpy(rtest, args.path, "Rtest")
-    save_numpy(nonzero_index, args.path, "Index")
+    save_array(nonzero_index, args.path, "Index")
 
 if __name__ == "__main__":
     # Commandline arguments

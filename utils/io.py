@@ -28,6 +28,10 @@ def save_numpy(matrix, path, model):
     save_npz('{0}{1}'.format(path, model), matrix)
 
 
+def save_array(array, path, model):
+    np.save('{0}{1}'.format(path, model), array)
+
+
 def load_numpy(path, name):
     return load_npz(path+name).tocsr()
 
