@@ -7,7 +7,7 @@ from utils.io import load_numpy, save_pickle, load_pickle
 
 params = {
     'models': {"PmiPLRec": pmi_lrec_items},
-    'root': np.linspace(0.5, 1.5, num=50),
+    'root': np.linspace(0.8, 1.2, num=50),
     'rank': 50,
     'lambda': 0.001,
     'topK': [50],
@@ -17,12 +17,12 @@ params = {
 
 
 def main(args):
-    R_train = load_numpy(path=args.path, name=args.train)
-    R_valid = load_numpy(path=args.path, name=args.valid)
-    lrec_result, wlrec_results = sensitivity(R_train, R_valid, params)
-
-    save_pickle("cache", "weighting", (lrec_result, wlrec_results))
-    lrec_result, wlrec_results = load_pickle("cache", "weighting")
+    # R_train = load_numpy(path=args.path, name=args.train)
+    # R_valid = load_numpy(path=args.path, name=args.valid)
+    # lrec_result, wlrec_results = sensitivity(R_train, R_valid, params)
+    #
+    # save_pickle("cache", "sensitivity", (lrec_result, wlrec_results))
+    lrec_result, wlrec_results = load_pickle("cache", "sensitivity")
 
     curve_sensitivity(lrec_result, wlrec_results, params['root'], metric='R-Precision', name="sensitivity/R-Precision")
     curve_sensitivity(lrec_result, wlrec_results, params['root'], metric='NDCG', name="sensitivity/NDCG")
