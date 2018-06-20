@@ -4,14 +4,14 @@ from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
 from experiment.weighting import weighting
 from plot.plot import curve_weighting
-from utils.io import load_numpy
+from utils.io import load_numpy, save_pickle, load_pickle
 
 params = {
     'models': {"PLRec": embedded_lrec_items, "WPLRec": weighted_lrec_items},
-    'alphas':  [0.] + np.logspace(-2, 2.0, num=25).tolist(),
-    'rank': 100,
-    'lambda': 1,
-    'topK': 10,
+    'alphas': np.linspace(-0.9, 1, num=50), #[-x for x in [0.] + np.logspace(-2, 0.0, num=5).tolist()],
+    'rank': 50,
+    'lambda': 0.001,
+    'topK': [50],
     'iter': 4,
     'metric': ['R-Precision', 'NDCG'],
 }
@@ -21,6 +21,10 @@ def main(args):
     R_train = load_numpy(path=args.path, name=args.train)
     R_valid = load_numpy(path=args.path, name=args.valid)
     lrec_result, wlrec_results = weighting(R_train, R_valid, params)
+
+    save_pickle("cache", "weighting", (lrec_result, wlrec_results))
+    lrec_result, wlrec_results = load_pickle("cache", "weighting")
+
     curve_weighting(lrec_result, wlrec_results, params['alphas'], metric='R-Precision', name="R-Precision")
     curve_weighting(lrec_result, wlrec_results, params['alphas'], metric='NDCG', name="NDCG")
 
@@ -28,9 +32,9 @@ def main(args):
 if __name__ == "__main__":
     # Commandline arguments
     parser = argparse.ArgumentParser(description="WPLRec VS PLRec")
-    parser.add_argument('-d', dest='path', default="/media/wuga/Storage/python_project/lrec/data/")
-    parser.add_argument('-t', dest='train', default='R_train.npz')
-    parser.add_argument('-v', dest='valid', default='R_valid.npz')
+    parser.add_argument('-d', dest='path', default="datax/")
+    parser.add_argument('-t', dest='train', default='Rtrain.npz')
+    parser.add_argument('-v', dest='valid', default='Rvalid.npz')
     args = parser.parse_args()
 
     main(args)

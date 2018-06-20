@@ -17,7 +17,6 @@ def per_item_gpu(vector_r, matrix_A, matrix_B, matrix_BT, alpha):
     vector_c_small = alpha * vector_r_small
     matrix_B_small = cp.take(matrix_B, vector_r_index, axis=0)
     matrix_BT_small = cp.take(matrix_BT, vector_r_index, axis=1)
-
     denominator = gpu_inv(matrix_A+(matrix_BT_small*vector_c_small).dot(matrix_B_small))
     return (denominator.dot(matrix_BT_small)).dot((vector_c_small*vector_r_small+vector_r_small)).flatten()
 

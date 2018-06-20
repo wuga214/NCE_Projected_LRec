@@ -5,6 +5,7 @@ from scipy.sparse import csr_matrix
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+import pickle
 
 
 def save_mxnet(matrix, path, name):
@@ -72,3 +73,14 @@ def load_netflix(path, shape=(2649430, 17771)):
     timestamps = timestamps.str.replace('-', '').progress_apply(int)
     print("Create Sparse Matrices")
     return csr_matrix((ratings, (rows, cols)), shape=shape), csr_matrix((timestamps, (rows, cols)), shape=shape)
+
+
+def save_pickle(path, name, data):
+    with open('{0}/{1}.pickle'.format(path, name), 'wb') as handle:
+        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+def load_pickle(path, name):
+    with open('{0}/{1}.pickle'.format(path, name), 'rb') as handle:
+        data = pickle.load(handle)
+
+    return data
