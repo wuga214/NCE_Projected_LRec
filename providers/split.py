@@ -22,9 +22,9 @@ def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], i
 
     user_num, item_num = rating_matrix.shape
 
-    rtrain = sparse.csr_matrix((user_num, item_num))
-    rvalid = sparse.csr_matrix((user_num, item_num))
-    rtest = sparse.csr_matrix((user_num, item_num))
+    rtrain = []
+    rvalid = []
+    rtest = []
 
     for i in tqdm(xrange(user_num)):
         item_indexes = rating_matrix[i].nonzero()[1]
@@ -42,17 +42,21 @@ def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], i
             data = data[argsort]
             item_indexes = item_indexes[argsort]
 
-            rtrain = rtrain + sparse.csr_matrix((data[:valid_offset], (np.full(valid_offset, i),
-                                                                       item_indexes[:valid_offset])),
-                                                shape=(user_num, item_num))
-            rvalid = rvalid + sparse.csr_matrix((data[valid_offset:test_offset],
-                                                 (np.full(test_offset-valid_offset, i),
-                                                  item_indexes[valid_offset:test_offset])),
-                                                shape=(user_num, item_num))
-            rtest = rtest + sparse.csr_matrix((data[test_offset:],
-                                               (np.full(num_test, i),
-                                                item_indexes[test_offset:])),
-                                              shape=(user_num, item_num))
+            rtrain.append([data[:valid_offset], np.full(valid_offset, i), item_indexes[:valid_offset]])
+            rvalid.append([data[valid_offset:test_offset], np.full(test_offset-valid_offset, i),
+                           item_indexes[valid_offset:test_offset]])
+            rtest.append([data[test_offset:], np.full(num_test, i), item_indexes[test_offset:]])
+
+    rtrain = np.array(rtrain)
+    rvalid = np.array(rvalid)
+    rtest = np.array(rtest)
+
+    rtrain = sparse.csr_matrix((np.hstack(rtrain[:, 0]), (np.hstack(rtrain[:, 1]), np.hstack(rtrain[:, 2]))),
+                               shape=rating_matrix.shape)
+    rvalid = sparse.csr_matrix((np.hstack(rvalid[:, 0]), (np.hstack(rvalid[:, 1]), np.hstack(rvalid[:, 2]))),
+                               shape=rating_matrix.shape)
+    rtest = sparse.csr_matrix((np.hstack(rtest[:, 0]), (np.hstack(rtest[:, 1]), np.hstack(rtest[:, 2]))),
+                              shape=rating_matrix.shape)
 
     return rtrain, rvalid, rtest, nonzero_index
 

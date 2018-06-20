@@ -1,0 +1,7 @@
+Method,PMI,SVD,Optimization
+ALS,0,0,1218
+PureSVD,0,28,0
+PLRec,0,28,11
+WPLRec,0,28,123
+PmiPLRec,22,70,11
+PmiWPLRec,22,70,123

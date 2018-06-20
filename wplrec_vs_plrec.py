@@ -20,6 +20,7 @@ params = {
 def main(args):
     R_train = load_numpy(path=args.path, name=args.train)
     R_valid = load_numpy(path=args.path, name=args.valid)
+    import ipdb;ipdb.set_trace()
     lrec_result, wlrec_results = weighting(R_train, R_valid, params)
 
     save_pickle("cache", "weighting", (lrec_result, wlrec_results))
@@ -32,7 +33,7 @@ def main(args):
 if __name__ == "__main__":
     # Commandline arguments
     parser = argparse.ArgumentParser(description="WPLRec VS PLRec")
-    parser.add_argument('-d', dest='path', default="datax/")
+    parser.add_argument('-d', dest='path', default="data/")
     parser.add_argument('-t', dest='train', default='Rtrain.npz')
     parser.add_argument('-v', dest='valid', default='Rvalid.npz')
     args = parser.parse_args()
