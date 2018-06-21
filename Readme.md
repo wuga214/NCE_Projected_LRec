@@ -97,7 +97,7 @@ The following result shows Weighted Projected LRec outperforms Projected LRec wh
 
 To reproduce this result, run
 ```
-python experiment_weighting.py -d datax/ -t Rtrain.npz -v Rvalid.npz
+python experiment/weighting.py -d datax/ -t Rtrain.npz -v Rvalid.npz
 ```
 
 ![NDCG](figures/NDCG.png) <!-- .element height="50%" width="50%" -->
