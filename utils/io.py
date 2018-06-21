@@ -35,7 +35,6 @@ def save_array(array, path, model):
 def load_numpy(path, name):
     return load_npz(path+name).tocsr()
 
-
 def load_pandas(path, name, row_name='userId', col_name='movieId',
                 value_name='rating', shape=(138494, 131263), sep=','):
     df = pd.read_csv(path + name, sep=sep)
@@ -52,8 +51,19 @@ def load_csv(path, name, shape=(1010000, 2262292)):
     save_npz(path + "rating.npz", matrix)
     return matrix
 
-
 # Special cases
+
+def load_yahoo(path, name, shape, sep='\t'):
+    '''
+    Load yahoo dataset from WebScope. Only tested on R1 so far
+    '''
+    df = pd.read_csv(path + name, sep=sep, header=None, names=['userId', 'trackId', 'rating'])
+    rows = df['userId']
+    cols = df['trackId']
+    values = df['rating']
+    csrMat = csr_matrix((values,(rows, cols)), shape=shape)
+    return csrMat
+
 def load_netflix(path, shape=(2649430, 17771)):
     # Cautious: This function will reindex the user-item IDs, only for experiment usage
     frames = []
