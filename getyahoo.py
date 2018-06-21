@@ -32,7 +32,8 @@ if __name__ == "__main__":
     pathToYahoo = "/root/Github/RecommendationSystems/sclrecommender/data/"
     parser.add_argument('-d', dest='path',
                         default=pathToYahoo)
-    parser.add_argument('-n', dest='name', default='yahoo/ydata-ymusic-user-artist-ratings-v1_0.txt')
+    # Note: Modified the file to change negative itemId to positive manually using replace all in vim
+    parser.add_argument('-n', dest='name', default='yahoo/ydata-ymusic-user-artist-ratings-v1_0modified.txt')
     parser.add_argument('--shape', help="CSR Shape", dest="shape", type=shape, nargs=2)
     args = parser.parse_args()
     main(args)
