@@ -93,10 +93,8 @@ def main(args):
         R_valid = load_numpy(path=args.path, name=args.valid)
         result = evaluate(prediction, R_valid, metric_names, [args.topk])
         print("-")
-        for atK in result.keys():
-            print("@{0}".format(atK))
-            for metric in result[atK].keys():
-                print("{0}:{1}".format(metric, result[atK][metric]))
+        for metric in result.keys():
+            print("{0}:{1}".format(metric, result[metric]))
         print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
 
