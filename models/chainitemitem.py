@@ -41,6 +41,6 @@ def chain_item_item(matrix_train, embeded_matrix=np.empty((0)),
     for i in range(1, chain):
         HRQ = HRQ.dot(QTQ).dot(SPPS)
 
-    print "Elapsed: {0}".format(inhour(time.time() - start_time))
+    print("Elapsed: {0}".format(inhour(time.time() - start_time)))
 
     return HRQ, Qt

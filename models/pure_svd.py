@@ -41,7 +41,7 @@ def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
                                       random_state=seed)
 
     RQ = matrix_input.dot(sparse.csc_matrix(Qt).T)
-    print "Elapsed: {0}".format(inhour(time.time() - start_time))
+    print("Elapsed: {0}".format(inhour(time.time() - start_time)))
 
     return np.array(RQ.todense()), Qt
 
@@ -82,6 +82,6 @@ def eigen_boosted_pure_svd(matrix_train, embeded_matrix=np.empty((0)),
                                       random_state=seed)
 
     PS = P*(sigma*alpha)
-    print "Elapsed: {0}".format(inhour(time.time() - start_time))
+    print("Elapsed: {0}".format(inhour(time.time() - start_time)))
 
     return PS, Qt
