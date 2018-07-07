@@ -83,7 +83,8 @@ def main(args):
     print("Elapsed: {0}".format(inhour(time.time() - start_time)))
 
     progress.section("Predict")
-    prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=True)
+    #prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=True)
+    prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=False)
 
     if args.validation:
         progress.section("Create Metrics")
@@ -93,10 +94,12 @@ def main(args):
         R_valid = load_numpy(path=args.path, name=args.valid)
         result = evaluate(prediction, R_valid, metric_names, [args.topk])
         print("-")
-        for atK in result.keys():
-            print("@{0}".format(atK))
-            for metric in result[atK].keys():
-                print("{0}:{1}".format(metric, result[atK][metric]))
+        for metric in result.keys():
+            print("{0}:{1}".format(metric, result[metric]))
+        #for atK in result.keys():
+        #    print("@{0}".format(atK))
+        #    for metric in result[atK].keys():
+        #        print("{0}:{1}".format(metric, result[atK][metric]))
         print("Elapsed: {0}".format(inhour(time.time() - start_time)))
 
 
@@ -115,6 +118,8 @@ if __name__ == "__main__":
     parser.add_argument('-m', dest='model', default="PLRec")
     #parser.add_argument('-d', dest='path', default="data/")
     pathToYahoo = "/root/Github/RecommendationSystems/sclrecommender/data/"
+    pathToYahoo = "/home/scheeloong/Github/RecommendationSystems/sclrecommender/data/"
+    pathToYahoo = "./yahooData/"
     parser.add_argument('-d', dest='path', default=pathToYahoo)
     parser.add_argument('-t', dest='train', default='Rtrain.npz')
     parser.add_argument('-v', dest='valid', default='Rvalid.npz')
