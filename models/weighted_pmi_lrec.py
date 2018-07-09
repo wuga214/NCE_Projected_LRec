@@ -135,7 +135,7 @@ def weighted_pmi_lrec_items(matrix_train,
             y_i_cpu = np.copy(y_i_gpu)
             Y.append(y_i_cpu)
         Y = scipy.vstack(Y)
-        print("Elapsed: {1}".format(inhour(time.time() - start_time)))
+        print("Elapsed: {0}".format(inhour(time.time() - start_time)))
     else:
         progress.subsection("Create Cacheable Matrices")
         RQ = matrix_input.dot(sparse.csc_matrix(Qt).T).toarray()
