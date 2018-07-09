@@ -1,9 +1,7 @@
 import numpy as np
-import cupy as cp
 from scipy.sparse import vstack
 import scipy.sparse as sparse
 from scipy.linalg import inv as cpu_inv
-from cupy.linalg import inv as gpu_inv
 from tqdm import tqdm
 
 from utils.progress import WorkSplitter
@@ -20,6 +18,8 @@ def per_item_cpu(vector_r, matrix_A, matrix_B, matrix_BT, alpha):
 
 
 def per_item_gpu(vector_r, matrix_A, matrix_B, matrix_BT, alpha):
+    import cupy as cp
+    from cupy.linalg import inv as gpu_inv
     vector_r_index = vector_r.nonzero()[0]
     vector_r_small = cp.array(vector_r.data)
     vector_c_small = alpha * vector_r_small
@@ -36,6 +36,7 @@ def solve(R, X, H, lam, rank, alpha, gpu):
     """
 
     if gpu:
+        import cupy as cp
         H = cp.array(H)
         HT = H.T
         matrix_A = HT.dot(H) + cp.array((lam * sparse.identity(rank)).toarray())

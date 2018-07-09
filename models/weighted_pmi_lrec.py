@@ -1,9 +1,7 @@
 import numpy as np
-import cupy as cp
 import scipy
 import scipy.sparse as sparse
 from scipy.sparse import vstack, hstack
-from cupy.linalg import inv as gpu_inv
 from scipy.linalg import inv as cpu_inv
 from sklearn.utils.extmath import randomized_svd
 from utils.progress import WorkSplitter, inhour
@@ -12,6 +10,8 @@ import time
 
 
 def per_item_gpu(vector_r, matrix_A, matrix_B, matrix_BT, alpha):
+    import cupy as cp
+    from cupy.linalg import inv as gpu_inv
     vector_r_index = vector_r.nonzero()[0]
     vector_r_small = cp.array(vector_r.data)
     vector_c_small = alpha * vector_r_small

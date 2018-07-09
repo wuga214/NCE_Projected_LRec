@@ -7,7 +7,7 @@ import inspect
 from models.predictor import predict
 
 
-def hyper_parameter_tuning(train, validation, params):
+def hyper_parameter_tuning(train, validation, params, gpu_on=True):
     progress = WorkSplitter()
     df = pd.DataFrame(columns=['model', 'rank', 'alpha', 'root', 'topK'])
 
@@ -40,13 +40,14 @@ def hyper_parameter_tuning(train, validation, params):
                                                          rank=rank,
                                                          lam=0.01,
                                                          root=root,
-                                                         alpha=alpha)
+                                                         alpha=alpha,
+                                                         gpu_on)
                     Y = Yt.T
 
                     progress.subsection("Prediction")
 
                     prediction = predict(matrix_U=RQ, matrix_V=Y,
-                                         topK=params['topK'][-1], matrix_Train=train, gpu=True)
+                                         topK=params['topK'][-1], matrix_Train=train, gpu=gpu_on)
 
                     progress.subsection("Evaluation")
 

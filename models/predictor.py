@@ -1,10 +1,10 @@
-import cupy as cp
 import numpy as np
 from tqdm import tqdm
 
 
 def predict(matrix_U, matrix_V, topK, matrix_Train, gpu=False):
     if gpu:
+        import cupy as cp
         matrix_U = cp.array(matrix_U)
         matrix_V = cp.array(matrix_V)
 
@@ -28,6 +28,7 @@ def sub_routine(vector_u, matrix_V, vector_train, topK=500, gpu=False):
     train_index = vector_train.nonzero()[1]
     vector_predict = matrix_V.dot(vector_u)
     if gpu:
+        import cupy as cp
         candidate_index = cp.argpartition(-vector_predict, topK+len(train_index))[:topK+len(train_index)]
         vector_predict = candidate_index[vector_predict[candidate_index].argsort()[::-1]]
         vector_predict = cp.asnumpy(vector_predict)

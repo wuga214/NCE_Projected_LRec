@@ -6,7 +6,6 @@ from sklearn.utils.extmath import randomized_svd
 from utils.progress import WorkSplitter, inhour
 import time
 from tqdm import tqdm
-import cupy as cp
 
 
 def get_pmi_matrix(matrix, root):
@@ -30,6 +29,7 @@ def get_pmi_matrix(matrix, root):
 
 
 def get_pmi_matrix_gpu(matrix):
+    import cupy as cp
     rows, cols = matrix.shape
     item_rated = cp.array(matrix.sum(axis=0))
     pmi_matrix = []
