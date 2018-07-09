@@ -58,11 +58,45 @@ def load_yahoo(path, name, shape, sep='\t'):
     Load yahoo dataset from WebScope. Only tested on R1 so far
     '''
     df = pd.read_csv(path + name, sep=sep, header=None, names=['userId', 'trackId', 'rating'])
-    rows = df['userId']
-    cols = df['trackId']
-    values = df['rating']
+
+    # Coordinate Format
+    userCOO = list()
+    itemCOO = list()
+    ratingCOO = list()
+
+    # Create unique mapping
+    itemIdToUniqueItemId = dict()
+    userIdToUniqueUserId = dict()
+    uniqueItemId = 0
+    uniqueUserId = 0
+    numIndex = 0
+    for index, row in df.iterrows():
+        numIndex += 1
+        itemId = row['trackId']
+        userId = row['userId']
+        rating = row['rating']
+        # Ensure it is in map
+        if itemId not in itemIdToUniqueItemId.keys():
+            itemIdToUniqueItemId[itemId] = uniqueItemId
+            uniqueItemId += 1
+        if userId not in userIdToUniqueUserId.keys():
+            userIdToUniqueUserId[userId] = uniqueUserId
+            uniqueUserId += 1
+        userCOO.append(userIdToUniqueUserId[userId])
+        itemCOO.append(itemIdToUniqueItemId[itemId])
+        ratingCOO.append(rating)
+    rows = np.array(userCOO)
+    cols = np.array(itemCOO)
+    values = np.array(ratingCOO)
+    print("Number of UniqueItems", uniqueItemId)
+    print("Number of UniqueUsers", uniqueUserId)
+    print("Number of ratings", numIndex)
+    #rows = df['userId']
+    #cols = df['trackId']
+    #values = df['rating']
     csrMat = csr_matrix((values,(rows, cols)), shape=shape)
     return csrMat
+
 
 def load_netflix(path, shape=(2649430, 17771)):
     # Cautious: This function will reindex the user-item IDs, only for experiment usage
@@ -87,7 +121,6 @@ def load_netflix(path, shape=(2649430, 17771)):
     timestamps = timestamps.str.replace('-', '').progress_apply(int)
     print("Create Sparse Matrices")
     return csr_matrix((ratings, (rows, cols)), shape=shape), csr_matrix((timestamps, (rows, cols)), shape=shape)
-
 
 def save_pickle(path, name, data):
     with open('{0}/{1}.pickle'.format(path, name), 'wb') as handle:

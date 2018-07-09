@@ -84,6 +84,7 @@ def main(args):
 
     progress.section("Predict")
     #prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=True)
+    # Set gpu to false since OOM errors
     prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=False)
 
     if args.validation:
@@ -117,8 +118,8 @@ if __name__ == "__main__":
     parser.add_argument('-s', dest='seed', type=check_int_positive, default=1)
     parser.add_argument('-m', dest='model', default="PLRec")
     #parser.add_argument('-d', dest='path', default="data/")
-    pathToYahoo = "/root/Github/RecommendationSystems/sclrecommender/data/"
-    pathToYahoo = "/home/scheeloong/Github/RecommendationSystems/sclrecommender/data/"
+    #pathToYahoo = "/root/Github/RecommendationSystems/sclrecommender/data/"
+    #pathToYahoo = "/home/scheeloong/Github/RecommendationSystems/sclrecommender/data/"
     pathToYahoo = "./yahooData/"
     parser.add_argument('-d', dest='path', default=pathToYahoo)
     parser.add_argument('-t', dest='train', default='Rtrain.npz')
