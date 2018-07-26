@@ -51,8 +51,8 @@ class AutoRec(object):
         with tf.variable_scope('decode'):
             self.decode_weights = tf.Variable(tf.truncated_normal([self.embed_dim, self.output_dim], stddev=1 / 500.0),
                                      name="Weights")
-            #decode_bias = tf.Variable(tf.constant(0., shape=[self.output_dim]), name="Bias")
-            prediction = tf.matmul(self.encoded, self.decode_weights)# + decode_bias
+            self.decode_bias = tf.Variable(tf.constant(0., shape=[self.output_dim]), name="Bias")
+            prediction = tf.matmul(self.encoded, self.decode_weights) + self.decode_bias
 
         with tf.variable_scope('loss'):
             l2_loss = tf.nn.l2_loss(encode_weights) + tf.nn.l2_loss(self.decode_weights)
@@ -100,6 +100,9 @@ class AutoRec(object):
     def get_Y(self):
         return self.sess.run(self.decode_weights)
 
+    def get_Bias(self):
+        return self.sess.run(self.decode_bias)
+
 
 def autorec(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, rank=200, seed=1, **unused):
     progress = WorkSplitter()
@@ -114,8 +117,9 @@ def autorec(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, r
 
     RQ = model.get_RQ(matrix_input)
     Y = model.get_Y()
+    Bias = model.get_Bias()
 
-    return RQ, Y
+    return RQ, Y, Bias
 
 
 

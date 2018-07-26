@@ -65,14 +65,14 @@ def main(args):
 
     # Item-Item or User-User
     if args.item == True:
-        RQ, Yt = models[args.model](R_train, embeded_matrix=np.empty((0)),
-                                    iteration=args.iter, rank=args.rank,
-                                    lam=args.lamb, alpha=args.alpha, seed=args.seed, root=args.root)
+        RQ, Yt, Bias = models[args.model](R_train, embeded_matrix=np.empty((0)),
+                                          iteration=args.iter, rank=args.rank,
+                                          lam=args.lamb, alpha=args.alpha, seed=args.seed, root=args.root)
         Y = Yt.T
     else:
-        Y, RQt = models[args.model](R_train.T, embeded_matrix=np.empty((0)),
-                                    iteration=args.iter, rank=args.rank,
-                                    lam=args.lamb, alpha=args.alpha, seed=args.seed, root=args.root)
+        Y, RQt, Bias = models[args.model](R_train.T, embeded_matrix=np.empty((0)),
+                                          iteration=args.iter, rank=args.rank,
+                                          lam=args.lamb, alpha=args.alpha, seed=args.seed, root=args.root)
         RQ = RQt.T
 
     # Save Files
@@ -85,7 +85,7 @@ def main(args):
     # print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     progress.section("Predict")
-    prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=True)
+    prediction = predict(matrix_U=RQ, matrix_V=Y, bias=Bias, topK=args.topk, matrix_Train=R_train, gpu=True)
 
     if args.validation:
         progress.section("Create Metrics")
