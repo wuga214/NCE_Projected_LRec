@@ -11,6 +11,7 @@ from models.als import als
 from models.pmi_lrec import pmi_lrec_items
 from models.weighted_pmi_lrec import weighted_pmi_lrec_items
 from models.chainitemitem import chain_item_item
+from models.autorec import autorec
 from models.predictor import predict
 from evaluation.metrics import evaluate
 
@@ -24,6 +25,7 @@ models = {
     "EBPureSVD": eigen_boosted_pure_svd,
     "ALS": als,
     "CII": chain_item_item,
+    "AutoRec": autorec,
 }
 
 
@@ -74,13 +76,13 @@ def main(args):
         RQ = RQt.T
 
     # Save Files
-    progress.section("Save U-V Matrix")
-    start_time = time.time()
-    save_mxnet(matrix=RQ, path=args.path+mode+'/',
-               name='U_{0}_{1}_{2}'.format(args.rank, args.lamb, args.model))
-    save_mxnet(matrix=Y, path=args.path+mode+'/',
-               name='V_{0}_{1}_{2}'.format(args.rank, args.lamb, args.model))
-    print "Elapsed: {0}".format(inhour(time.time() - start_time))
+    # progress.section("Save U-V Matrix")
+    # start_time = time.time()
+    # save_mxnet(matrix=RQ, path=args.path+mode+'/',
+    #            name='U_{0}_{1}_{2}'.format(args.rank, args.lamb, args.model))
+    # save_mxnet(matrix=Y, path=args.path+mode+'/',
+    #            name='V_{0}_{1}_{2}'.format(args.rank, args.lamb, args.model))
+    # print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     progress.section("Predict")
     prediction = predict(matrix_U=RQ, matrix_V=Y, topK=args.topk, matrix_Train=R_train, gpu=True)
@@ -112,8 +114,8 @@ if __name__ == "__main__":
     parser.add_argument('-s', dest='seed', type=check_int_positive, default=1)
     parser.add_argument('-m', dest='model', default="PLRec")
     parser.add_argument('-d', dest='path', default="data/")
-    parser.add_argument('-t', dest='train', default='R_train.npz')
-    parser.add_argument('-v', dest='valid', default='R_valid.npz')
+    parser.add_argument('-t', dest='train', default='Rtrain.npz')
+    parser.add_argument('-v', dest='valid', default='Rvalid.npz')
     parser.add_argument('-k', dest='topk', type=check_int_positive, default=50)
     parser.add_argument('--shape', help="CSR Shape", dest="shape", type=shape, nargs=2)
     args = parser.parse_args()
