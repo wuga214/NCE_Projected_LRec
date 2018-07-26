@@ -164,4 +164,4 @@ def weighted_pmi_lrec_items(matrix_train,
             Y.append(y_i_cpu)
         Y = scipy.vstack(Y)
         print("Elapsed: {0}".format(inhour(time.time() - start_time)))
-    return RQ, Y.T
+    return RQ, Y.T, None

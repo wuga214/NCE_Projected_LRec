@@ -43,4 +43,4 @@ def chain_item_item(matrix_train, embeded_matrix=np.empty((0)),
 
     print("Elapsed: {0}".format(inhour(time.time() - start_time)))
 
-    return HRQ, Qt
+    return HRQ, Qt, None

@@ -119,6 +119,6 @@ def als(matrix_train,
         solve(matrix_input.T, U, V, lam=lam, rank=rank, alpha=alpha, gpu=gpu)
         solve(matrix_input, V, U, lam=lam, rank=rank, alpha=alpha, gpu=gpu)
 
-    return U, V.T
+    return U, V.T, None
 
 

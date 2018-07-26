@@ -41,4 +41,4 @@ def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
     inverse = inv(pre_inv)
     Y = inverse.dot(RQ.T).dot(matrix_input)
     print("Elapsed: {0}".format(inhour(time.time() - start_time)))
-    return np.array(RQ.todense()), np.array(Y.todense())
+    return np.array(RQ.todense()), np.array(Y.todense()), None

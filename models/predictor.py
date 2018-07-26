@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 
 
-def predict(matrix_U, matrix_V, topK, matrix_Train, gpu=False):
+def predict(matrix_U, matrix_V, topK, matrix_Train, bias=None, gpu=False):
     if gpu:
         import cupy as cp
         matrix_U = cp.array(matrix_U)
@@ -14,7 +14,7 @@ def predict(matrix_U, matrix_V, topK, matrix_Train, gpu=False):
         vector_u = matrix_U[user_index]
         vector_train = matrix_Train[user_index]
         if len(vector_train.nonzero()[0]) > 0:
-            vector_predict = sub_routine(vector_u, matrix_V, vector_train, topK=topK, gpu=gpu)
+            vector_predict = sub_routine(vector_u, matrix_V, vector_train, bias, topK=topK, gpu=gpu)
         else:
             vector_predict = np.zeros(topK)
 
@@ -23,10 +23,17 @@ def predict(matrix_U, matrix_V, topK, matrix_Train, gpu=False):
     return np.vstack(prediction)
 
 
-def sub_routine(vector_u, matrix_V, vector_train, topK=500, gpu=False):
+def sub_routine(vector_u, matrix_V, vector_train, bias, topK=500, gpu=False):
 
     train_index = vector_train.nonzero()[1]
     vector_predict = matrix_V.dot(vector_u)
+    if bias is not None:
+        if gpu:
+            import cupy as cp
+            vector_predict = vector_predict + cp.array(bias)
+        else:
+            vector_predict = vector_predict + bias
+
     if gpu:
         import cupy as cp
         candidate_index = cp.argpartition(-vector_predict, topK+len(train_index))[:topK+len(train_index)]
