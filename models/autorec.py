@@ -4,24 +4,6 @@ from tqdm import tqdm
 from utils.progress import WorkSplitter, inhour
 from scipy.sparse import vstack, hstack
 
-# Instruction about feeding sparse placeholder
-
-# X = tf.Variable(tf.truncated_normal([500, 25], stddev=1/500.0))
-# sp_indices = tf.placeholder(tf.int64)
-# sp_shape = tf.placeholder(tf.int64)
-# sp_ids_val = tf.placeholder(tf.int64)
-# sp_weights_val = tf.placeholder(tf.float32)
-# sp_ids = tf.SparseTensor(sp_indices, sp_ids_val, sp_shape)
-# sp_weights = tf.SparseTensor(sp_indices, sp_weights_val, sp_shape)
-# y = tf.nn.embedding_lookup_sparse(X, sp_ids, sp_weights, "sum")
-# tf.initialize_all_variables().run()  # initialize values in X
-#
-# y_values = tf.run(y, feed_dict={
-#   sp_indices: [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1]],  # 3 entries in minibatch entry 0, 2 entries in entry 1.
-#   sp_shape: [2, 3],  # batch size: 2, max index: 2 (so index count == 3)
-#   sp_ids_val: [53, 87, 101, 34, 98],
-#   sp_weights_val: [0.1, 0.2, 0.3, -1.0, 3.5]})
-
 
 class AutoRec(object):
     def __init__(self,
