@@ -130,3 +130,20 @@ class CollaborativeMetricLearning(object):
 
     def get_Y(self):
         return self.sess.run(self.item_embeddings)
+
+
+def cml(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, rank=200, seed=1, **unused):
+    progress = WorkSplitter()
+    matrix_input = matrix_train
+    if embeded_matrix.shape[0] > 0:
+        matrix_input = vstack((matrix_input, embeded_matrix.T))
+
+    m, n = matrix_input.shape
+    model = CollaborativeMetricLearning(n, rank, 100, lamb=lam)
+
+    model.train_model(matrix_input, iteration)
+
+    RQ = model.get_RQ()
+    Y = model.get_Y()
+
+    return RQ, Y, None
