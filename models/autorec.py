@@ -64,7 +64,7 @@ class AutoRec(object):
 
         # Training
         pbar = tqdm(range(epoch))
-        for epoch in pbar:
+        for i in pbar:
             for step in range(len(batches)):
                 feed_dict = {self.inputs: batches[step].todense()}
                 training = self.sess.run([self.optimizer], feed_dict=feed_dict)

@@ -1,5 +1,19 @@
-Weighted Projected LRec(AAAI-18)
+Pointwise Mutual Information Projected LRec(AAAI-18)
 ================================
+# Algorithm Implemented
+1. Pointwise Mutual Information Projected LRec(PMI-PLRec)
+2. Linear FLow or Projected LRec(PLRec)
+3. Collaborative Metric Learning(CML)
+4. Auto-encoder Recommender(AutoRec)
+5. Weighted Regularized Matrix Factorization(WRMF or ALS)
+6. PureSVD Recommender
+7. Item-Item Similarity in Chain
+
+# Measure
+The above algorithm could be splitted into two major category based on the distance
+measurement: Euclidean or Cosine. CML is a euclidean distance recommender. And, ALS 
+is a typical Cosine distance recommender. When doing evaluation, please select 
+similarity measurement before running with `--similarity Euclidean` 
 
 # Data
 Movielens 1M,
@@ -20,7 +34,7 @@ ge/python_project/wlrec_update/IMPLEMENTATION_Projected_LRec/datax/ \
 
 Run Weighted Projected LRec
 ```
-$ python main.py -i 4 -l 1.0 -r 100 -a 10 -m WPLRec -d datax/ \
+$ python main.py -i 4 -l 1.0 -r 100 -a 10 -m PmiPLRec -d datax/ \
 -t Rtrain.npz -v Rvalid.npz -k 10
 ```
 
