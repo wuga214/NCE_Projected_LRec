@@ -57,7 +57,7 @@ class CollaborativeMetricLearning(object):
             cov_loss = tf.reduce_sum(tf.matrix_set_diag(cov, tf.zeros(self.embed_dim, tf.float32))
                                      ) * self.cov_loss_weight
 
-        with tf.variable_scope("metric loss"):
+        with tf.variable_scope("metric_loss"):
             users = tf.nn.embedding_lookup(self.user_embeddings, self.user_idx, name="users")
             pos_samples = tf.nn.embedding_lookup(self.item_embeddings, self.pos_sample_idx, name="pos_items")
             neg_samples = tf.transpose(tf.nn.embedding_lookup(self.item_embeddings, self.neg_sample_idx),
@@ -81,6 +81,12 @@ class CollaborativeMetricLearning(object):
                                                                var_list=[self.user_embeddings,
                                                                          self.item_embeddings])
 
+        with tf.variable_scope("clip"):
+            self.clips = [
+                tf.assign(self.user_embeddings, tf.clip_by_norm(self.user_embeddings, self.clip_norm, axes=[1])),
+                tf.assign(self.item_embeddings, tf.clip_by_norm(self.item_embeddings, self.clip_norm, axes=[1]))
+            ]
+
     def train_model(self, rating_matrix, epoch=100):
         batches = self.get_batches(rating_matrix, self.batch_size, 10)
 
@@ -95,6 +101,7 @@ class CollaborativeMetricLearning(object):
                              self.neg_sample_idx: batches[step][2]
                              }
                 training = self.sess.run([self.optimizer], feed_dict=feed_dict)
+                clip = self.sess.run(self.clips)
 
     @staticmethod
     def get_batches(rating_matrix, batch_size, n_negative):
@@ -139,11 +146,11 @@ def cml(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, rank=
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
     m, n = matrix_input.shape
-    model = CollaborativeMetricLearning(n, rank, 100, lamb=lam)
+    model = CollaborativeMetricLearning(num_users=m, num_items=n, embed_dim=rank)
 
     model.train_model(matrix_input, iteration)
 
     RQ = model.get_RQ()
-    Y = model.get_Y()
+    Y = model.get_Y().T
 
     return RQ, Y, None
