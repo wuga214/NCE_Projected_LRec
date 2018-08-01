@@ -5,9 +5,6 @@ from utils.progress import WorkSplitter, inhour
 from scipy.sparse import vstack, hstack, lil_matrix
 
 
-# Under construction...
-
-
 class CollaborativeMetricLearning(object):
     def __init__(self,
                  num_users,
