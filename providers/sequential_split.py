@@ -1,15 +1,6 @@
-# Target:
-# A split function used to split training data(unsupervised) into feature and label for the
-# Sequential prediction(supervised).
-
-# The function should do
-# 1. Time based leave one out split
-# 2. Dynamic split and yield training batch
-
-# this function only support implicit feedback!
-
 import scipy.sparse as sparse
 import numpy as np
+from tqdm import tqdm
 
 
 class BatchForSequence(object):
@@ -22,7 +13,6 @@ class BatchForSequence(object):
         self.neg_label_length = neg_label_length
         self.rating_lists = sparse.lil_matrix(rating_matrix).rows
         self.lengths = np.vectorize(len)(self.rating_lists)
-
 
     def generate_feature_labels(self):
 
@@ -37,27 +27,43 @@ class BatchForSequence(object):
         self.neg_labels = np.full((num_subsequences, self.neg_label_length),
                                   dtype=np.int64,
                                   fill_value=self.padding_index)
-
-
         seq_index = 0
 
-        for user_index in range(len(self.rating_lists)):
+        for user_index in tqdm(range(len(self.rating_lists))):
+            rating_list = self.rating_lists[user_index]
+            neg_pool = np.array(list(set(range(self.padding_index)) - set(rating_list)), dtype=np.int32)
+
             for seq in self._sliding_window(user_index):
-                #import ipdb; ipdb.set_trace()
                 if len(seq) > self.label_length:
                     features = seq[:-self.label_length]
                     self.features[seq_index][self.feature_length-len(features):] = features
-
                     self.pos_labels[seq_index][:] = seq[-self.label_length:]
+
+                    self.neg_labels[seq_index][:] = neg_pool[np.random.randint(len(neg_pool),
+                                                                               size=self.neg_label_length)]
+
                     seq_index += 1
 
         self.features = self.features[:seq_index]
         self.pos_labels = self.pos_labels[:seq_index]
         self.neg_labels = self.neg_labels[:seq_index]
 
-        import ipdb; ipdb.set_trace()
-
-
+    def next_batch(self):
+        remaining_size = self.features.shape[0]
+        batch_index = 0
+        while remaining_size > 0:
+            if remaining_size < self.batch_size:
+                output = (self.features[batch_index*self.batch_size:-1],
+                          self.pos_labels[batch_index * self.batch_size:-1],
+                          self.neg_labels[batch_index * self.batch_size:-1])
+                remaining_size = 0
+            else:
+                output = (self.features[batch_index*self.batch_size:(batch_index+1)*self.batch_size],
+                          self.pos_labels[batch_index*self.batch_size:(batch_index+1)*self.batch_size],
+                          self.neg_labels[batch_index*self.batch_size:(batch_index+1)*self.batch_size])
+                batch_index += 1
+                remaining_size -= self.batch_size
+            yield output
 
     def _sliding_window(self, user_index, step_size=1):
         if self.lengths[user_index] - self.max_length >= 0:
@@ -69,16 +75,19 @@ class BatchForSequence(object):
         else:
             yield self.rating_lists[user_index]
 
-
-def main():
-    x = sparse.random(100, 100)
-    bs = BatchForSequence(x, 10, 5, 2, 2)
-    bs.generate_feature_labels()
-
-
-if __name__ == "__main__":
-    main()
-
+# TEST CODE
+# def main():
+#     x = sparse.random(10000, 1000)
+#     bs = BatchForSequence(x, 10, 5, 2, 2)
+#     bs.generate_feature_labels()
+#
+#     for batch in bs.next_batch():
+#         print(batch)
+#
+#
+# if __name__ == "__main__":
+#     main()
+#
 
 
 
