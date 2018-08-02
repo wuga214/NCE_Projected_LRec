@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import math
 from tqdm import tqdm
+from providers.sequential_split import BatchForSequence
 from scipy.sparse import vstack, hstack, lil_matrix
 
 
@@ -31,23 +32,47 @@ class SeqAwaRecMetAtt(object):
 
     def get_graph(self):
 
-        self.purchase = tf.placeholder(tf.int32)
+        self.features = tf.placeholder(tf.int32)
+        self.pos_label = tf.placeholder(tf.int32)
+        self.neg_label = tf.placeholder(tf.int32)
         self.item_embeddings= tf.placeholder(tf.float32, [self.num_items, self.embed_dim])
-        purchase_embedding = tf.nn.embedding_lookup(self.item_embeddings, self.purchase)
 
-        self.purchase_range = tf.placeholder(tf.int32)
-        self.order_embeddings = tf.Variable(self.get_order_embeddings())
-        purchase_range_embedding = tf.nn.embedding_lookup(self.order_embeddings, self.purchase_range)
+        with tf.variable_scope("cnn_attention"):
+            feature_embedding = tf.nn.embedding_lookup(self.item_embeddings, self.features)
+            order_embeddings = tf.Variable(self.get_order_embeddings())
+            attention_base = feature_embedding + order_embeddings
+            filter = tf.Variable(tf.random_normal([1, self.embed_dim, 1],
+                                                  stddev=1 / (self.embed_dim ** 0.5), dtype=tf.float32))
+            cnn_out = tf.nn.conv1d(attention_base, filter, stride=1, padding="VALID")
 
-        self.attention_base = purchase_embedding + purchase_range_embedding
+            attention = tf.nn.softmax(cnn_out, axis=1)
+            self.user_embeddings = tf.reduce_sum(tf.multiply(feature_embedding, attention), axis=1)
 
-        filter = tf.Variable(tf.random_normal([1, self.embed_dim, 1],
-                                              stddev=1 / (self.embed_dim ** 0.5), dtype=tf.float32))
-        self.output = tf.nn.conv1d(self.attention_base, filter, stride=1, padding="VALID")
+        with tf.variable_scope("loss"):
+            pos_embedding = tf.nn.embedding_lookup(self.item_embeddings, self.pos_label)
+            neg_embedding = tf.nn.embedding_lookup(self.item_embeddings, self.neg_label)
 
-        self.attention = tf.nn.softmax(self.output, axis=1)
+            self.loss = tf.reduce_sum(tf.nn.relu(tf.matmul(self.user_embeddings, neg_embedding)
+                                                 - tf.matmul(self.user_embeddings, pos_embedding)
+                                                 - self.margin),
+                                      axis=1)
 
-        self.user_embeddings = tf.reduce_sum(tf.multiply(purchase_embedding, self.attention), axis=1)
+        with tf.variable_scope("optimizer"):
+            self.optimizer = tf.train.AdamOptimizer().minimize(self.loss)
+
+
+    def train_model(self, rating_matrix, timestamp_matrix, epoch=100):
+        bs = BatchForSequence(rating_matrix, timestamp_matrix, self.batch_size, self.max_seq_length, 2, 2)
+
+        summary_writer = tf.summary.FileWriter('auto_rec', graph=self.sess.graph)
+
+        # Training
+        pbar = tqdm(range(epoch))
+        for i in pbar:
+            for batch in bs.next_batch():
+                # No item embedding yet, extract from CML? 
+                feed_dict = {self.inputs: batches[step].todense()}
+                training = self.sess.run([self.optimizer], feed_dict=feed_dict)
 
 
     def get_order_embeddings(self):
