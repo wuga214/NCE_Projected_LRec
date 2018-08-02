@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 
 class BatchForSequence(object):
-    def __init__(self, rating_matrix, batch_size, feature_length, label_length, neg_label_length):
+    def __init__(self, rating_matrix, timestamp_matrix, batch_size, feature_length, label_length, neg_label_length):
         self.padding_index = rating_matrix.shape[0]
         self.batch_size = batch_size
         self.feature_length = feature_length
@@ -13,6 +13,13 @@ class BatchForSequence(object):
         self.neg_label_length = neg_label_length
         self.rating_lists = sparse.lil_matrix(rating_matrix).rows
         self.lengths = np.vectorize(len)(self.rating_lists)
+        self.generate_rating_lists(rating_matrix, timestamp_matrix)
+
+    def generate_rating_lists(self, rating_matrix, timestamp_matrix):
+        timestamp_matrix = rating_matrix.multiply(timestamp_matrix)
+        for i in range(self.padding_index):
+            argsort = np.argsort(timestamp_matrix[i].data)
+            self.rating_lists[i] = np.array(self.rating_lists[i])[argsort]
 
     def generate_feature_labels(self):
 
@@ -76,18 +83,18 @@ class BatchForSequence(object):
             yield self.rating_lists[user_index]
 
 # TEST CODE
-# def main():
-#     x = sparse.random(10000, 1000)
-#     bs = BatchForSequence(x, 10, 5, 2, 2)
-#     bs.generate_feature_labels()
-#
-#     for batch in bs.next_batch():
-#         print(batch)
-#
-#
-# if __name__ == "__main__":
-#     main()
-#
+def main():
+    x = sparse.random(10000, 1000)
+    bs = BatchForSequence(x, x, 10, 5, 2, 2)
+    bs.generate_feature_labels()
+
+    for batch in bs.next_batch():
+        print(batch)
+
+
+if __name__ == "__main__":
+    main()
+
 
 
 
