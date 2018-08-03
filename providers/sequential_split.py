@@ -83,17 +83,17 @@ class BatchForSequence(object):
             yield self.rating_lists[user_index]
 
 # TEST CODE
-def main():
-    x = sparse.random(10000, 1000)
-    bs = BatchForSequence(x, x, 10, 5, 2, 2)
-    bs.generate_feature_labels()
-
-    for batch in bs.next_batch():
-        print(batch)
-
-
-if __name__ == "__main__":
-    main()
+# def main():
+#     x = sparse.random(10000, 1000)
+#     bs = BatchForSequence(x, x, 10, 5, 2, 2)
+#     bs.generate_feature_labels()
+#
+#     for batch in bs.next_batch():
+#         print(batch)
+#
+#
+# if __name__ == "__main__":
+#     main()
 
 
 

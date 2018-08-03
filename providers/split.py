@@ -65,6 +65,7 @@ def split_seed_randomly(rating_matrix, ratio=[0.5, 0.2, 0.3], implicit=True, rem
 
     return rtrain, rvalid, rtest, nonzero_index
 
+
 def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], implicit=True, remove_empty=True):
     if implicit:
         # rating_matrix[rating_matrix.nonzero()] = 1

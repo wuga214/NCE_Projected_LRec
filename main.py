@@ -2,7 +2,7 @@ import numpy as np
 from utils.progress import WorkSplitter, inhour
 import argparse
 import time
-from utils.io import save_mxnet, load_numpy, load_pandas, load_csv
+from utils.io import save_mxnet, load_numpy, load_pandas, load_csv, save_numpy
 from utils.argument import check_float_positive, check_int_positive, shape
 from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
@@ -78,13 +78,15 @@ def main(args):
         RQ = RQt.T
 
     # Save Files
-    # progress.section("Save U-V Matrix")
-    # start_time = time.time()
+    progress.section("Save U-V Matrix")
+    start_time = time.time()
     # save_mxnet(matrix=RQ, path=args.path+mode+'/',
     #            name='U_{0}_{1}_{2}'.format(args.rank, args.lamb, args.model))
     # save_mxnet(matrix=Y, path=args.path+mode+'/',
     #            name='V_{0}_{1}_{2}'.format(args.rank, args.lamb, args.model))
-    # print "Elapsed: {0}".format(inhour(time.time() - start_time))
+    np.save('latent/U_{0}_{1}'.format(args.model, args.rank), RQ)
+    np.save('latent/V_{0}_{1}'.format(args.model, args.rank), Y)
+    print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     progress.section("Predict")
     prediction = predict(matrix_U=RQ,
