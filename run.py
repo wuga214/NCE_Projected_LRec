@@ -6,6 +6,7 @@ from experiment.popular_analysis import popular_overlapping
 from utils.argument import shape
 from utils.argument import check_float_positive, check_int_positive, shape
 from models.sarma import SeqAwaRecMetAtt
+from providers.sequential_split import BatchForSequence
 from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
 from models.pure_svd import pure_svd, eigen_boosted_pure_svd
@@ -14,15 +15,39 @@ from models.pmi_lrec import pmi_lrec_items
 from models.weighted_pmi_lrec import weighted_pmi_lrec_items
 from models.chainitemitem import chain_item_item
 from models.predictor import predict
+from evaluation.metrics import evaluate
 
 def main():
     matrix_train = load_numpy(path='datax/', name='Rtrain.npz')
     num_item = matrix_train.shape[1]
-    model = SeqAwaRecMetAtt(num_item, 100, 7)
+    model = SeqAwaRecMetAtt(num_item, 100, 1, 1)
     timestamp_matrix = load_pandas(path='datax/', value_name='timestamp', name='ml-1m/ratings.csv', shape=(6041, 3953))
     item_embeddings = np.load('latent/V_CML_100.npy')
     #import ipdb; ipdb.set_trace()
-    model.train_model(matrix_train, timestamp_matrix, item_embeddings)
+    bs = BatchForSequence(matrix_train, timestamp_matrix, 100, 1, 1, 100)
+    bs.generate_feature_labels()
+
+    model.train_model(bs, item_embeddings)
+    user_embedding = model.get_user_embeddings(bs, item_embeddings)
+    print user_embedding.shape
+
+    prediction = predict(matrix_U=user_embedding,
+                         matrix_V=item_embeddings,
+                         bias=None,
+                         topK=50,
+                         matrix_Train=matrix_train,
+                         measure='Cosine',
+                         gpu=True)
+
+
+
+    metric_names = ['R-Precision', 'NDCG', 'Clicks']
+    R_valid = load_numpy(path='datax/', name='Rvalid.npz')
+    result = evaluate(prediction, R_valid, metric_names, [50])
+    print("-")
+    for metric in result.keys():
+        print("{0}:{1}".format(metric, result[metric]))
+
 
 if __name__ == "__main__":
     main()

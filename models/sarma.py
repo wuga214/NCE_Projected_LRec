@@ -46,23 +46,21 @@ class SeqAwaRecMetAtt(object):
                                                   stddev=1 / (self.embed_dim ** 0.5), dtype=tf.float32))
             cnn_out = tf.nn.conv1d(attention_base, filter, stride=1, padding="VALID")
             attention = tf.nn.softmax(cnn_out, axis=1)
-            self.user_embeddings = tf.reduce_sum(tf.multiply(feature_embedding, attention), axis=1)
+            self.pred_embeddings = tf.reduce_sum(tf.multiply(feature_embedding, attention), axis=1)
 
         with tf.variable_scope("loss"):
             pos_embedding = tf.nn.embedding_lookup(self.item_embeddings, self.pos_label)
             neg_embedding = tf.nn.embedding_lookup(self.item_embeddings, self.neg_label)
 
-            self.loss = tf.reduce_sum(tf.nn.relu(tf.matmul(neg_embedding, tf.expand_dims(self.user_embeddings, -1))
-                                                 - tf.matmul(pos_embedding, tf.expand_dims(self.user_embeddings, -1))
+            self.loss = tf.reduce_sum(tf.nn.relu(tf.matmul(neg_embedding, tf.expand_dims(self.pred_embeddings, -1))
+                                                 - tf.matmul(pos_embedding, tf.expand_dims(self.pred_embeddings, -1))
                                                  - self.margin),
                                       axis=1)
 
         with tf.variable_scope("optimizer"):
             self.optimizer = tf.train.AdamOptimizer().minimize(self.loss)
 
-    def train_model(self, rating_matrix, timestamp_matrix, item_embeddings, epoch=100):
-        bs = BatchForSequence(rating_matrix, timestamp_matrix, self.batch_size, self.max_seq_length, 2, 2)
-        bs.generate_feature_labels()
+    def train_model(self, bs, item_embeddings, epoch=20):
         summary_writer = tf.summary.FileWriter('sarma', graph=self.sess.graph)
 
         # Training
@@ -85,6 +83,25 @@ class SeqAwaRecMetAtt(object):
         pe[:, 1::2] = np.cos(positions * div_term)
         return pe
 
+    def get_user_embeddings(self, bs, item_embeddings):
+        self.user_embeddings = np.zeros((bs.padding_index, self.embed_dim))
+        prediction_counter = np.ones(bs.padding_index)
+
+        for batch in tqdm(bs.next_batch()):
+            # No item embedding yet, extract from CML?
+            feed_dict = {self.features: batch[0],
+                         self.item_embeddings: item_embeddings}
+            pred_embeddings = self.sess.run(self.pred_embeddings, feed_dict=feed_dict)
+
+            for i, pred_embedding in enumerate(pred_embeddings):
+                user_index = batch[3][i]
+                self.user_embeddings[user_index] = self.user_embeddings[user_index] +\
+                                                   (pred_embedding - self.user_embeddings[user_index]) /\
+                                                   prediction_counter[user_index]
+                prediction_counter[user_index] += 1
+
+        return self.user_embeddings
+
 
 def main():
     matrix_train = load_numpy(path='datax/', name='Rtrain')
@@ -92,7 +109,12 @@ def main():
     model = SeqAwaRecMetAtt(num_item, 100, 7)
     timestamp_matrix = load_pandas(path='datax/', value_name='timestamp', name='ml-10/ratings.csv')
     item_embeddings = np.load('latent/V_CML_100')
-    model.train_model(matrix_train, timestamp_matrix, item_embeddings)
+
+    bs = BatchForSequence(matrix_train, timestamp_matrix, 100, 7, 2, 1000)
+    bs.generate_feature_labels()
+
+    model.train_model(bs, item_embeddings)
+    model.get_user_embeddings(bs, item_embeddings)
 
 if __name__ == "__main__":
     main()

@@ -84,7 +84,7 @@ class CollaborativeMetricLearning(object):
                 tf.assign(self.item_embeddings, tf.clip_by_norm(self.item_embeddings, self.clip_norm, axes=[1]))
             ]
 
-    def train_model(self, rating_matrix, epoch=100):
+    def train_model(self, rating_matrix, epoch=200):
         batches = self.get_batches(rating_matrix, self.batch_size, 10)
 
         summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)

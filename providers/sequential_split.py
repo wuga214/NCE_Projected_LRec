@@ -15,6 +15,11 @@ class BatchForSequence(object):
         self.lengths = np.vectorize(len)(self.rating_lists)
         self.generate_rating_lists(rating_matrix, timestamp_matrix)
 
+        self.features = None
+        self.pos_labels = None
+        self.neg_labels = None
+        self.user_ids = None
+
     def generate_rating_lists(self, rating_matrix, timestamp_matrix):
         timestamp_matrix = rating_matrix.multiply(timestamp_matrix)
         for i in range(self.padding_index):
@@ -36,6 +41,8 @@ class BatchForSequence(object):
                                   fill_value=self.padding_index)
         seq_index = 0
 
+        user_ids = []
+
         for user_index in tqdm(range(len(self.rating_lists))):
             rating_list = self.rating_lists[user_index]
             neg_pool = np.array(list(set(range(self.padding_index)) - set(rating_list)), dtype=np.int32)
@@ -48,26 +55,33 @@ class BatchForSequence(object):
 
                     self.neg_labels[seq_index][:] = neg_pool[np.random.randint(len(neg_pool),
                                                                                size=self.neg_label_length)]
-
+                    user_ids.append(user_index)
                     seq_index += 1
 
         self.features = self.features[:seq_index]
         self.pos_labels = self.pos_labels[:seq_index]
         self.neg_labels = self.neg_labels[:seq_index]
+        self.user_ids = np.array(user_ids, dtype=np.int64)
 
     def next_batch(self):
         remaining_size = self.features.shape[0]
         batch_index = 0
+
+        # Random choice the negative columns
+        neg_columns = np.random.choice(self.neg_label_length, self.label_length)
+
         while remaining_size > 0:
             if remaining_size < self.batch_size:
                 output = (self.features[batch_index*self.batch_size:-1],
                           self.pos_labels[batch_index * self.batch_size:-1],
-                          self.neg_labels[batch_index * self.batch_size:-1])
+                          self.neg_labels[batch_index * self.batch_size:-1, neg_columns],
+                          self.user_ids[batch_index * self.batch_size:-1])
                 remaining_size = 0
             else:
                 output = (self.features[batch_index*self.batch_size:(batch_index+1)*self.batch_size],
                           self.pos_labels[batch_index*self.batch_size:(batch_index+1)*self.batch_size],
-                          self.neg_labels[batch_index*self.batch_size:(batch_index+1)*self.batch_size])
+                          self.neg_labels[batch_index*self.batch_size:(batch_index+1)*self.batch_size, neg_columns],
+                          self.user_ids[batch_index*self.batch_size:(batch_index+1)*self.batch_size])
                 batch_index += 1
                 remaining_size -= self.batch_size
             yield output
