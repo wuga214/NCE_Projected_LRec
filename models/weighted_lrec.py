@@ -63,6 +63,7 @@ def weighted_lrec_items(matrix_train,
 
     start_time = time.time()
     if gpu:
+        import cupy as cp
         progress.subsection("Create Cacheable Matrices")
         # RQ = matrix_input.dot(sparse.csc_matrix(Qt).T).toarray()
 

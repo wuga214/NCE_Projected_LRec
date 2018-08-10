@@ -34,14 +34,14 @@ def hyper_parameter_tuning(train, validation, params, gpu_on=True):
                                                                                              rank,
                                                                                              root,
                                                                                              alpha))
-                    RQ, Yt = params['models'][algorithm](train,
-                                                         embeded_matrix=np.empty((0)),
-                                                         iteration=params['iter'],
-                                                         rank=rank,
-                                                         lam=0.01,
-                                                         root=root,
-                                                         alpha=alpha,
-                                                         gpu_on)
+                    RQ, Yt, _ = params['models'][algorithm](train,
+                                                            embeded_matrix=np.empty((0)),
+                                                            iteration=params['iter'],
+                                                            rank=rank,
+                                                            lam=0.01,
+                                                            root=root,
+                                                            alpha=alpha,
+                                                            gpu_on=True)
                     Y = Yt.T
 
                     progress.subsection("Prediction")

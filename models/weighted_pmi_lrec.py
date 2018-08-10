@@ -53,6 +53,7 @@ def get_pmi_matrix(matrix, root):
 
 
 def get_pmi_matrix_gpu(matrix):
+    import cupy as cp
     rows, cols = matrix.shape
     item_rated = cp.array(matrix.sum(axis=0))
     pmi_matrix = []
@@ -103,6 +104,7 @@ def weighted_pmi_lrec_items(matrix_train,
 
     start_time = time.time()
     if gpu:
+        import cupy as cp
         progress.subsection("Create Cacheable Matrices")
         # RQ = matrix_input.dot(sparse.csc_matrix(Qt).T).toarray()
 

@@ -99,7 +99,7 @@ def main(args):
         progress.section("Create Metrics")
         start_time = time.time()
 
-        metric_names = ['R-Precision', 'NDCG', 'Clicks']
+        metric_names = ['R-Precision', 'NDCG', 'Clicks', 'Recall', 'Precision']
         R_valid = load_numpy(path=args.path, name=args.valid)
         result = evaluate(prediction, R_valid, metric_names, [args.topk])
         print("-")
