@@ -13,7 +13,7 @@ from models.weighted_pmi_lrec import weighted_pmi_lrec_items
 from models.chainitemitem import chain_item_item
 from models.autorec import autorec
 from models.cml import cml
-from models.predictor import predict
+from models.predictor import predict,predict_batch
 from evaluation.metrics import evaluate
 
 
@@ -87,13 +87,13 @@ def main(args):
     # print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     progress.section("Predict")
-    prediction = predict(matrix_U=RQ,
-                         matrix_V=Y,
-                         bias=Bias,
-                         topK=args.topk,
-                         matrix_Train=R_train,
-                         measure=args.sim_measure,
-                         gpu=True)
+    prediction = predict_batch(matrix_U=RQ,
+                                 matrix_V=Y,
+                                 bias=Bias,
+                                 topK=args.topk,
+                                 matrix_Train=R_train,
+                                 measure=args.sim_measure,
+                                 gpu=True)
 
     if args.validation:
         progress.section("Create Metrics")
