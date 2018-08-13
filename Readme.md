@@ -32,11 +32,18 @@ ge/python_project/wlrec_update/IMPLEMENTATION_Projected_LRec/datax/ \
 
 ```
 
-Run Weighted Projected LRec
+Run Weighted PMI-PLRec
 ```
 $ python main.py -i 4 -l 1.0 -r 100 -a 10 -m PmiPLRec -d datax/ \
 -t Rtrain.npz -v Rvalid.npz -k 10
 ```
+
+Do model comparision on all metrics(with hyper-parameter tuning)
+```
+python tune_parameters.py -d datax/ -n log -v Rvalid
+
+```
+Result shows in `table/log`
 
 # Run-time
 This model needs only 3 mins to process MovieLens 20M!
