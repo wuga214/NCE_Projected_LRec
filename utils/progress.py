@@ -4,8 +4,11 @@ import time
 
 class WorkSplitter(object):
     def __init__(self):
-        _, columns = os.popen('stty size', 'r').read().split()
-        self.columns = int(columns)
+        try:
+            _, columns = os.popen('stty size', 'r').read().split()
+            self.columns = int(columns)
+        except:
+            self.columns = 50
 
     def section(self, name):
         name_length = len(name)

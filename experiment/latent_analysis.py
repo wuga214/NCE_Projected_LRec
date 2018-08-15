@@ -9,7 +9,9 @@ from models.chainitemitem import chain_item_item
 from models.predictor import predict
 from plot.plot import scatter_plot
 from sklearn.preprocessing import normalize
-
+import plotly.plotly as py
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+import plotly.graph_objs as go
 
 params = {
     'models': {"PLR": embedded_lrec_items,
@@ -30,11 +32,15 @@ def latent_analysis(matrix):
 
     # Item-Item or User-User
     for model_name in params['models'].keys():
-        RQ, Yt = params['models'][model_name](matrix, embeded_matrix=np.empty((0)),
-                                              iteration=params['iter'], rank=params['rank'],
-                                              lam=params['lambda'], alpha=params['alphas'], seed=1)
+        RQ, Yt, _ = params['models'][model_name](matrix, embeded_matrix=np.empty((0)),
+                                                 iteration=params['iter'], rank=params['rank'],
+                                                 lam=params['lambda'], alpha=params['alphas'], seed=1)
 
         scatter_plot(Yt.T, item_popularity, model_name, save=True)
+
+
+
+
 
 
 

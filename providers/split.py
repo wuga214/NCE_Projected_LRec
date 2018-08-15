@@ -83,9 +83,9 @@ def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], i
         timestamp_matrix = timestamp_matrix[:, nonzero_index]
 
         # Remove empty rows. record original user index
-        nonzero_index = np.unique(rating_matrix.nonzero()[0])
-        rating_matrix = rating_matrix[nonzero_index]
-        timestamp_matrix = timestamp_matrix[nonzero_index]
+        nonzero_rows = np.unique(rating_matrix.nonzero()[0])
+        rating_matrix = rating_matrix[nonzero_rows]
+        timestamp_matrix = timestamp_matrix[nonzero_rows]
 
     user_num, item_num = rating_matrix.shape
 
