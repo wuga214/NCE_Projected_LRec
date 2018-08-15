@@ -102,10 +102,12 @@ def batch_sub_routine(subset_U, matrix_V, subset_Train, bias, measure, topK=50, 
             batch_predict = (subset_U ** 2).sum(axis=-1)[:, np.newaxis] + (matrix_V ** 2).sum(axis=-1)
             batch_predict -= 2 * cp.squeeze(subset_U.dot(matrix_V[..., np.newaxis]), axis=-1)
             batch_predict **= 0.5
+            batch_predict = - batch_predict
         else:
             batch_predict = (subset_U ** 2).sum(axis=-1)[:, np.newaxis] + (matrix_V ** 2).sum(axis=-1)
             batch_predict -= 2 * np.squeeze(subset_U.dot(matrix_V[..., np.newaxis]), axis=-1)
             batch_predict **= 0.5
+            batch_predict = - batch_predict
     if bias is not None:
         if gpu:
             import cupy as cp
