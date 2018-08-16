@@ -11,13 +11,14 @@ def main(args):
     progress.section("Load Raw Data")
     rating_matrix, timestamp_matrix = load_netflix(path=args.folder, shape=args.shape)
     progress.section("Split CSR Matrices")
-    rtrain, rvalid, rtest, nonzero_index = time_ordered_split(rating_matrix=rating_matrix,
-                                                              timestamp_matrix=timestamp_matrix,
-                                                              ratio=args.ratio, implicit=args.implicit)
+    rtrain, rvalid, rtest, nonzero_index, rtime = time_ordered_split(rating_matrix=rating_matrix,
+                                                                     timestamp_matrix=timestamp_matrix,
+                                                                     ratio=args.ratio, implicit=args.implicit)
     progress.section("Save NPZ")
     save_numpy(rtrain, args.path, "Rtrain")
     save_numpy(rvalid, args.path, "Rvalid")
     save_numpy(rtest, args.path, "Rtest")
+    save_numpy(rtime, args.path, "Rtime")
     save_array(nonzero_index, args.path, "Index")
 
 if __name__ == "__main__":

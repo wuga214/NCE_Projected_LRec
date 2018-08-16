@@ -13,6 +13,7 @@ from models.weighted_pmi_lrec import weighted_pmi_lrec_items
 from models.chainitemitem import chain_item_item
 from models.autorec import autorec
 from models.cml import cml
+from models.cml_normalized import cml_normalized
 from models.predictor import predict,predict_batch
 from evaluation.metrics import evaluate
 
@@ -27,7 +28,8 @@ models = {
     "ALS": als,
     "CII": chain_item_item,
     "AutoRec": autorec,
-    "CML": cml
+    "CML": cml,
+    "NCML": cml_normalized
 }
 
 
@@ -87,7 +89,7 @@ def main(args):
     # print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
     progress.section("Predict")
-    prediction = predict_batch(matrix_U=RQ,
+    prediction = predict(matrix_U=RQ,
                                  matrix_V=Y,
                                  bias=Bias,
                                  topK=args.topk,
@@ -116,7 +118,7 @@ if __name__ == "__main__":
     parser.add_argument('--disable-validation', dest='validation', action='store_false')
     parser.add_argument('-i', dest='iter', type=check_int_positive, default=1)
     parser.add_argument('-a', dest='alpha', type=check_float_positive, default=100.0)
-    parser.add_argument('-l', dest='lamb', type=check_float_positive, default=100.0)
+    parser.add_argument('-l', dest='lamb', type=check_float_positive, default=100)
     parser.add_argument('-r', dest='rank', type=check_int_positive, default=100)
     parser.add_argument('-f', dest='root', type=check_float_positive, default=1)
     parser.add_argument('-s', dest='seed', type=check_int_positive, default=1)

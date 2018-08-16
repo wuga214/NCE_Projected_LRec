@@ -90,6 +90,7 @@ def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], i
     user_num, item_num = rating_matrix.shape
 
     rtrain = []
+    rtime = []
     rvalid = []
     rtest = []
 
@@ -126,5 +127,5 @@ def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], i
     rtest = sparse.csr_matrix((np.hstack(rtest[:, 0]), (np.hstack(rtest[:, 1]), np.hstack(rtest[:, 2]))),
                               shape=rating_matrix.shape)
 
-    return rtrain, rvalid, rtest, nonzero_index
+    return rtrain, rvalid, rtest, nonzero_index, timestamp_matrix
 
