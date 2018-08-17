@@ -33,9 +33,9 @@ def main(args):
     R_train = load_numpy(path=args.path, name=args.train)
     #latent_analysis(R_train)
 
-    RQ, Yt = models['PLRec'](R_train, embeded_matrix=np.empty((0)),
-                             iteration=args.iter, rank=args.rank,
-                             lam=args.lamb, alpha=args.alpha, seed=args.seed, root=args.root)
+    RQ, Yt, _ = models['PLRec'](R_train, embeded_matrix=np.empty((0)),
+                                iteration=args.iter, rank=args.rank,
+                                lam=args.lamb, alpha=args.alpha, seed=args.seed, root=args.root)
 
     Y = Yt.T
 

@@ -8,11 +8,11 @@ from utils.progress import WorkSplitter, inhour
 def weighting(train, validation, params):
     progress = WorkSplitter()
     progress.section("PLRec")
-    RQ, Yt = params['models']['PLRec'](train,
-                                       embeded_matrix=np.empty((0)),
-                                       iteration=params['iter'],
-                                       rank=params['rank'],
-                                       lam=params['lambda'])
+    RQ, Yt, _ = params['models']['PLRec'](train,
+                                          embeded_matrix=np.empty((0)),
+                                          iteration=params['iter'],
+                                          rank=params['rank'],
+                                          lam=params['lambda'])
     Y = Yt.T
 
     lrec_prediction = predict(matrix_U=RQ, matrix_V=Y, topK=params['topK'][-1], matrix_Train=train, gpu=True)
@@ -29,12 +29,12 @@ def weighting(train, validation, params):
     wlrec_results = dict()
     for alpha in tqdm(params['alphas']):
         progress.section("WPLRec, Alpha: "+str(alpha))
-        RQ, Yt = params['models']['WPLRec'](train,
-                                            embeded_matrix=np.empty((0)),
-                                            iteration=params['iter'],
-                                            rank=params['rank'],
-                                            lam=params['lambda'],
-                                            alpha=alpha)
+        RQ, Yt, _ = params['models']['WPLRec'](train,
+                                               embeded_matrix=np.empty((0)),
+                                               iteration=params['iter'],
+                                               rank=params['rank'],
+                                               lam=params['lambda'],
+                                               alpha=alpha)
         Y = Yt.T
 
         prediction = predict(matrix_U=RQ, matrix_V=Y, topK=params['topK'][-1], matrix_Train=train, gpu=True)

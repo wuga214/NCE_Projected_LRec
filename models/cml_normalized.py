@@ -79,7 +79,7 @@ class NormalizedCollaborativeMetricLearning(object):
             hinge_loss = tf.maximum(pos_distances - shortest_neg_distances + self.margin, 0, name="pair_loss")
             impostors = (tf.expand_dims(pos_distances, -1) - neg_distances + self.margin) > 0
             rank = tf.reduce_mean(tf.cast(impostors, dtype=tf.float32), 1, name="rank_weight") * self.num_items
-            metric_loss = hinge_loss * tf.log(rank + 1) * popularity_weights * self.orders/3
+            metric_loss = hinge_loss * tf.log(rank + 1)# * popularity_weights * self.orders/3
 
         self.loss = cov_loss + metric_loss
 
@@ -124,7 +124,11 @@ class NormalizedCollaborativeMetricLearning(object):
         user_item_pairs = np.asarray(user_item_matrix.nonzero()).T
         user_to_positive_set = {u: set(row) for u, row in enumerate(user_item_matrix.rows)}
         batches = []
-        np.random.shuffle(user_item_pairs)
+
+        index_shuf = range(len(user_item_pairs))
+        np.random.shuffle(index_shuf)
+        user_item_pairs = user_item_pairs[index_shuf]
+        orders = orders[index_shuf]
         for i in range(int(len(user_item_pairs) / batch_size)):
 
             ui_pairs = user_item_pairs[i * batch_size: (i + 1) * batch_size, :]

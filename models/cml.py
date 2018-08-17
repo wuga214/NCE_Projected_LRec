@@ -88,7 +88,7 @@ class CollaborativeMetricLearning(object):
             ]
 
     def train_model(self, rating_matrix, epoch=100):
-        batches = self.get_batches(rating_matrix, self.batch_size, 10)
+        batches = self.get_batches(rating_matrix, self.batch_size, 100)
 
         summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)
 
@@ -146,7 +146,7 @@ def cml(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, rank=
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
     m, n = matrix_input.shape
-    model = CollaborativeMetricLearning(num_users=m, num_items=n, embed_dim=rank)
+    model = CollaborativeMetricLearning(num_users=m, num_items=n, embed_dim=rank, cov_loss_weight=lam)
 
     model.train_model(matrix_input, iteration)
 
