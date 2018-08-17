@@ -79,7 +79,7 @@ class NormalizedCollaborativeMetricLearning(object):
             hinge_loss = tf.maximum(pos_distances - shortest_neg_distances + self.margin, 0, name="pair_loss")
             impostors = (tf.expand_dims(pos_distances, -1) - neg_distances + self.margin) > 0
             rank = tf.reduce_mean(tf.cast(impostors, dtype=tf.float32), 1, name="rank_weight") * self.num_items
-            metric_loss = hinge_loss * tf.log(rank + 1)# * popularity_weights * self.orders/3
+            metric_loss = hinge_loss * tf.log(rank + 1) * self.orders/3 * popularity_weights
 
         self.loss = cov_loss + metric_loss
 
@@ -100,13 +100,19 @@ class NormalizedCollaborativeMetricLearning(object):
 
         idf = np.log(item_popularity+1.0)
 
-        batches = self.get_batches(rating_matrix, orders, self.batch_size, 10)
+        user_item_matrix = lil_matrix(rating_matrix)
+        user_item_pairs = np.asarray(user_item_matrix.nonzero()).T
+        user_to_positive_set = {u: set(row) for u, row in enumerate(user_item_matrix.rows)}
 
         summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)
 
         # Training
         pbar = tqdm(range(epoch))
         for i in pbar:
+
+            batches = self.get_batches(user_item_pairs, user_to_positive_set, orders,
+                                       user_item_matrix.shape[1], self.batch_size, 10)
+
             for step in range(len(batches)):
                 feed_dict = {self.user_idx: batches[step][0],
                              self.pos_sample_idx: batches[step][1],
@@ -118,11 +124,7 @@ class NormalizedCollaborativeMetricLearning(object):
                 clip = self.sess.run(self.clips)
 
     @staticmethod
-    def get_batches(rating_matrix, orders, batch_size, n_negative):
-
-        user_item_matrix = lil_matrix(rating_matrix)
-        user_item_pairs = np.asarray(user_item_matrix.nonzero()).T
-        user_to_positive_set = {u: set(row) for u, row in enumerate(user_item_matrix.rows)}
+    def get_batches(user_item_pairs, user_to_positive_set, orders, num_item, batch_size, n_negative):
         batches = []
 
         index_shuf = range(len(user_item_pairs))
@@ -136,7 +138,7 @@ class NormalizedCollaborativeMetricLearning(object):
 
             negative_samples = np.random.randint(
                 0,
-                user_item_matrix.shape[1],
+                num_item,
                 size=(batch_size, n_negative))
 
             for user_positive, negatives, i in zip(ui_pairs,
@@ -145,7 +147,7 @@ class NormalizedCollaborativeMetricLearning(object):
                 user = user_positive[0]
                 for j, neg in enumerate(negatives):
                     while neg in user_to_positive_set[user]:
-                        negative_samples[i, j] = neg = np.random.randint(0, user_item_matrix.shape[1])
+                        negative_samples[i, j] = neg = np.random.randint(0, num_item)
             batches.append([ui_pairs[:, 0], ui_pairs[:, 1], negative_samples, ui_order])
 
         return batches
@@ -185,7 +187,7 @@ def cml_normalized(matrix_train, time_stamp_matrix=None, embeded_matrix=np.empty
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
     m, n = matrix_input.shape
-    model = NormalizedCollaborativeMetricLearning(num_users=m, num_items=n, embed_dim=rank)
+    model = NormalizedCollaborativeMetricLearning(num_users=m, num_items=n, embed_dim=rank, cov_loss_weight=lam)
 
     model.train_model(matrix_input, orders, iteration)
 
