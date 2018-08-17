@@ -90,12 +90,12 @@ def main(args):
 
     progress.section("Predict")
     prediction = predict(matrix_U=RQ,
-                                 matrix_V=Y,
-                                 bias=Bias,
-                                 topK=args.topk,
-                                 matrix_Train=R_train,
-                                 measure=args.sim_measure,
-                                 gpu=True)
+                               matrix_V=Y,
+                               bias=Bias,
+                               topK=args.topk,
+                               matrix_Train=R_train,
+                               measure=args.sim_measure,
+                               gpu=True)
 
     if args.validation:
         progress.section("Create Metrics")

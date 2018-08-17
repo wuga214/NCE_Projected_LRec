@@ -79,9 +79,9 @@ class NormalizedCollaborativeMetricLearning(object):
             hinge_loss = tf.maximum(pos_distances - shortest_neg_distances + self.margin, 0, name="pair_loss")
             impostors = (tf.expand_dims(pos_distances, -1) - neg_distances + self.margin) > 0
             rank = tf.reduce_mean(tf.cast(impostors, dtype=tf.float32), 1, name="rank_weight") * self.num_items
-            metric_loss = hinge_loss * tf.log(rank + 1) * self.orders/3 * popularity_weights
+            metric_loss = hinge_loss * self.orders# * tf.log(rank + 1) * popularity_weights
 
-        self.loss = cov_loss + metric_loss
+        self.loss = metric_loss + cov_loss
 
         with tf.variable_scope("optimizer"):
             self.optimizer = tf.train.AdamOptimizer().minimize(self.loss,
@@ -160,16 +160,22 @@ class NormalizedCollaborativeMetricLearning(object):
         return self.sess.run(self.item_embeddings)
 
 
-def get_orders(time_stamp_matrix):
+def get_orders(time_stamp_matrix, threshold=10):
     orders = []
-    max_length = 0
-    for row in tqdm(time_stamp_matrix):
-        if row.nnz > max_length:
-            max_length = row.nnz
+    # max_length = 0
+    # for row in tqdm(time_stamp_matrix):
+    #     if row.nnz > max_length:
+    #         max_length = row.nnz
+    #
+    # for row in tqdm(time_stamp_matrix):
+    #     offset = max_length - row.nnz
+    #     orders.append(np.log(offset + rankdata(row.data)+1))
 
     for row in tqdm(time_stamp_matrix):
-        offset = max_length - row.nnz
-        orders.append(np.log(offset + rankdata(row.data)+1))
+        if row.nnz < threshold:
+            orders.append(rankdata(row.data)+1)
+        else:
+            orders.append(np.maximum(rankdata(row.data) + 1 - (row.nnz-threshold), 1))
 
     return np.hstack(orders)
 
@@ -180,7 +186,7 @@ def cml_normalized(matrix_train, time_stamp_matrix=None, embeded_matrix=np.empty
     matrix_input = matrix_train
 
     from utils.io import load_numpy
-    time_stamp_matrix = load_numpy(path='datax/', name='Rtime.npz')
+    time_stamp_matrix = load_numpy(path='data/amazon/', name='Rtime.npz')
     orders = get_orders(time_stamp_matrix.multiply(matrix_train))
 
     if embeded_matrix.shape[0] > 0:
@@ -193,5 +199,5 @@ def cml_normalized(matrix_train, time_stamp_matrix=None, embeded_matrix=np.empty
 
     RQ = model.get_RQ()
     Y = model.get_Y().T
-
+    tf.reset_default_graph()
     return RQ, Y, None

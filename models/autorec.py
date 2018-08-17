@@ -100,6 +100,7 @@ def autorec(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, r
     RQ = model.get_RQ(matrix_input)
     Y = model.get_Y()
     Bias = model.get_Bias()
+    tf.reset_default_graph()
 
     return RQ, Y, Bias
 

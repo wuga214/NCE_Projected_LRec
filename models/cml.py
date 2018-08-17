@@ -88,13 +88,18 @@ class CollaborativeMetricLearning(object):
             ]
 
     def train_model(self, rating_matrix, epoch=100):
-        batches = self.get_batches(rating_matrix, self.batch_size, 100)
+
+        user_item_matrix = lil_matrix(rating_matrix)
+        user_item_pairs = np.asarray(user_item_matrix.nonzero()).T
+        user_to_positive_set = {u: set(row) for u, row in enumerate(user_item_matrix.rows)}
 
         summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)
 
         # Training
         pbar = tqdm(range(epoch))
         for i in pbar:
+            batches = self.get_batches(user_item_pairs, user_to_positive_set,
+                                       user_item_matrix.shape[1], self.batch_size, 10)
             for step in range(len(batches)):
                 feed_dict = {self.user_idx: batches[step][0],
                              self.pos_sample_idx: batches[step][1],
@@ -104,20 +109,19 @@ class CollaborativeMetricLearning(object):
                 clip = self.sess.run(self.clips)
 
     @staticmethod
-    def get_batches(rating_matrix, batch_size, n_negative):
-
-        user_item_matrix = lil_matrix(rating_matrix)
-        user_item_pairs = np.asarray(user_item_matrix.nonzero()).T
-        user_to_positive_set = {u: set(row) for u, row in enumerate(user_item_matrix.rows)}
+    def get_batches(user_item_pairs, user_to_positive_set, num_item, batch_size, n_negative):
         batches = []
-        np.random.shuffle(user_item_pairs)
+
+        index_shuf = range(len(user_item_pairs))
+        np.random.shuffle(index_shuf)
+        user_item_pairs = user_item_pairs[index_shuf]
         for i in range(int(len(user_item_pairs) / batch_size)):
 
             ui_pairs = user_item_pairs[i * batch_size: (i + 1) * batch_size, :]
 
             negative_samples = np.random.randint(
                 0,
-                user_item_matrix.shape[1],
+                num_item,
                 size=(batch_size, n_negative))
 
             for user_positive, negatives, i in zip(ui_pairs,
@@ -126,7 +130,7 @@ class CollaborativeMetricLearning(object):
                 user = user_positive[0]
                 for j, neg in enumerate(negatives):
                     while neg in user_to_positive_set[user]:
-                        negative_samples[i, j] = neg = np.random.randint(0, user_item_matrix.shape[1])
+                        negative_samples[i, j] = neg = np.random.randint(0, num_item)
             batches.append([ui_pairs[:, 0], ui_pairs[:, 1], negative_samples])
 
         return batches
@@ -152,5 +156,6 @@ def cml(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, rank=
 
     RQ = model.get_RQ()
     Y = model.get_Y().T
+    tf.reset_default_graph()
 
     return RQ, Y, None
