@@ -4,6 +4,9 @@ from tqdm import tqdm
 from utils.progress import WorkSplitter, inhour
 from scipy.sparse import vstack, hstack, lil_matrix
 from scipy.stats import rankdata
+import pyximport; pyximport.install()
+from utils.cython.negative_sampler import get_negative_samples
+
 
 # Under construction...
 
@@ -142,19 +145,7 @@ class NormalizedCollaborativeMetricLearning(object):
                 num_item,
                 size=(batch_size, n_negative))
 
-            for user_positive, negatives, i in zip(ui_pairs,
-                                                   negative_samples,
-                                                   range(len(negative_samples))):
-                user = user_positive[0]
-                for j, neg in enumerate(negatives):
-                    while neg in user_to_positive_set[user]:
-                        negative_samples[i, j] = neg = np.random.randint(0, num_item)
-            # current_user = -1
-            # neg_pool = None
-            # for j, (user, _) in enumerate(ui_pairs):
-            #     if user != current_user:
-            #         neg_pool = np.array(list(set(range(num_item)) - user_to_positive_set[user]), dtype=np.int32)
-            #     negative_samples[j] = neg_pool[np.random.randint(len(neg_pool), size=n_negative)]
+            negative_samples = get_negative_samples(user_to_positive_set, ui_pairs[:, 0], num_item, negative_samples)
 
             batches.append([ui_pairs[:, 0], ui_pairs[:, 1], negative_samples, ui_order])
 
