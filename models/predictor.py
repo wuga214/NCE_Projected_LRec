@@ -57,7 +57,7 @@ def sub_routine(vector_u, matrix_V, vector_train, bias, measure, topK=500, gpu=F
     return vector_predict[:topK]
 
 
-def predict_batch(matrix_U, matrix_V, topK, matrix_Train, batch_size=50, bias=None, measure="Cosine", gpu=False):
+def predict_batch(matrix_U, matrix_V, topK, matrix_Train, batch_size=100, bias=None, measure="Cosine", gpu=False):
     if gpu:
         import cupy as cp
         matrix_U = cp.array(matrix_U)

@@ -13,7 +13,7 @@ class CollaborativeMetricLearning(object):
                  num_users,
                  num_items,
                  embed_dim,
-                 batch_size=100,
+                 batch_size=1000,
                  margin=1.0,
                  clip_norm=1.0,
                  cov_loss_weight=0.01,
@@ -96,11 +96,10 @@ class CollaborativeMetricLearning(object):
         summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)
 
         # Training
-        pbar = tqdm(range(epoch))
-        for i in pbar:
+        for i in range(epoch):
             batches = self.get_batches(user_item_pairs, user_to_positive_set,
                                        user_item_matrix.shape[1], self.batch_size, 10)
-            for step in range(len(batches)):
+            for step in tqdm(range(len(batches))):
                 feed_dict = {self.user_idx: batches[step][0],
                              self.pos_sample_idx: batches[step][1],
                              self.neg_sample_idx: batches[step][2]
@@ -115,7 +114,7 @@ class CollaborativeMetricLearning(object):
         index_shuf = range(len(user_item_pairs))
         np.random.shuffle(index_shuf)
         user_item_pairs = user_item_pairs[index_shuf]
-        for i in range(int(len(user_item_pairs) / batch_size)):
+        for i in tqdm(range(int(len(user_item_pairs) / batch_size))):
 
             ui_pairs = user_item_pairs[i * batch_size: (i + 1) * batch_size, :]
 

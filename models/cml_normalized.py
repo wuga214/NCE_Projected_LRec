@@ -13,7 +13,7 @@ class NormalizedCollaborativeMetricLearning(object):
                  num_users,
                  num_items,
                  embed_dim,
-                 batch_size=100,
+                 batch_size=1000,
                  margin=1.0,
                  clip_norm=1.0,
                  cov_loss_weight=0.01,
@@ -79,7 +79,7 @@ class NormalizedCollaborativeMetricLearning(object):
             hinge_loss = tf.maximum(pos_distances - shortest_neg_distances + self.margin, 0, name="pair_loss")
             impostors = (tf.expand_dims(pos_distances, -1) - neg_distances + self.margin) > 0
             rank = tf.reduce_mean(tf.cast(impostors, dtype=tf.float32), 1, name="rank_weight") * self.num_items
-            metric_loss = hinge_loss * self.orders# * tf.log(rank + 1) * popularity_weights
+            metric_loss = hinge_loss * self.orders# * tf.log(rank + 1) # * popularity_weights
 
         self.loss = metric_loss + cov_loss
 
@@ -107,13 +107,12 @@ class NormalizedCollaborativeMetricLearning(object):
         summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)
 
         # Training
-        pbar = tqdm(range(epoch))
-        for i in pbar:
+        for i in range(epoch):
 
             batches = self.get_batches(user_item_pairs, user_to_positive_set, orders,
                                        user_item_matrix.shape[1], self.batch_size, 10)
 
-            for step in range(len(batches)):
+            for step in tqdm(range(len(batches))):
                 feed_dict = {self.user_idx: batches[step][0],
                              self.pos_sample_idx: batches[step][1],
                              self.neg_sample_idx: batches[step][2],
@@ -131,7 +130,7 @@ class NormalizedCollaborativeMetricLearning(object):
         np.random.shuffle(index_shuf)
         user_item_pairs = user_item_pairs[index_shuf]
         orders = orders[index_shuf]
-        for i in range(int(len(user_item_pairs) / batch_size)):
+        for i in tqdm(range(int(len(user_item_pairs) / batch_size))):
 
             ui_pairs = user_item_pairs[i * batch_size: (i + 1) * batch_size, :]
             ui_order = orders[i * batch_size: (i + 1) * batch_size]
@@ -148,6 +147,13 @@ class NormalizedCollaborativeMetricLearning(object):
                 for j, neg in enumerate(negatives):
                     while neg in user_to_positive_set[user]:
                         negative_samples[i, j] = neg = np.random.randint(0, num_item)
+            # current_user = -1
+            # neg_pool = None
+            # for j, (user, _) in enumerate(ui_pairs):
+            #     if user != current_user:
+            #         neg_pool = np.array(list(set(range(num_item)) - user_to_positive_set[user]), dtype=np.int32)
+            #     negative_samples[j] = neg_pool[np.random.randint(len(neg_pool), size=n_negative)]
+
             batches.append([ui_pairs[:, 0], ui_pairs[:, 1], negative_samples, ui_order])
 
         return batches
