@@ -96,7 +96,7 @@ class NormalizedCollaborativeMetricLearning(object):
 
     def train_model(self, rating_matrix, orders, epoch=100):
 
-        n_negative = 500
+        n_negative = 10
 
         item_popularity = np.array(np.sum(rating_matrix, axis=0)).flatten()
 
@@ -108,18 +108,16 @@ class NormalizedCollaborativeMetricLearning(object):
 
         summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)
 
-        batches = self.get_batches(user_item_pairs, user_to_positive_set, orders,
-                                   user_item_matrix.shape[1], self.batch_size, n_negative)
-
         # Training
         for i in range(epoch):
 
-            neg_indecs = np.random.choice(n_negative, size=10)
+            batches = self.get_batches(user_item_pairs, user_to_positive_set, orders,
+                                       user_item_matrix.shape[1], self.batch_size, n_negative)
 
             for step in tqdm(range(len(batches))):
                 feed_dict = {self.user_idx: batches[step][0],
                              self.pos_sample_idx: batches[step][1],
-                             self.neg_sample_idx: batches[step][2][:, neg_indecs],
+                             self.neg_sample_idx: batches[step][2],
                              self.orders: batches[step][3],
                              self.idf: idf
                              }
@@ -172,14 +170,6 @@ class NormalizedCollaborativeMetricLearning(object):
 
 def get_orders(time_stamp_matrix, threshold=10):
     orders = []
-    # max_length = 0
-    # for row in tqdm(time_stamp_matrix):
-    #     if row.nnz > max_length:
-    #         max_length = row.nnz
-    #
-    # for row in tqdm(time_stamp_matrix):
-    #     offset = max_length - row.nnz
-    #     orders.append(np.log(offset + rankdata(row.data)+1))
 
     for row in tqdm(time_stamp_matrix):
         if row.nnz < threshold:
