@@ -13,7 +13,7 @@ class NormalizedCollaborativeMetricLearning(object):
                  num_users,
                  num_items,
                  embed_dim,
-                 batch_size=1000,
+                 batch_size=10000,
                  margin=1.0,
                  clip_norm=1.0,
                  cov_loss_weight=0.01,
@@ -96,6 +96,8 @@ class NormalizedCollaborativeMetricLearning(object):
 
     def train_model(self, rating_matrix, orders, epoch=100):
 
+        n_negative = 500
+
         item_popularity = np.array(np.sum(rating_matrix, axis=0)).flatten()
 
         idf = np.log(item_popularity+1.0)
@@ -106,16 +108,18 @@ class NormalizedCollaborativeMetricLearning(object):
 
         summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)
 
+        batches = self.get_batches(user_item_pairs, user_to_positive_set, orders,
+                                   user_item_matrix.shape[1], self.batch_size, n_negative)
+
         # Training
         for i in range(epoch):
 
-            batches = self.get_batches(user_item_pairs, user_to_positive_set, orders,
-                                       user_item_matrix.shape[1], self.batch_size, 10)
+            neg_indecs = np.random.choice(n_negative, size=10)
 
             for step in tqdm(range(len(batches))):
                 feed_dict = {self.user_idx: batches[step][0],
                              self.pos_sample_idx: batches[step][1],
-                             self.neg_sample_idx: batches[step][2],
+                             self.neg_sample_idx: batches[step][2][:, neg_indecs],
                              self.orders: batches[step][3],
                              self.idf: idf
                              }
@@ -192,7 +196,7 @@ def cml_normalized(matrix_train, time_stamp_matrix=None, embeded_matrix=np.empty
     matrix_input = matrix_train
 
     from utils.io import load_numpy
-    time_stamp_matrix = load_numpy(path='data/amazon/', name='Rtime.npz')
+    time_stamp_matrix = load_numpy(path='data/netflix/', name='Rtime.npz')
     orders = get_orders(time_stamp_matrix.multiply(matrix_train))
 
     if embeded_matrix.shape[0] > 0:
