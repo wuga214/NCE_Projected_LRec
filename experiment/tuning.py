@@ -7,7 +7,7 @@ import inspect
 from models.predictor import predict
 
 
-def hyper_parameter_tuning(train, validation, params, gpu_on=True):
+def hyper_parameter_tuning(train, validation, params, measure='Cosine', gpu_on=True):
     progress = WorkSplitter()
     df = pd.DataFrame(columns=['model', 'rank', 'alpha', 'root', 'topK'])
 
@@ -38,7 +38,7 @@ def hyper_parameter_tuning(train, validation, params, gpu_on=True):
                                                             embeded_matrix=np.empty((0)),
                                                             iteration=params['iter'],
                                                             rank=rank,
-                                                            lam=0.01,
+                                                            lam=params['lam'],
                                                             root=root,
                                                             alpha=alpha,
                                                             gpu_on=True)
@@ -46,7 +46,7 @@ def hyper_parameter_tuning(train, validation, params, gpu_on=True):
 
                     progress.subsection("Prediction")
 
-                    prediction = predict(matrix_U=RQ, matrix_V=Y,
+                    prediction = predict(matrix_U=RQ, matrix_V=Y, measure=measure,
                                          topK=params['topK'][-1], matrix_Train=train, gpu=gpu_on)
 
                     progress.subsection("Evaluation")

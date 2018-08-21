@@ -88,6 +88,9 @@ def main(args):
     #            name='V_{0}_{1}_{2}'.format(args.rank, args.lamb, args.model))
     # print "Elapsed: {0}".format(inhour(time.time() - start_time))
 
+    np.save('latent/U_{0}_{1}'.format(args.model, args.rank), RQ)
+    np.save('latent/V_{0}_{1}'.format(args.model, args.rank), Y)
+
     progress.section("Predict")
     prediction = predict(matrix_U=RQ,
                                matrix_V=Y,

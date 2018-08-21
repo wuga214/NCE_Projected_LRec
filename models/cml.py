@@ -3,6 +3,8 @@ import numpy as np
 from tqdm import tqdm
 from utils.progress import WorkSplitter, inhour
 from scipy.sparse import vstack, hstack, lil_matrix
+import pyximport; pyximport.install()
+from utils.cython.negative_sampler import get_negative_samples
 
 
 # Under construction...
@@ -13,7 +15,7 @@ class CollaborativeMetricLearning(object):
                  num_users,
                  num_items,
                  embed_dim,
-                 batch_size=1000,
+                 batch_size=10000,
                  margin=1.0,
                  clip_norm=1.0,
                  cov_loss_weight=0.01,
@@ -123,13 +125,14 @@ class CollaborativeMetricLearning(object):
                 num_item,
                 size=(batch_size, n_negative))
 
-            for user_positive, negatives, i in zip(ui_pairs,
-                                                   negative_samples,
-                                                   range(len(negative_samples))):
-                user = user_positive[0]
-                for j, neg in enumerate(negatives):
-                    while neg in user_to_positive_set[user]:
-                        negative_samples[i, j] = neg = np.random.randint(0, num_item)
+            # for user_positive, negatives, i in zip(ui_pairs,
+            #                                        negative_samples,
+            #                                        range(len(negative_samples))):
+            #     user = user_positive[0]
+            #     for j, neg in enumerate(negatives):
+            #         while neg in user_to_positive_set[user]:
+            #             negative_samples[i, j] = neg = np.random.randint(0, num_item)
+            negative_samples = get_negative_samples(user_to_positive_set, ui_pairs[:, 0], num_item, negative_samples)
             batches.append([ui_pairs[:, 0], ui_pairs[:, 1], negative_samples])
 
         return batches

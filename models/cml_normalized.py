@@ -109,7 +109,7 @@ class NormalizedCollaborativeMetricLearning(object):
         user_item_pairs = np.asarray(user_item_matrix.nonzero()).T
         user_to_positive_set = {u: set(row) for u, row in enumerate(user_item_matrix.rows)}
 
-        summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)
+        summary_writer = tf.summary.FileWriter('ncml', graph=self.sess.graph)
 
         # Training
         for i in range(epoch):
@@ -146,7 +146,6 @@ class NormalizedCollaborativeMetricLearning(object):
                 size=(batch_size, n_negative))
 
             negative_samples = get_negative_samples(user_to_positive_set, ui_pairs[:, 0], num_item, negative_samples)
-
             batches.append([ui_pairs[:, 0], ui_pairs[:, 1], negative_samples, ui_order])
 
         return batches
@@ -177,7 +176,7 @@ def cml_normalized(matrix_train, time_stamp_matrix=None, embeded_matrix=np.empty
     matrix_input = matrix_train
 
     from utils.io import load_numpy
-    time_stamp_matrix = load_numpy(path='data/netflix/', name='Rtime.npz')
+    time_stamp_matrix = load_numpy(path='data/', name='Rtime.npz')
     orders = get_orders(time_stamp_matrix.multiply(matrix_train))
 
     if embeded_matrix.shape[0] > 0:
