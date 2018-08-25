@@ -99,7 +99,6 @@ def main(args):
                                matrix_Train=R_train,
                                measure=args.sim_measure,
                                gpu=True)
-
     if args.validation:
         progress.section("Create Metrics")
         start_time = time.time()

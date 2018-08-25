@@ -73,7 +73,7 @@ def weighted_lrec_items(matrix_train,
         # Exact
         matrix_B = cp.array(RQ)
         matrix_BT = matrix_B.T
-        matrix_A = matrix_BT.dot(matrix_B) + cp.array((lam * sparse.identity(rank)).toarray())
+        matrix_A = matrix_BT.dot(matrix_B) + cp.array((lam * sparse.identity(rank, dtype=np.float32)).toarray())
 
         # Approx
         # matrix_A = cp.array(sparse.diags(sigma * sigma + lam).todense())
@@ -88,7 +88,7 @@ def weighted_lrec_items(matrix_train,
         # For loop
         m, n = matrix_train.shape
         Y = []
-        alpha = cp.array(alpha)
+        alpha = cp.array(alpha, dtype=cp.float32)
         for i in tqdm(xrange(n)):
             vector_r = matrix_train[:, i]
             vector_y = per_item_gpu(vector_r, matrix_A, matrix_B, matrix_BT, alpha)
@@ -104,7 +104,7 @@ def weighted_lrec_items(matrix_train,
         # Exact
         matrix_B = RQ
         matrix_BT = RQ.T
-        matrix_A = matrix_BT.dot(matrix_B) + (lam * sparse.identity(rank)).toarray()
+        matrix_A = matrix_BT.dot(matrix_B) + (lam * sparse.identity(rank, dtype=np.float32)).toarray()
 
         # Approx
         # matrix_B = P * sigma

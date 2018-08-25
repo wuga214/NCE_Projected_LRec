@@ -39,7 +39,7 @@ def solve(R, X, H, lam, rank, alpha, gpu):
         import cupy as cp
         H = cp.array(H)
         HT = H.T
-        matrix_A = HT.dot(H) + cp.array((lam * sparse.identity(rank)).toarray())
+        matrix_A = HT.dot(H) + cp.array((lam * sparse.identity(rank, dtype=np.float32)).toarray())
 
         for i in tqdm(xrange(R.shape[1])):
             vector_r = R[:, i]
@@ -51,7 +51,7 @@ def solve(R, X, H, lam, rank, alpha, gpu):
 
     else:
         HT = H.T
-        matrix_A = HT.dot(H) + (lam * sparse.identity(rank)).toarray()
+        matrix_A = HT.dot(H) + (lam * sparse.identity(rank, dtype=np.float32)).toarray()
 
         for i in tqdm(xrange(R.shape[1])):
             vector_r = R[:, i]
@@ -107,8 +107,8 @@ def als(matrix_train,
     m, n =matrix_train.shape
 
     np.random.seed(1)
-    U = np.random.normal(0, 0.01, size=(m, rank))
-    V = np.random.normal(0, 0.01, size=(n, rank))
+    U = np.random.normal(0, 0.01, size=(m, rank)).astype(np.float32)
+    V = np.random.normal(0, 0.01, size=(n, rank)).astype(np.float32)
 
     cold_rows, cold_cols = get_cold(matrix_train)
     U[cold_rows] = 0

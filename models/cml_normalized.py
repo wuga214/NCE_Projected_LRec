@@ -176,7 +176,7 @@ def cml_normalized(matrix_train, time_stamp_matrix=None, embeded_matrix=np.empty
     matrix_input = matrix_train
 
     from utils.io import load_numpy
-    time_stamp_matrix = load_numpy(path='data/', name='Rtime.npz')
+    time_stamp_matrix = load_numpy(path='datax/', name='Rtime.npz')
     orders = get_orders(time_stamp_matrix.multiply(matrix_train))
 
     if embeded_matrix.shape[0] > 0:

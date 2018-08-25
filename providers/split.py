@@ -57,11 +57,11 @@ def split_seed_randomly(rating_matrix, ratio=[0.5, 0.2, 0.3], implicit=True, rem
     rtest = np.array(rtest)
 
     rtrain = sparse.csr_matrix((np.hstack(rtrain[:, 0]), (np.hstack(rtrain[:, 1]), np.hstack(rtrain[:, 2]))),
-                               shape=rating_matrix.shape)
+                               shape=rating_matrix.shape, dtype=np.float32)
     rvalid = sparse.csr_matrix((np.hstack(rvalid[:, 0]), (np.hstack(rvalid[:, 1]), np.hstack(rvalid[:, 2]))),
-                               shape=rating_matrix.shape)
+                               shape=rating_matrix.shape, dtype=np.float32)
     rtest = sparse.csr_matrix((np.hstack(rtest[:, 0]), (np.hstack(rtest[:, 1]), np.hstack(rtest[:, 2]))),
-                              shape=rating_matrix.shape)
+                              shape=rating_matrix.shape, dtype=np.float32)
 
     return rtrain, rvalid, rtest, nonzero_index
 
@@ -121,11 +121,11 @@ def time_ordered_split(rating_matrix, timestamp_matrix, ratio=[0.5, 0.2, 0.3], i
     rtest = np.array(rtest)
 
     rtrain = sparse.csr_matrix((np.hstack(rtrain[:, 0]), (np.hstack(rtrain[:, 1]), np.hstack(rtrain[:, 2]))),
-                               shape=rating_matrix.shape)
+                               shape=rating_matrix.shape, dtype=np.float32)
     rvalid = sparse.csr_matrix((np.hstack(rvalid[:, 0]), (np.hstack(rvalid[:, 1]), np.hstack(rvalid[:, 2]))),
-                               shape=rating_matrix.shape)
+                               shape=rating_matrix.shape, dtype=np.float32)
     rtest = sparse.csr_matrix((np.hstack(rtest[:, 0]), (np.hstack(rtest[:, 1]), np.hstack(rtest[:, 2]))),
-                              shape=rating_matrix.shape)
+                              shape=rating_matrix.shape, dtype=np.float32)
 
     return rtrain, rvalid, rtest, nonzero_index, timestamp_matrix
 

@@ -8,7 +8,7 @@ import time
 
 
 def pure_svd(matrix_train, embeded_matrix=np.empty((0)),
-             iteration=4, rank=200, fb=True, seed=1, **unused):
+             iteration=4, rank=200, fb=False, seed=1, **unused):
     """
     PureSVD algorithm
 

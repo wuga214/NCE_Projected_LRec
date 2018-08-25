@@ -37,7 +37,7 @@ def embedded_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4,
 
     progress.subsection("Closed-Form Linear Optimization")
     start_time = time.time()
-    pre_inv = RQ.T.dot(RQ) + lam * sparse.identity(rank)
+    pre_inv = RQ.T.dot(RQ) + lam * sparse.identity(rank, dtype=np.float32)
     inverse = inv(pre_inv)
     Y = inverse.dot(RQ.T).dot(matrix_input)
     print("Elapsed: {0}".format(inhour(time.time() - start_time)))

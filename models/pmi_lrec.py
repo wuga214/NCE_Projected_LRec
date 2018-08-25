@@ -20,7 +20,7 @@ def get_pmi_matrix(matrix, root):
             # import ipdb; ipdb.set_trace()
             # values = np.asarray(user_rated[i].dot(item_rated)[:, col_index]).flatten()
             values = np.asarray(item_rated[:, col_index]).flatten()
-            values = np.maximum(np.log(rows/np.power(values, root))-np.log(1), 0)
+            values = np.maximum(np.log(rows/np.power(values, root)), 0)
             pmi_matrix.append(sparse.coo_matrix((values, (row_index, col_index)), shape=(1, cols)))
         else:
             pmi_matrix.append(sparse.coo_matrix((1, cols)))
@@ -28,7 +28,7 @@ def get_pmi_matrix(matrix, root):
     return sparse.vstack(pmi_matrix)
 
 
-def get_pmi_matrix_gpu(matrix):
+def get_pmi_matrix_gpu(matrix, root):
     import cupy as cp
     rows, cols = matrix.shape
     item_rated = cp.array(matrix.sum(axis=0))
@@ -37,7 +37,7 @@ def get_pmi_matrix_gpu(matrix):
         row_index, col_index = matrix[i].nonzero()
         if len(row_index) > 0:
             values = cp.asarray(item_rated[:, col_index]).flatten()
-            values = cp.maximum(cp.log(rows/values)-cp.log(1), 0)
+            values = cp.maximum(cp.log(rows/cp.power(values, root)), 0)
             pmi_matrix.append(sparse.coo_matrix((cp.asnumpy(values), (row_index, col_index)), shape=(1, cols)))
         else:
             pmi_matrix.append(sparse.coo_matrix((1, cols)))
@@ -59,7 +59,7 @@ def pmi_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=
         matrix_input = vstack((matrix_input, embeded_matrix.T))
 
     progress.subsection("Create PMI matrix")
-    pmi_matrix = get_pmi_matrix(matrix_input, root)
+    pmi_matrix = get_pmi_matrix_gpu(matrix_input, root)
 
     progress.subsection("Randomized SVD")
     start_time = time.time()
@@ -77,7 +77,7 @@ def pmi_lrec_items(matrix_train, embeded_matrix=np.empty((0)), iteration=4, lam=
 
     progress.subsection("Closed-Form Linear Optimization")
     start_time = time.time()
-    pre_inv = RQ.T.dot(RQ) + lam * sparse.identity(rank)
+    pre_inv = RQ.T.dot(RQ) + lam * sparse.identity(rank, dtype=np.float32)
     inverse = inv(pre_inv)
     Y = inverse.dot(RQ.T).dot(matrix_input)
     print("Elapsed: {0}".format(inhour(time.time() - start_time)))
