@@ -90,6 +90,8 @@ def main(args):
 
     np.save('latent/U_{0}_{1}'.format(args.model, args.rank), RQ)
     np.save('latent/V_{0}_{1}'.format(args.model, args.rank), Y)
+    if Bias:
+        np.save('latent/B_{0}_{1}'.format(args.model, args.rank), Y)
 
     progress.section("Predict")
     prediction = predict(matrix_U=RQ,
