@@ -14,14 +14,14 @@ from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 import plotly.graph_objs as go
 
 params = {
-    'models': {"PLR": embedded_lrec_items,
-               "PMI-PLR": pmi_lrec_items,
-               "ALS": als
+    'models': {#"PLR": embedded_lrec_items,
+               "PmiPLRec": pmi_lrec_items,
+               #"ALS": als
                },
     'alphas': 1,
-    'rank': 2,
-    'lambda': 1,
-    'topK': 10,
+    'rank': 50,
+    'lambda': 100,
+    'topK': 50,
     'iter': 7,
     'metric': ['R-Precision', 'NDCG'],
 }
@@ -33,10 +33,11 @@ def latent_analysis(matrix):
     # Item-Item or User-User
     for model_name in params['models'].keys():
         RQ, Yt, _ = params['models'][model_name](matrix, embeded_matrix=np.empty((0)),
+                                                 root=2,
                                                  iteration=params['iter'], rank=params['rank'],
                                                  lam=params['lambda'], alpha=params['alphas'], seed=1)
 
-        scatter_plot(Yt.T, item_popularity, model_name, save=True)
+        scatter_plot(100*Yt.T[:,:2], item_popularity, model_name, save=True)
 
 
 

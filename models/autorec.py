@@ -28,7 +28,7 @@ class AutoRec(object):
                                          name="Weights")
             encode_bias = tf.Variable(tf.constant(0., shape=[self.embed_dim]), name="Bias")
 
-            self.encoded = tf.nn.sigmoid(tf.matmul(self.inputs, encode_weights) + encode_bias)
+            self.encoded = tf.nn.relu(tf.matmul(self.inputs, encode_weights) + encode_bias)
 
         with tf.variable_scope('decode'):
             self.decode_weights = tf.Variable(tf.truncated_normal([self.embed_dim, self.output_dim], stddev=1 / 500.0),
@@ -39,7 +39,7 @@ class AutoRec(object):
         with tf.variable_scope('loss'):
             l2_loss = tf.nn.l2_loss(encode_weights) + tf.nn.l2_loss(self.decode_weights)
             sigmoid_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=self.inputs, logits=prediction)
-            self.loss = sigmoid_loss + self.lamb*l2_loss
+            self.loss = tf.reduce_sum(sigmoid_loss) + tf.reduce_sum(self.lamb*l2_loss)
 
         with tf.variable_scope('optimizer'):
             self.optimizer = tf.train.AdamOptimizer().minimize(self.loss)

@@ -13,9 +13,9 @@ from plot.plot import pandas_scatter_plot
 import itertools
 
 models = [
-    "PmiPLRec",
-    "PLRec",
-    "ALS",
+    "PMI-PLRec",
+    "LinearFlow",
+    "WRMF",
     "CML",
     "AutoRec"
 ]
@@ -60,16 +60,16 @@ def main(args):
         progress.section("Create Metrics")
         start_time = time.time()
 
-        metric_names = ['R-Precision', 'NDCG', 'Clicks', 'Recall', 'Precision']
+        metric_names = ['R-Precision', 'NDCG', 'Recall', 'Precision']
         R_valid = load_numpy(path=args.path, name=args.valid)
         result = evaluate_analysis(prediction, R_valid, metric_names, [args.topk])
         results[model] = result
 
     pairs = list(itertools.combinations(models, 2))
 
-    evaluated_metrics = results['PmiPLRec'].keys()
+    evaluated_metrics = results['PMI-PLRec'].keys()
 
-    for pair in pairs[:4]:
+    for pair in pairs[:5]:
         candid1 = results[pair[0]]
         candid2 = results[pair[1]]
 
