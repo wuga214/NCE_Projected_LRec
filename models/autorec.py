@@ -50,7 +50,7 @@ class AutoRec(object):
         batches = []
         while(remaining_size>0):
             if remaining_size<batch_size:
-                batches.append(rating_matrix[batch_index*batch_size:-1])
+                batches.append(rating_matrix[batch_index*batch_size:])
             else:
                 batches.append(rating_matrix[batch_index*batch_size:(batch_index+1)*batch_size])
             batch_index += 1
@@ -59,7 +59,6 @@ class AutoRec(object):
 
     def train_model(self, rating_matrix, epoch=100):
         batches = self.get_batches(rating_matrix, self.batch_size)
-
         summary_writer = tf.summary.FileWriter('auto_rec', graph=self.sess.graph)
 
         # Training

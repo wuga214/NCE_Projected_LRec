@@ -73,7 +73,7 @@ def main(args):
                              measure="Cosine",
                              gpu=True)
 
-        results =  []
+        results = []
         for i in range(args.sample_size):
             query = [Item_names[n] for n in new_users[i].nonzero()[1]]
             answer = [Item_names[int(n)] for n in prediction[i]]

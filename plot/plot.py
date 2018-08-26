@@ -53,3 +53,35 @@ def scatter_plot(data, weight, name, folder='figures/latent', save=False):
     if save:
         plt.savefig("{0}/latent_{1}.pdf".format(folder, name), format="pdf")
     plt.show()
+
+
+def pandas_scatter_plot(df, model1, model2, metric, pos_percentage, neg_percentage, max,
+                        folder='figures/pairwise', save=True):
+    fig, ax = plt.subplots(figsize=(4, 4))
+    sns.scatterplot(ax=ax, x="x", y="y", hue="Diverge", size="Diverge", data=df)
+    ax.plot([0, max+0.01], [0, max+0.01], ls="--")
+    ax.set_xlim([0, max+0.01])
+    ax.set_ylim([0, max+0.01])
+    plt.legend(loc='upper right')
+    plt.xlabel('{0} (Counts:{1})'.format(model1, pos_percentage))
+    plt.ylabel('{0} (Counts:{1})'.format(model2, neg_percentage))
+    plt.tight_layout()
+    if save:
+        plt.savefig("{0}/{1}_{2}_{3}_scatter.pdf".format(folder, model1, model2, metric), format="pdf")
+    else:
+        plt.show()
+    plt.close()
+
+    fig, ax = plt.subplots(figsize=(3, 3))
+    ax.hist(df['diff'].values, bins=21, log=True, align='mid')
+    plt.axvline(x=[0.0], color='red', ls='--')
+    ax.set_xlim([-max - 0.01, max + 0.01])
+    plt.xlabel('{0}        {1}'.format(model2, model1))
+    plt.tight_layout()
+    if save:
+        plt.savefig("{0}/{1}_{2}_{3}_hist.pdf".format(folder, model1, model2, metric), format="pdf")
+    else:
+        plt.show()
+    plt.close()
+
+
