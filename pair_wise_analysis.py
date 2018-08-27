@@ -8,7 +8,7 @@ from models.predictor import predict,predict_batch
 from evaluation.metrics import evaluate_analysis
 import os.path
 import pandas as pd
-from plot.plot import pandas_scatter_plot
+from plot.plot import pandas_scatter_plot, pandas_bar_plot
 
 import itertools
 
@@ -29,6 +29,7 @@ def main(args):
     print("Data Path: {0}".format(args.path))
     print("Train File Name: {0}".format(args.train))
     R_train = load_numpy(path=args.path, name=args.train)
+    R_valid = load_numpy(path=args.path, name=args.valid)
     if args.validation:
         print("Valid File Name: {0}".format(args.valid))
 
@@ -61,13 +62,40 @@ def main(args):
         start_time = time.time()
 
         metric_names = ['R-Precision', 'NDCG', 'Recall', 'Precision']
-        R_valid = load_numpy(path=args.path, name=args.valid)
         result = evaluate_analysis(prediction, R_valid, metric_names, [args.topk])
         results[model] = result
 
-    pairs = list(itertools.combinations(models, 2))
-
     evaluated_metrics = results['PMI-PLRec'].keys()
+
+    user_observation_counts = np.array(np.sum(R_train, axis=1)).flatten()
+    user_observation_counts = user_observation_counts[np.array(np.sum(R_valid, axis=1)).flatten() != 0]
+
+    giant_dataframes = []
+    for model in models:
+        df = pd.DataFrame(results[model])
+        df['model'] = model
+        df['user_count'] = user_observation_counts
+        giant_dataframes.append(df)
+
+    df = pd.concat(giant_dataframes)
+    df = df.groupby(['model', 'user_count']).mean().reset_index()
+
+    def getGroup(user_counts):
+        patents = [[1, 6], [7, 21], [22, 46], [47, 98], [99, 400], [401, 2000]]
+        group = []
+        for user_count in user_counts:
+            for patent in patents:
+                if user_count >= patent[0] and user_count <= patent[1]:
+                    group.append(str(patent))
+
+        return group
+
+    df['group'] = getGroup(df['user_count'].values)
+
+    for metric in evaluated_metrics:
+        pandas_bar_plot(x='group', y=metric, hue='model', x_name='# of user ratings', y_name=metric, df=df)
+
+    pairs = list(itertools.combinations(models, 2))
 
     for pair in pairs[:5]:
         candid1 = results[pair[0]]

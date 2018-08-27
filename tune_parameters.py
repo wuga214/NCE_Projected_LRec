@@ -8,6 +8,7 @@ from models.pmi_lrec import pmi_lrec_items
 from models.weighted_pmi_lrec import weighted_pmi_lrec_items
 from models.cml import cml
 from models.cml_normalized import cml_normalized
+from models.autorec import autorec
 from experiment.tuning import hyper_parameter_tuning
 from utils.io import load_numpy, save_dataframe_latex, save_dataframe_csv
 
@@ -15,19 +16,20 @@ from utils.io import load_numpy, save_dataframe_latex, save_dataframe_csv
 # Set Measure!
 #######################
 
-# models = {
-#     "PLRec": embedded_lrec_items,
-#     "WPLRec": weighted_lrec_items,
-#     "PureSVD": pure_svd,
-#     "PmiPLRec": pmi_lrec_items,
-#     "PmiWPLRec": weighted_pmi_lrec_items,
-#     "ALS": als,
-# }
-
 models = {
-    "CML": cml,
-    "NCML": cml_normalized,
+    # "PLRec": embedded_lrec_items,
+    # "WPLRec": weighted_lrec_items,
+    # "PureSVD": pure_svd,
+    # "PmiPLRec": pmi_lrec_items,
+    # "PmiWPLRec": weighted_pmi_lrec_items,
+    # "ALS": als,
+    "AutoRec": autorec
 }
+
+# models = {
+#     "CML": cml,
+#     "NCML": cml_normalized,
+# }
 
 
 def main(args):
@@ -37,8 +39,8 @@ def main(args):
         'rank': [100],
         'root': [0.8, 0.9, 1.0, 1.1, 1.2],
         'topK': [5, 10, 15, 20, 50],
-        'iter': 20,
-        'lam': 0.01,
+        'iter': 200,
+        'lam': 10,
         'metric': ['R-Precision', 'NDCG', 'Precision', 'Recall'],
     }
 

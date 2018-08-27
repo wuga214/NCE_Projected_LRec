@@ -11,6 +11,7 @@ from models.predictor import predict
 
 def main(args):
     R_train = load_numpy(path=args.path, name=args.train)
+    import ipdb;ipdb.set_trace()
     latent_analysis(R_train)
 
 

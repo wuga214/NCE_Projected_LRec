@@ -85,3 +85,20 @@ def pandas_scatter_plot(df, model1, model2, metric, pos_percentage, neg_percenta
     plt.close()
 
 
+def pandas_bar_plot(df, x, y, hue, x_name, y_name, folder='figures/user_rating', save=True):
+    fig, ax = plt.subplots(figsize=(4, 3))
+    sns.barplot(ax=ax, x=x, y=y, hue=hue, data=df, errwidth=1)
+    plt.xlabel(x_name)
+    plt.ylabel(y_name)
+    plt.xticks(rotation=15)
+    if y != 'Recall@50':
+        ax.legend_.remove()
+    plt.tight_layout()
+    if save:
+        plt.savefig("{0}/{1}_bar.png".format(folder, y_name), format="png")
+    else:
+        plt.show()
+    plt.close()
+
+
+

@@ -34,7 +34,7 @@ def hyper_parameter_tuning(train, validation, params, measure='Cosine', gpu_on=T
                                                                                              rank,
                                                                                              root,
                                                                                              alpha))
-                    RQ, Yt, _ = params['models'][algorithm](train,
+                    RQ, Yt, Bias = params['models'][algorithm](train,
                                                             embeded_matrix=np.empty((0)),
                                                             iteration=params['iter'],
                                                             rank=rank,
@@ -46,7 +46,7 @@ def hyper_parameter_tuning(train, validation, params, measure='Cosine', gpu_on=T
 
                     progress.subsection("Prediction")
 
-                    prediction = predict(matrix_U=RQ, matrix_V=Y, measure=measure,
+                    prediction = predict(matrix_U=RQ, matrix_V=Y, measure=measure, bias=Bias,
                                          topK=params['topK'][-1], matrix_Train=train, gpu=gpu_on)
 
                     progress.subsection("Evaluation")
