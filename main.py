@@ -13,6 +13,8 @@ from models.weighted_pmi_lrec import weighted_pmi_lrec_items
 from models.chainitemitem import chain_item_item
 from models.autorec import autorec
 from models.cml import cml
+from models.pmi_svd import pmi_svd
+from models.pop import pop
 from models.cml_normalized import cml_normalized
 from models.predictor import predict,predict_batch
 from evaluation.metrics import evaluate
@@ -29,7 +31,9 @@ models = {
     "CII": chain_item_item,
     "AutoRec": autorec,
     "CML": cml,
-    "NCML": cml_normalized
+    "NCML": cml_normalized,
+    "NCE-SVD": pmi_svd,
+    "POP": pop
 }
 
 

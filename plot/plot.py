@@ -94,7 +94,7 @@ def pandas_scatter_plot(df, model1, model2, metric, pos_percentage, neg_percenta
 
 
 def pandas_bar_plot(df, x, y, hue, x_name, y_name, folder='figures/user_rating', save=True):
-    fig, ax = plt.subplots(figsize=(4, 3))
+    fig, ax = plt.subplots(figsize=(4, 4))
     sns.barplot(ax=ax, x=x, y=y, hue=hue, data=df, errwidth=1)
     plt.xlabel(x_name)
     plt.ylabel(y_name)
@@ -103,25 +103,38 @@ def pandas_bar_plot(df, x, y, hue, x_name, y_name, folder='figures/user_rating',
         ax.legend_.remove()
     plt.tight_layout()
     if save:
-        plt.savefig("{0}/{1}_bar.png".format(folder, y_name), format="png")
+        plt.savefig("{0}/{1}_bar.pdf".format(folder, y_name), format="pdf")
     else:
         plt.show()
     plt.close()
 
 
 def pandas_group_hist_plot(df, var, group, x_name, y_name, folder='figures', save=True):
-    plt.figure(figsize=(30, 10))
-    g = sns.FacetGrid(df, hue=group, size=3)
+    plt.figure(figsize=(8, 5))
+    g = sns.FacetGrid(df, hue=group, height=5, aspect=1)
     g.map(sns.distplot, var)
     g.add_legend()
     plt.xlabel(x_name)
     plt.ylabel(y_name)
     plt.tight_layout()
     if save:
-        plt.savefig("{0}/{1}_hist.png".format(folder, y_name), format="png")
+        plt.savefig("{0}/{1}_hist.pdf".format(folder, y_name), format="pdf")
     else:
         plt.show()
     plt.close()
 
+def pandas_group_distribution_plot(df, order_list, x, x_name, y_name, folder='figures/user_rating', save=True):
+    fig, ax = plt.subplots(figsize=(4, 4))
+
+    sns.countplot(ax=ax, x=x, data=df, order=[str(a) for a in order_list])
+    plt.xlabel(x_name)
+    plt.ylabel(y_name)
+    plt.xticks(rotation=15)
+    plt.tight_layout()
+    if save:
+        plt.savefig("{0}/{1}_bar.pdf".format(folder, y_name), format="pdf")
+    else:
+        plt.show()
+    plt.close()
 
 

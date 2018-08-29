@@ -8,17 +8,30 @@ from models.predictor import predict,predict_batch
 from evaluation.metrics import evaluate_analysis
 import os.path
 import pandas as pd
-from plot.plot import pandas_scatter_plot, pandas_bar_plot, pandas_group_hist_plot
+from plot.plot import pandas_scatter_plot, pandas_bar_plot, pandas_group_hist_plot, pandas_group_distribution_plot
 
 import itertools
 
 models = [
     "NCE-PLRec",
     "LinearFlow",
+    "NCE-SVD",
+    "POP",
     "WRMF",
     "CML",
     "AutoRec"
 ]
+
+
+def getGroup(user_counts):
+    patents = [[1, 6], [7, 21], [22, 46], [47, 98], [99, 400], [401, 2000]]
+    group = []
+    for user_count in user_counts:
+        for patent in patents:
+            if user_count >= patent[0] and user_count <= patent[1]:
+                group.append(str(patent))
+
+    return group
 
 
 def main(args):
@@ -30,6 +43,15 @@ def main(args):
     print("Train File Name: {0}".format(args.train))
     R_train = load_numpy(path=args.path, name=args.train)
     R_valid = load_numpy(path=args.path, name=args.valid)
+
+    user_observation_counts = np.array(np.sum(R_train, axis=1)).flatten()
+    user_observation_counts = user_observation_counts[np.array(np.sum(R_valid, axis=1)).flatten() != 0]
+
+    pandas_group_distribution_plot(pd.DataFrame({'c': user_observation_counts, 't': getGroup(user_observation_counts)}),
+                                   [[1, 6], [7, 21], [22, 46], [47, 98], [99, 400], [401, 2000]],
+                                   't',
+                                   '# of user ratings',
+                                   'Count')
 
     item_popularity = np.array(np.sum(R_train, axis=0)).flatten()
 
@@ -75,9 +97,6 @@ def main(args):
 
     evaluated_metrics = results['NCE-PLRec'].keys()
 
-    user_observation_counts = np.array(np.sum(R_train, axis=1)).flatten()
-    user_observation_counts = user_observation_counts[np.array(np.sum(R_valid, axis=1)).flatten() != 0]
-
     giant_dataframes = []
     for model in models:
         df = pd.DataFrame(results[model])
@@ -86,29 +105,19 @@ def main(args):
         giant_dataframes.append(df)
 
     df = pd.concat(giant_dataframes)
+
     df = df.groupby(['model', 'user_count']).mean().reset_index()
 
-    def getGroup(user_counts):
-        patents = [[1, 6], [7, 21], [22, 46], [47, 98], [99, 400], [401, 2000]]
-        group = []
-        for user_count in user_counts:
-            for patent in patents:
-                if user_count >= patent[0] and user_count <= patent[1]:
-                    group.append(str(patent))
-
-        return group
+    pandas_group_hist_plot(df, 'pop', 'model', 'Popularity of The First Recommended Item', 'Density')
 
     df['group'] = getGroup(df['user_count'].values)
 
     for metric in evaluated_metrics:
         pandas_bar_plot(x='group', y=metric, hue='model', x_name='# of user ratings', y_name=metric, df=df)
 
-    pandas_group_hist_plot(df, 'pop', 'model', 'Popularity of First Recommended Item', 'Count')
-    import ipdb;ipdb.set_trace()
-
     pairs = list(itertools.combinations(models, 2))
 
-    for pair in pairs[:5]:
+    for pair in pairs[:]:
         candid1 = results[pair[0]]
         candid2 = results[pair[1]]
 
