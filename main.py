@@ -19,13 +19,13 @@ from evaluation.metrics import evaluate
 
 
 models = {
-    "PLRec": embedded_lrec_items,
-    "WPLRec": weighted_lrec_items,
-    "PmiPLRec": pmi_lrec_items,
-    "PmiWPLRec": weighted_pmi_lrec_items,
+    "LinearFlow": embedded_lrec_items,
+    "LinearFlow-W": weighted_lrec_items,
+    "NCE-PLRec": pmi_lrec_items,
+    "NCE-PLRec-W": weighted_pmi_lrec_items,
     "PureSVD": pure_svd,
     "EBPureSVD": eigen_boosted_pure_svd,
-    "ALS": als,
+    "WRMF": als,
     "CII": chain_item_item,
     "AutoRec": autorec,
     "CML": cml,

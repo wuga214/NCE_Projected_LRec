@@ -8,12 +8,12 @@ from models.predictor import predict,predict_batch
 from evaluation.metrics import evaluate_analysis
 import os.path
 import pandas as pd
-from plot.plot import pandas_scatter_plot, pandas_bar_plot
+from plot.plot import pandas_scatter_plot, pandas_bar_plot, pandas_group_hist_plot
 
 import itertools
 
 models = [
-    "PMI-PLRec",
+    "NCE-PLRec",
     "LinearFlow",
     "WRMF",
     "CML",
@@ -30,6 +30,9 @@ def main(args):
     print("Train File Name: {0}".format(args.train))
     R_train = load_numpy(path=args.path, name=args.train)
     R_valid = load_numpy(path=args.path, name=args.valid)
+
+    item_popularity = np.array(np.sum(R_train, axis=0)).flatten()
+
     if args.validation:
         print("Valid File Name: {0}".format(args.valid))
 
@@ -63,9 +66,14 @@ def main(args):
 
         metric_names = ['R-Precision', 'NDCG', 'Recall', 'Precision']
         result = evaluate_analysis(prediction, R_valid, metric_names, [args.topk])
+        top_popularity = item_popularity[prediction[:, 0].astype(np.int32)]
+
+        result['pop'] = top_popularity[np.array(np.sum(R_valid, axis=1)).flatten() != 0]
+        #import ipdb;ipdb.set_trace()
+
         results[model] = result
 
-    evaluated_metrics = results['PMI-PLRec'].keys()
+    evaluated_metrics = results['NCE-PLRec'].keys()
 
     user_observation_counts = np.array(np.sum(R_train, axis=1)).flatten()
     user_observation_counts = user_observation_counts[np.array(np.sum(R_valid, axis=1)).flatten() != 0]
@@ -95,6 +103,9 @@ def main(args):
     for metric in evaluated_metrics:
         pandas_bar_plot(x='group', y=metric, hue='model', x_name='# of user ratings', y_name=metric, df=df)
 
+    pandas_group_hist_plot(df, 'pop', 'model', 'Popularity of First Recommended Item', 'Count')
+    import ipdb;ipdb.set_trace()
+
     pairs = list(itertools.combinations(models, 2))
 
     for pair in pairs[:5]:
@@ -105,9 +116,14 @@ def main(args):
             x = np.array(candid1[metric]).astype(np.float16)
             y = np.array(candid2[metric]).astype(np.float16)
 
+            useless_index = np.intersect1d(np.where(x == 0)[0],np.where(y == 0)[0])
+
+            x = np.delete(x, useless_index)
+            y = np.delete(y, useless_index)
+
             max1 = np.max(x)
             max2 = np.max(y)
-            max = np.maximum(max1, max2)
+            max = np.minimum(max1, max2)
 
             positive_percentage = ((x - y) > 0).sum()
             negative_percentage = ((x - y) < 0).sum()

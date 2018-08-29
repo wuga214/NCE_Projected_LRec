@@ -158,6 +158,7 @@ def cml(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, rank=
 
     RQ = model.get_RQ()
     Y = model.get_Y().T
+    model.sess.close()
     tf.reset_default_graph()
 
     return RQ, Y, None

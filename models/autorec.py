@@ -39,7 +39,7 @@ class AutoRec(object):
         with tf.variable_scope('loss'):
             l2_loss = tf.nn.l2_loss(encode_weights) + tf.nn.l2_loss(self.decode_weights)
             sigmoid_loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=self.inputs, logits=prediction)
-            self.loss = tf.reduce_sum(sigmoid_loss) + tf.reduce_sum(self.lamb*l2_loss)
+            self.loss = tf.reduce_mean(sigmoid_loss) + self.lamb*tf.reduce_mean(l2_loss)
 
         with tf.variable_scope('optimizer'):
             self.optimizer = tf.train.AdamOptimizer().minimize(self.loss)
@@ -99,6 +99,7 @@ def autorec(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, r
     RQ = model.get_RQ(matrix_input)
     Y = model.get_Y()
     Bias = model.get_Bias()
+    model.sess.close()
     tf.reset_default_graph()
 
     return RQ, Y, Bias
