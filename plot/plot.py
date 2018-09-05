@@ -28,7 +28,7 @@ def curve_weighting(lrec_result, wlrec_results, weights, metric, name):
 def curve_sensitivity(lrec_result, wlrec_results, weights, metric, name):
     plt.figure(figsize=(4, 2.5))
     plt.hlines(lrec_result[metric][0], weights[0], weights[-1],
-               color=sns.xkcd_rgb["pale red"], linestyle='--', label='Default PMI')
+               color=sns.xkcd_rgb["pale red"], linestyle='--', label='Default')
 
     scores = []
     errs = []
@@ -36,7 +36,7 @@ def curve_sensitivity(lrec_result, wlrec_results, weights, metric, name):
         scores.append(wlrec_results[i][metric][0])
         errs.append(wlrec_results[i][metric][1])
 
-    plt.plot(weights, scores, sns.xkcd_rgb["denim blue"], label='Modified PMI')
+    plt.plot(weights, scores, sns.xkcd_rgb["denim blue"], label='Modified')
     plt.legend(loc=4)
     plt.xlabel('Beta')
     plt.ylabel(metric)
@@ -68,11 +68,11 @@ def pandas_scatter_plot(df, model1, model2, metric, pos_percentage, neg_percenta
     # ax.contourf(xi, yi, np.log2(zi.reshape(xi.shape)), 10, cmap=sns.cubehelix_palette(light=1, as_cmap=True))
     sns.kdeplot(df.x, df.y, ax=ax, cmap="Blues", shade=True, shade_lowest=False)
     ax.plot([0, 0.6+0.01], [0, 0.6+0.01], ls="--")
-    ax.set_xlim([0, 0.6+0.01])
-    ax.set_ylim([0, 0.6+0.01])
-    plt.legend(loc='upper right')
-    plt.xlabel('{0} (Counts:{1})'.format(model1, pos_percentage))
-    plt.ylabel('{0} (Counts:{1})'.format(model2, neg_percentage))
+    # ax.set_xlim([0, 0.6+0.01])
+    # ax.set_ylim([0, 0.6+0.01])
+    # plt.legend(loc='upper right')
+    # plt.xlabel('{0} (Counts:{1})'.format(model1, pos_percentage))
+    # plt.ylabel('{0} (Counts:{1})'.format(model2, neg_percentage))
     plt.tight_layout()
     if save:
         plt.savefig("{0}/{1}_{2}_{3}_scatter.pdf".format(folder, model1, model2, metric), format="pdf")
@@ -99,7 +99,8 @@ def pandas_bar_plot(df, x, y, hue, x_name, y_name, folder='figures/user_rating',
     plt.xlabel(x_name)
     plt.ylabel(y_name)
     plt.xticks(rotation=15)
-    if y != 'Recall@50':
+    plt.legend(loc='upper left')
+    if y != 'Precision@50':
         ax.legend_.remove()
     plt.tight_layout()
     if save:

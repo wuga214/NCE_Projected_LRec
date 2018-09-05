@@ -1,7 +1,8 @@
-Method,PMI,SVD,Optimization
-ALS,0,0,1218
-PureSVD,0,28,0
-PLRec,0,28,11
-WPLRec,0,28,123
-PmiPLRec,22,70,11
-PmiWPLRec,22,70,123
+Method,NCE,SVD,Optimization
+WRMF,0,0,4950
+CML,0,0,3582
+AutoRec,0,0,2416
+NCE-PLRec-W,30,85,323
+NCE-PLRec,30,85,20
+PLRec,0,50,20
+PureSVD,0,50,0

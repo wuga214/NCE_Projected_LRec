@@ -14,17 +14,18 @@ import itertools
 
 models = [
     "NCE-PLRec",
-    "LinearFlow",
-    "NCE-SVD",
-    "POP",
-    "WRMF",
-    "CML",
-    "AutoRec"
+    "PLRec",
+    # "NCE-SVD",
+    # "POP",
+    # "WRMF",
+    # "CML",
+    # "AutoRec"
 ]
 
 
 def getGroup(user_counts):
-    patents = [[1, 6], [7, 21], [22, 46], [47, 98], [99, 400], [401, 2000]]
+    # patents = [[1, 6], [7, 21], [22, 46], [47, 98], [99, 400], [401, 2000]]
+    patents = [[1, 10], [11, 21], [22, 50], [51, 2084]]
     group = []
     for user_count in user_counts:
         for patent in patents:
@@ -48,7 +49,7 @@ def main(args):
     user_observation_counts = user_observation_counts[np.array(np.sum(R_valid, axis=1)).flatten() != 0]
 
     pandas_group_distribution_plot(pd.DataFrame({'c': user_observation_counts, 't': getGroup(user_observation_counts)}),
-                                   [[1, 6], [7, 21], [22, 46], [47, 98], [99, 400], [401, 2000]],
+                                   [[1, 10], [11, 21], [22, 50], [51, 2084]],
                                    't',
                                    '# of user ratings',
                                    'Count')
@@ -69,7 +70,7 @@ def main(args):
         RQ = np.load('latent/U_{0}_{1}.npy'.format(model, args.rank))
         Y = np.load('latent/V_{0}_{1}.npy'.format(model, args.rank))
 
-        if os.path.isfile('latent/B_{0}_{1}'.format(model, args.rank)):
+        if os.path.isfile('latent/B_{0}_{1}.npy'.format(model, args.rank)):
             Bias = np.load('latent/B_{0}_{1}.npy'.format(model, args.rank))
         else:
             Bias = None

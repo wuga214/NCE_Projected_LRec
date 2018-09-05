@@ -21,8 +21,8 @@ from evaluation.metrics import evaluate
 
 
 models = {
-    "LinearFlow": embedded_lrec_items,
-    "LinearFlow-W": weighted_lrec_items,
+    "PLRec": embedded_lrec_items,
+    "PLRec-W": weighted_lrec_items,
     "NCE-PLRec": pmi_lrec_items,
     "NCE-PLRec-W": weighted_pmi_lrec_items,
     "PureSVD": pure_svd,

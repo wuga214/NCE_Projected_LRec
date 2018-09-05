@@ -8,12 +8,12 @@ from utils.progress import WorkSplitter, inhour
 def sensitivity(train, validation, params):
     progress = WorkSplitter()
     progress.section("PMI-PLRec Default")
-    RQ, Yt,_ = params['models']['PmiPLRec'](train,
-                                            embeded_matrix=np.empty((0)),
-                                            iteration=params['iter'],
-                                            rank=params['rank'],
-                                            lam=params['lambda'],
-                                            root=1.0)
+    RQ, Yt,_ = params['models']['NCE-PLRec'](train,
+                                             embeded_matrix=np.empty((0)),
+                                             iteration=params['iter'],
+                                             rank=params['rank'],
+                                             lam=params['lambda'],
+                                             root=1.0)
     Y = Yt.T
 
     default_prediction = predict(matrix_U=RQ, matrix_V=Y, topK=params['topK'][-1], matrix_Train=train, gpu=True)
@@ -30,12 +30,12 @@ def sensitivity(train, validation, params):
     sensitivity_results = dict()
     for root in tqdm(params['root']):
         progress.section("PMI-PLRec, Root: "+str(root))
-        RQ, Yt,_ = params['models']['PmiPLRec'](train,
-                                                embeded_matrix=np.empty((0)),
-                                                iteration=params['iter'],
-                                                rank=params['rank'],
-                                                lam=params['lambda'],
-                                                root=root)
+        RQ, Yt,_ = params['models']['NCE-PLRec'](train,
+                                                 embeded_matrix=np.empty((0)),
+                                                 iteration=params['iter'],
+                                                 rank=params['rank'],
+                                                 lam=params['lambda'],
+                                                 root=root)
         Y = Yt.T
 
         prediction = predict(matrix_U=RQ, matrix_V=Y, topK=params['topK'][-1], matrix_Train=train, gpu=True)
