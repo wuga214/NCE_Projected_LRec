@@ -1,13 +1,14 @@
-Pointwise Mutual Information Projected LRec(AAAI-18)
-================================
+Noise-contrastive Estimation Projected LRec(AAAI-19)
+====================================================
 # Algorithm Implemented
-1. Pointwise Mutual Information Projected LRec(PMI-PLRec)
+1. Noise-contrastive Estimation Projected LRec(NCE-PLRec)
 2. Linear FLow or Projected LRec(PLRec)
 3. Collaborative Metric Learning(CML)
 4. Auto-encoder Recommender(AutoRec)
-5. Weighted Regularized Matrix Factorization(WRMF or ALS)
+5. Weighted Regularized Matrix Factorization(WRMF)
 6. PureSVD Recommender
-7. Item-Item Similarity in Chain
+7. Item-Item Similarity
+8. Popularity
 
 # Measure
 The above algorithm could be splitted into two major category based on the distance
@@ -16,9 +17,13 @@ is a typical Cosine distance recommender. When doing evaluation, please select
 similarity measurement before running with `--similarity Euclidean` 
 
 # Data
-Movielens 1M,
-Movielens 20M and
-Spotify RecSys 2018 Competition Dataset.
+1. Movielens 1M,
+2. Movielens 20M,
+3. Yahoo 1R,
+4. Netflix,
+5. Amazon Prize,
+6. and
+7. Spotify RecSys 2018 Competition Dataset.
 
 Data is not suit to submit on github, so please prepare it yourself. It should be numpy npy file directly 
 dumped from csr sparse matrix. It should be easy.. 
@@ -32,18 +37,12 @@ ge/python_project/wlrec_update/IMPLEMENTATION_Projected_LRec/datax/ \
 
 ```
 
-Run Weighted PMI-PLRec
+Run Weighted NCE-PLRec
 ```
 $ python main.py -i 4 -l 1.0 -r 100 -a 10 -m PmiPLRec -d datax/ \
 -t Rtrain.npz -v Rvalid.npz -k 10
 ```
 
-Do model comparision on all metrics(with hyper-parameter tuning)
-```
-python tune_parameters.py -d datax/ -n log -v Rvalid
-
-```
-Result shows in `table/log`
 
 # Run-time
 This model needs only 3 mins to process MovieLens 20M!
@@ -64,7 +63,7 @@ to avoid poor generalization issue.
 Data Path: datax/
 Train File Name: Rtrain.npz
 Valid File Name: Rvalid.npz
-Algorithm: WPLRec
+Algorithm: PLRec
 Mode: Item-based
 Alpha: 10
 Rank: 100
@@ -111,15 +110,6 @@ Elapsed: 00:00:08
 
 ```
 
-Effect of Weighting
-===================
-The following result shows Weighted Projected LRec outperforms Projected LRec when
- using reasonable hyper-parameters.
+# Popularity Analysis
+![NDCG](figures/Density_hist_pop.png) <!-- .element height="50%" width="50%" -->
 
-To reproduce this result, run
-```
-python experiment/weighting.py -d datax/ -t Rtrain.npz -v Rvalid.npz
-```
-
-![NDCG](figures/NDCG.png) <!-- .element height="50%" width="50%" -->
-![R-Precision](figures/R-Precision.png) <!-- .element height="50%" width="50%" -->
