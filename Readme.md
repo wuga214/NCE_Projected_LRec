@@ -1,5 +1,18 @@
 Noise-contrastive Estimation Projected LRec(AAAI-19)
 ====================================================
+# Environment
+![](https://img.shields.io/badge/python-3.5.2-blue)
+![](https://img.shields.io/badge/cython-0.28.5-blue)
+![](https://img.shields.io/badge/scipy-1.0.0-blue)
+![](https://img.shields.io/badge/numpy-1.14.1-blue)
+![](https://img.shields.io/badge/sklearn-0.19.0-blue)
+![](https://img.shields.io/badge/pandas-0.20.3-blue)
+![](https://img.shields.io/badge/tqdm-4.11.2-blue)
+![](https://img.shields.io/badge/argparse-1.1-blue)
+![](https://img.shields.io/badge/tensorflow-1.4.0-blue)
+![](https://img.shields.io/badge/mxnet-1.1.0-blue)
+![](https://img.shields.io/badge/matplotlib-3.0.0-blue)
+
 # Algorithm Implemented
 1. Noise-contrastive Estimation Projected LRec(NCE-PLRec)
 2. Linear FLow or Projected LRec(PLRec)
@@ -7,7 +20,7 @@ Noise-contrastive Estimation Projected LRec(AAAI-19)
 4. Auto-encoder Recommender(AutoRec)
 5. Weighted Regularized Matrix Factorization(WRMF)
 6. PureSVD Recommender
-7. Item-Item Similarity
+7. Item-Item Similarity*
 8. Popularity
 
 # Measure
@@ -43,11 +56,10 @@ $ python main.py -i 4 -l 1.0 -r 100 -a 10 -m PmiPLRec -d datax/ \
 -t Rtrain.npz -v Rvalid.npz -k 10
 ```
 
-
 # Run-time
-This model needs only 3 mins to process MovieLens 20M!
+The proposed NCE-PLRec model needs only 3 mins to process MovieLens 20M!
 
-# Result
+# Example Result
 Note: reproduce this result is easy, but you need to tune the hyperparameter alpha to
 see the improvement, since for even same dataset, the split of the dataset could cause
 huge difference of the hyper-parameter requirement. We suggest to use 50% of the training
