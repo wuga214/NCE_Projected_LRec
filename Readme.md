@@ -1,17 +1,17 @@
 Noise-contrastive Estimation Projected LRec(AAAI-19)
 ====================================================
 # Environment
-![](https://img.shields.io/badge/python-3.5.2-blue)
-![](https://img.shields.io/badge/cython-0.28.5-blue)
-![](https://img.shields.io/badge/scipy-1.0.0-blue)
-![](https://img.shields.io/badge/numpy-1.14.1-blue)
-![](https://img.shields.io/badge/sklearn-0.19.0-blue)
-![](https://img.shields.io/badge/pandas-0.20.3-blue)
-![](https://img.shields.io/badge/tqdm-4.11.2-blue)
-![](https://img.shields.io/badge/argparse-1.1-blue)
-![](https://img.shields.io/badge/tensorflow-1.4.0-blue)
-![](https://img.shields.io/badge/mxnet-1.1.0-blue)
-![](https://img.shields.io/badge/matplotlib-3.0.0-blue)
+![](https://img.shields.io/badge/python-3.5.2-blue.svg)
+![](https://img.shields.io/badge/cython-0.28.5-blue.svg)
+![](https://img.shields.io/badge/scipy-1.0.0-blue.svg)
+![](https://img.shields.io/badge/numpy-1.14.1-blue.svg)
+![](https://img.shields.io/badge/sklearn-0.19.0-blue.svg)
+![](https://img.shields.io/badge/pandas-0.20.3-blue.svg)
+![](https://img.shields.io/badge/tqdm-4.11.2-blue.svg)
+![](https://img.shields.io/badge/argparse-1.1-blue.svg)
+![](https://img.shields.io/badge/tensorflow-1.4.0-blue.svg)
+![](https://img.shields.io/badge/mxnet-1.1.0-blue.svg)
+![](https://img.shields.io/badge/matplotlib-3.0.0-blue.svg)
 
 # Algorithm Implemented
 1. Noise-contrastive Estimation Projected LRec(NCE-PLRec)
