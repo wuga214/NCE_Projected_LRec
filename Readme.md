@@ -46,15 +46,14 @@ dumped from csr sparse matrix. It should be easy..
 # Command for Movielens 1M
 Process data
 ```
-python getmovielens.py --implicit -r 0.5,0.2,0.3 -d /media/wuga/Stora
-ge/python_project/wlrec_update/IMPLEMENTATION_Projected_LRec/datax/ \
+python getmovielens.py --implicit -r 0.5,0.2,0.3 -d /NCE_Projected_LRec/datax/ \
 -n ml-1m/ratings.csv --shape 6041 3953
 
 ```
 
 Run Weighted NCE-PLRec
 ```
-$ python main.py -i 4 -l 1.0 -r 100 -a 10 -m PmiPLRec -d datax/ \
+$ python main.py -i 4 -l 1.0 -r 100 -a 10 -m NCE-PLRec -d datax/ \
 -t Rtrain.npz -v Rvalid.npz -k 10
 ```
 
