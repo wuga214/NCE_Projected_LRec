@@ -1,6 +1,5 @@
-Noise-contrastive Estimation Projected LRec(AAAI-19)
+Noise-contrastive Estimation Projected LRec
 ====================================================
-# Environment
 ![](https://img.shields.io/badge/python-3.5.2-blue.svg)
 ![](https://img.shields.io/badge/cython-0.28.5-blue.svg)
 ![](https://img.shields.io/badge/scipy-1.0.0-blue.svg)
@@ -12,6 +11,9 @@ Noise-contrastive Estimation Projected LRec(AAAI-19)
 ![](https://img.shields.io/badge/tensorflow-1.4.0-blue.svg)
 ![](https://img.shields.io/badge/mxnet-1.1.0-blue.svg)
 ![](https://img.shields.io/badge/matplotlib-3.0.0-blue.svg)
+
+# About NCE-PLRec
+In multi-stage recommendation frameworks(see our [RecSys Challenge repository](https://github.com/layer6ai-labs/vl6_recsys2018)), the first stage requires scalable algorithms that can process millions users and items in reasonable time and still maintain good performance(recall 90%+). Even over almost 10 years, WRMF is still the most reliable algorithm for such task(see [RecSys Leaderboard](https://recsys-challenge.spotify.com/static/final_main_leaderboard.html)). Despite its good performance, the computation is too expensive and slow. Thus, we introduce a fast linear recommendation algorithm called NCE-PLRec to replace WRMF in large scale recommendation tasks. 
 
 # Algorithm Implemented
 1. Noise-contrastive Estimation Projected LRec(NCE-PLRec)
