@@ -8,6 +8,7 @@ from models.lrec import embedded_lrec_items
 from models.weighted_lrec import weighted_lrec_items
 from models.pure_svd import pure_svd, eigen_boosted_pure_svd
 from models.als import als
+from models.bpr import bpr
 from models.pmi_lrec import pmi_lrec_items
 from models.weighted_pmi_lrec import weighted_pmi_lrec_items
 from models.chainitemitem import chain_item_item
@@ -28,6 +29,7 @@ models = {
     "PureSVD": pure_svd,
     "EBPureSVD": eigen_boosted_pure_svd,
     "WRMF": als,
+    "BPR": bpr,
     "CII": chain_item_item,
     "AutoRec": autorec,
     "CML": cml,
@@ -104,7 +106,7 @@ def main(args):
                                topK=args.topk,
                                matrix_Train=R_train,
                                measure=args.sim_measure,
-                               gpu=True)
+                               gpu=False)
     if args.validation:
         progress.section("Create Metrics")
         start_time = time.time()
