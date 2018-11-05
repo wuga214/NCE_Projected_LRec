@@ -15,6 +15,8 @@ Noise-contrastive Estimation Projected LRec
 ![](https://img.shields.io/badge/mxnet-1.1.0-blue.svg)
 ![](https://img.shields.io/badge/matplotlib-3.0.0-blue.svg)
 
+Please Disable GPU usage in `main.py` if needed.
+
 # About NCE-PLRec
 In multi-stage recommendation frameworks(see our [RecSys Challenge repository](https://github.com/layer6ai-labs/vl6_recsys2018)), the first stage requires scalable algorithms that can process millions users and items in reasonable time and still maintain good performance(recall 90%+). Even over almost 10 years, WRMF is still the most reliable algorithm for such task(see [RecSys Leaderboard](https://recsys-challenge.spotify.com/static/final_main_leaderboard.html)). Despite its good performance, the computation is too expensive and slow. Thus, we introduce a fast linear recommendation algorithm called NCE-PLRec to replace WRMF in large scale recommendation tasks. More details about this work are well described in our paper.
 
@@ -34,11 +36,12 @@ If you are interested in building up your research on this work, please cite:
 2. Linear FLow or Projected LRec(PLRec)
 3. Collaborative Metric Learning(CML)
 4. Auto-encoder Recommender(AutoRec)
-5. Weighted Regularized Matrix Factorization(WRMF)
-6. Pure SVD Recommender(PureSVD)
-7. Bayesian Personalized Ranking(BPR)
-8. Item-Item Similarity*
-9. Popularity
+5. Collaborative Denoising Auto-Encoders(CDAE)
+6. Weighted Regularized Matrix Factorization(WRMF)
+7. Pure SVD Recommender(PureSVD)
+8. Bayesian Personalized Ranking(BPR)
+9. Item-Item Similarity*
+10. Popularity
 
 # Data
 1. Movielens 1M,
