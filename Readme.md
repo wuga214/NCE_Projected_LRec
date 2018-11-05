@@ -1,6 +1,8 @@
 Noise-contrastive Estimation Projected LRec
 ====================================================
-![](https://img.shields.io/badge/python-3.5.2-blue.svg)
+![](https://img.shields.io/badge/cuda-9.0-green.svg)
+![](https://img.shields.io/badge/python-3.5.2-green.svg)
+
 ![](https://img.shields.io/badge/cython-0.28.5-blue.svg)
 ![](https://img.shields.io/badge/cupy-4.4-blue.svg)
 ![](https://img.shields.io/badge/scipy-1.0.0-blue.svg)
@@ -14,7 +16,18 @@ Noise-contrastive Estimation Projected LRec
 ![](https://img.shields.io/badge/matplotlib-3.0.0-blue.svg)
 
 # About NCE-PLRec
-In multi-stage recommendation frameworks(see our [RecSys Challenge repository](https://github.com/layer6ai-labs/vl6_recsys2018)), the first stage requires scalable algorithms that can process millions users and items in reasonable time and still maintain good performance(recall 90%+). Even over almost 10 years, WRMF is still the most reliable algorithm for such task(see [RecSys Leaderboard](https://recsys-challenge.spotify.com/static/final_main_leaderboard.html)). Despite its good performance, the computation is too expensive and slow. Thus, we introduce a fast linear recommendation algorithm called NCE-PLRec to replace WRMF in large scale recommendation tasks. 
+In multi-stage recommendation frameworks(see our [RecSys Challenge repository](https://github.com/layer6ai-labs/vl6_recsys2018)), the first stage requires scalable algorithms that can process millions users and items in reasonable time and still maintain good performance(recall 90%+). Even over almost 10 years, WRMF is still the most reliable algorithm for such task(see [RecSys Leaderboard](https://recsys-challenge.spotify.com/static/final_main_leaderboard.html)). Despite its good performance, the computation is too expensive and slow. Thus, we introduce a fast linear recommendation algorithm called NCE-PLRec to replace WRMF in large scale recommendation tasks. More details about this work are well described in our paper.
+
+If you are interested in building up your research on this work, please cite:
+```
+@ARTICLE {wuga18nceplrec,
+    author  = "Ga Wu, Maksims Volkovs, Chee Loong Soon, Scott Sanner, Himanshu Rai",
+    title   = "Noise Contrastive Estimation for Scalable Linear Models for One-Class Collaborative Filtering",
+    journal = "arXiv: 1811.00697",
+    year    = "2018"
+}
+```
+
 
 # Algorithm Implemented
 1. Noise-contrastive Estimation Projected LRec(NCE-PLRec)
@@ -22,15 +35,10 @@ In multi-stage recommendation frameworks(see our [RecSys Challenge repository](h
 3. Collaborative Metric Learning(CML)
 4. Auto-encoder Recommender(AutoRec)
 5. Weighted Regularized Matrix Factorization(WRMF)
-6. PureSVD Recommender
-7. Item-Item Similarity*
-8. Popularity
-
-# Measure
-The above algorithm could be splitted into two major category based on the distance
-measurement: Euclidean or Cosine. CML is a euclidean distance recommender. And, ALS 
-is a typical Cosine distance recommender. When doing evaluation, please select 
-similarity measurement before running with `--similarity Euclidean` 
+6. Pure SVD Recommender(PureSVD)
+7. Bayesian Personalized Ranking(BPR)
+8. Item-Item Similarity*
+9. Popularity
 
 # Data
 1. Movielens 1M,
@@ -57,6 +65,12 @@ Run Weighted NCE-PLRec
 $ python main.py -i 4 -l 1.0 -r 100 -a 10 -m NCE-PLRec -d datax/ \
 -t Rtrain.npz -v Rvalid.npz -k 10
 ```
+
+# Measure
+The above algorithm could be splitted into two major category based on the distance
+measurement: Euclidean or Cosine. CML is a euclidean distance recommender. And, ALS 
+is a typical Cosine distance recommender. When doing evaluation, please select 
+similarity measurement before running with `--similarity Euclidean` 
 
 # Run-time
 The proposed NCE-PLRec model needs only 3 mins to process MovieLens 20M!
