@@ -2,6 +2,7 @@ Noise-contrastive Estimation Projected LRec
 ====================================================
 ![](https://img.shields.io/badge/python-3.5.2-blue.svg)
 ![](https://img.shields.io/badge/cython-0.28.5-blue.svg)
+![](https://img.shields.io/badge/cupy-4.4-blue.svg)
 ![](https://img.shields.io/badge/scipy-1.0.0-blue.svg)
 ![](https://img.shields.io/badge/numpy-1.14.1-blue.svg)
 ![](https://img.shields.io/badge/sklearn-0.19.0-blue.svg)
