@@ -1,1 +1,0 @@
-python main.py -i 4 -a 100 -l 10 -r 100 -m WPLRec -d /media/wuga/Experiments/Recsys-18/IMPLEMENTATION_Projected_LRec/data/movielens/ -n rating.npz

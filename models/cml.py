@@ -95,8 +95,6 @@ class CollaborativeMetricLearning(object):
         user_item_pairs = np.asarray(user_item_matrix.nonzero()).T
         user_to_positive_set = {u: set(row) for u, row in enumerate(user_item_matrix.rows)}
 
-        summary_writer = tf.summary.FileWriter('cml', graph=self.sess.graph)
-
         # Training
         for i in range(epoch):
             batches = self.get_batches(user_item_pairs, user_to_positive_set,

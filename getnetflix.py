@@ -1,5 +1,5 @@
 from utils.io import save_numpy, load_netflix, save_array
-from utils.argument import shape, ratio
+from utils.argcheck import shape, ratio
 from providers.split import time_ordered_split
 import argparse
 from utils.progress import WorkSplitter
@@ -27,8 +27,8 @@ if __name__ == "__main__":
     parser.add_argument('--implicit', dest='implicit', action='store_true')
     parser.add_argument('-r', dest='ratio', type=ratio, default='0.5,0.2,0.3')
     parser.add_argument('-f', dest='folder',
-                        default="/media/wuga/Storage/data/netflix/download/training_set")
-    parser.add_argument('-d', dest='path', default='/media/wuga/Storage/data/netflix/')
+                        default="data/netflix/row/training_set")
+    parser.add_argument('-d', dest='path', default='data/netflix/')
     parser.add_argument('--shape', help="CSR Shape", dest="shape", type=shape, nargs=2)
     args = parser.parse_args()
 

@@ -1,0 +1,4 @@
+model,alpha,corruption,rank,iter,lam,optimizer
+IFVAE,1,0.2,50,300,0.0001,RMSProp
+IFVAE,1,0.2,50,300,0.0001,Adam
+IFVAE,1,0.2,50,300,0.0001,SGD

@@ -1,6 +1,6 @@
 name: nce-plrec
 dependencies:
-  - python=3.5.2
+  - python=2.7.10
   - cython=0.28.5
   - scipy=1.0.0
   - numpy=1.14.1
@@ -8,6 +8,8 @@ dependencies:
   - pandas=0.20.3
   - tqdm=4.11.2
   - argparse=1.1
-  - tensorflow=1.4.0
-  - mxnet=1.1.0
+  - tensorflow_gpu=1.4.0
   - matplotlib=3.0.0
+  - pyyaml=4.1
+  - fbpca=1.0
+

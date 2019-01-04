@@ -134,3 +134,41 @@ def batch_sub_routine(subset_U, matrix_V, subset_Train, bias, measure, topK=50, 
             batch_predict.append(np.zeros(topK))
 
     return np.array(batch_predict)
+
+
+def sampling_predictor(matrix_U, matrix_V, topK, matrix_Train, index_Valid, bias=None, measure="Cosine", gpu=False):
+    if gpu:
+        import cupy as cp
+        matrix_U = cp.array(matrix_U)
+        matrix_V = cp.array(matrix_V)
+
+    prediction = []
+
+    for user_index in tqdm(range(matrix_U.shape[0])):
+        vector_u = matrix_U[user_index]
+        vector_train = matrix_Train[user_index]
+        subset_index = index_Valid[user_index]
+        subset_matrix_V = matrix_V[subset_index]
+
+        if len(vector_train.nonzero()[0]) > 0:
+            vector_predict = sub_routine(vector_u, subset_matrix_V, vector_train, bias, measure, topK=topK, gpu=gpu)
+        else:
+            vector_predict = np.zeros(topK, dtype=np.float32)
+
+        prediction.append(vector_predict)
+
+    return np.vstack(prediction)
+
+
+def sampler(matrix_Valid, multiple=100):
+    m, n = matrix_Valid.shape
+    index_Valid = []
+    for i in range(m):
+        observed_index = matrix_Valid[m].nonzero()[1]
+        num_observed = len(observed_index)
+        if num_observed * multiple < n:
+            subset_index = np.random.choice(n, num_observed * multiple, replace=False)
+        else:
+            subset_index = range(n)
+        index_Valid.append(num_observed)
+    return index_Valid

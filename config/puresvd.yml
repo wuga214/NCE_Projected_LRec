@@ -1,0 +1,11 @@
+parameters:
+    models: PureSVD
+    similarity: Cosine
+    corruption: [0]
+    alpha: [1]
+    rank: [50, 100, 200]
+    root: [1.0]
+    topK: [5, 10, 15, 20, 50]
+    iter: 10
+    lambda: [1]
+    metric: [R-Precision, NDCG, Precision, Recall]

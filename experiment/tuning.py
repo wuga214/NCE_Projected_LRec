@@ -5,58 +5,70 @@ from evaluation.metrics import evaluate
 from utils.progress import WorkSplitter
 import inspect
 from models.predictor import predict
+from utils.io import load_dataframe_csv, save_dataframe_csv, load_yaml
 
 
-def hyper_parameter_tuning(train, validation, params, measure='Cosine', gpu_on=True):
+def hyper_parameter_tuning(train, validation, params, save_path, measure='Cosine', gpu_on=True):
     progress = WorkSplitter()
-    df = pd.DataFrame(columns=['model', 'rank', 'alpha', 'root', 'topK'])
+    table_path = load_yaml('config/global.yml', key='path')['tables']
+
+    try:
+        df = load_dataframe_csv(table_path, save_path)
+    except:
+        df = pd.DataFrame(columns=['model', 'rank', 'alpha', 'lambda',
+                                   'iter', 'similarity', 'corruption', 'root', 'topK'])
 
     num_user = train.shape[0]
 
     for algorithm in params['models']:
 
         for rank in params['rank']:
-            if 'alpha' in inspect.getargspec(params['models'][algorithm])[0]:
-                alphas = params['alpha']
-            else:
-                alphas = [1]
 
-            for alpha in alphas:
+            for alpha in params['alpha']:
 
-                if 'root' in inspect.getargspec(params['models'][algorithm])[0]:
-                    roots = params['root']
-                else:
-                    roots = [1]
+                for lam in params['lambda']:
 
-                for root in roots:
+                    for corruption in params['corruption']:
 
-                    progress.section("model: {0}, rank: {1}, root: {2}, alpha: {3}".format(algorithm,
-                                                                                             rank,
-                                                                                             root,
-                                                                                             alpha))
-                    RQ, Yt, Bias = params['models'][algorithm](train,
-                                                            embeded_matrix=np.empty((0)),
-                                                            iteration=params['iter'],
-                                                            rank=rank,
-                                                            lam=params['lam'],
-                                                            root=root,
-                                                            alpha=alpha,
-                                                            gpu_on=True)
-                    Y = Yt.T
+                        for root in params['root']:
 
-                    progress.subsection("Prediction")
+                            if ((df['model'] == algorithm) &
+                                (df['rank'] == rank) &
+                                (df['alpha'] == alpha) &
+                                (df['lambda'] == lam) &
+                                (df['corruption'] == corruption) &
+                               (df['root'] == root)).any():
+                                continue
 
-                    prediction = predict(matrix_U=RQ, matrix_V=Y, measure=measure, bias=Bias,
-                                         topK=params['topK'][-1], matrix_Train=train, gpu=gpu_on)
+                            format = "model: {0}, rank: {1}, alpha: {2}, lambda: {3}, corruption: {4}, root: {5}"
+                            progress.section(format.format(algorithm, rank, alpha, lam, corruption, root))
+                            RQ, Yt, Bias = params['models'][algorithm](train,
+                                                                       embeded_matrix=np.empty((0)),
+                                                                       iteration=params['iter'],
+                                                                       rank=rank,
+                                                                       lam=lam,
+                                                                       alpha=alpha,
+                                                                       corruption=corruption,
+                                                                       root=root,
+                                                                       gpu_on=gpu_on)
+                            Y = Yt.T
 
-                    progress.subsection("Evaluation")
+                            progress.subsection("Prediction")
 
-                    result = evaluate(prediction, validation, params['metric'], params['topK'])
+                            prediction = predict(matrix_U=RQ, matrix_V=Y, measure=measure, bias=Bias,
+                                                 topK=params['topK'][-1], matrix_Train=train, gpu=gpu_on)
 
-                    result_dict = {'model': algorithm, 'rank': rank, 'root': root, 'alpha': alpha}
+                            progress.subsection("Evaluation")
 
-                    for name in result.keys():
-                        result_dict[name] = [round(result[name][0], 4), round(result[name][1], 4)]
+                            result = evaluate(prediction, validation, params['metric'], params['topK'])
 
-                    df = df.append(result_dict, ignore_index=True)
-    return df
+                            result_dict = {'model': algorithm, 'rank': rank, 'alpha': alpha, 'lambda': lam,
+                                           'iter': params['iter'], 'similarity': params['similarity'],
+                                           'corruption': corruption, 'root': root}
+
+                            for name in result.keys():
+                                result_dict[name] = [round(result[name][0], 4), round(result[name][1], 4)]
+
+                            df = df.append(result_dict, ignore_index=True)
+
+                            save_dataframe_csv(df, table_path, save_path)

@@ -118,8 +118,6 @@ class BPR(object):
             user_item_matrix = lil_matrix(rating_matrix)
             user_item_pairs = np.asarray(user_item_matrix.nonzero()).T
 
-        summary_writer = tf.summary.FileWriter('bpr', graph=self.sess.graph)
-
         # Training
         for i in tqdm(range(epoch)):
             if self.uniform:
@@ -157,7 +155,3 @@ def bpr(matrix_train, embeded_matrix=np.empty((0)), iteration=100, lam=80, rank=
     tf.reset_default_graph()
 
     return RQ, Y, None
-
-
-
-

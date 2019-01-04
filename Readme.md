@@ -1,5 +1,8 @@
-Noise-contrastive Estimation Projected LRec
-====================================================
+Noise Contrastive Estimation Projected Linear Recommender(NCE-PLRec)
+====================================================================
+![](https://img.shields.io/badge/linux-ubuntu-red.svg)
+![](https://img.shields.io/badge/Mac-OS-red.svg)
+
 ![](https://img.shields.io/badge/cuda-8.0-green.svg)
 ![](https://img.shields.io/badge/python-2.7-green.svg)
 
@@ -12,135 +15,71 @@ Noise-contrastive Estimation Projected LRec
 ![](https://img.shields.io/badge/tqdm-4.11.2-blue.svg)
 ![](https://img.shields.io/badge/argparse-1.1-blue.svg)
 ![](https://img.shields.io/badge/tensorflow-1.4.0-blue.svg)
-![](https://img.shields.io/badge/mxnet-1.1.0-blue.svg)
+![](https://img.shields.io/badge/pytorch-1.0.0-blue.svg)
 ![](https://img.shields.io/badge/matplotlib-3.0.0-blue.svg)
+![](https://img.shields.io/badge/fbpca-1.0-blue.svg)
+![](https://img.shields.io/badge/pyyaml-4.1-blue.svg)
 
-Please Disable GPU usage in `main.py` if needed.
-
-# About NCE-PLRec
-In multi-stage recommendation frameworks(see our [RecSys Challenge repository](https://github.com/layer6ai-labs/vl6_recsys2018)), the first stage requires scalable algorithms that can process millions users and items in reasonable time and still maintain good performance(recall 90%+). Even over almost 10 years, WRMF is still the most reliable algorithm for such task(see [RecSys Leaderboard](https://recsys-challenge.spotify.com/static/final_main_leaderboard.html)). Despite its good performance, the computation is too expensive and slow. Thus, we introduce a fast linear recommendation algorithm called NCE-PLRec to replace WRMF in large scale recommendation tasks. More details about this work are well described in our paper.
-
-If you are interested in building up your research on this work, please cite:
-```
-@ARTICLE {wuga18nceplrec,
-    author  = "Ga Wu, Maksims Volkovs, Chee Loong Soon, Scott Sanner, Himanshu Rai",
-    title   = "Noise Contrastive Estimation for Scalable Linear Models for One-Class Collaborative Filtering",
-    journal = "arXiv: 1811.00697",
-    year    = "2018"
-}
-```
 
 
 # Algorithm Implemented
-1. Noise-contrastive Estimation Projected LRec(NCE-PLRec)
-2. Linear FLow or Projected LRec(PLRec)
+1. Noise Contrastive Estimation Projected Linear Recommender(NCE-PLRec)
+2. Variational Autoencoder for Collaborative Filtering(VAE-CF)
 3. Collaborative Metric Learning(CML)
 4. Auto-encoder Recommender(AutoRec)
 5. Collaborative Denoising Auto-Encoders(CDAE)
 6. Weighted Regularized Matrix Factorization(WRMF)
 7. Pure SVD Recommender(PureSVD)
 8. Bayesian Personalized Ranking(BPR)
-9. Item-Item Similarity*
-10. Popularity
+9. Noise Contrastive Estimation through SVD(NCE-SVD)
+10.Popularity
+
 
 # Data
 1. Movielens 1M,
 2. Movielens 20M,
 3. Yahoo 1R,
 4. Netflix,
-5. Amazon Prize,
-6. and
-7. Spotify RecSys 2018 Competition Dataset.
 
-Data is not suit to submit on github, so please prepare it yourself. It should be numpy npy file directly 
-dumped from csr sparse matrix. It should be easy.. 
-
-# Command for Movielens 1M
-Process data
-```
-python getmovielens.py --implicit -r 0.5,0.2,0.3 -d /NCE_Projected_LRec/datax/ \
--n ml-1m/ratings.csv --shape 6041 3953
-
-```
-
-Run Weighted NCE-PLRec
-```
-$ python main.py -i 4 -l 1.0 -r 100 -a 10 -m NCE-PLRec -d datax/ \
--t Rtrain.npz -v Rvalid.npz -k 10
-```
+Data is not suit to submit on github, so please prepare it yourself. It should be numpy npy file directly
+dumped from csr sparse matrix. It should be easy..
 
 # Measure
 The above algorithm could be splitted into two major category based on the distance
-measurement: Euclidean or Cosine. CML is a euclidean distance recommender. And, ALS 
-is a typical Cosine distance recommender. When doing evaluation, please select 
-similarity measurement before running with `--similarity Euclidean` 
+measurement: Euclidean or Cosine. CML is a euclidean distance recommender. And, ALS
+is a typical Cosine distance recommender. When doing evaluation, please select
+similarity measurement before running with `--similarity Euclidean`
 
-# Run-time
-The proposed NCE-PLRec model needs only 3 mins to process MovieLens 20M!
+# Example Commands
 
-# Example Result
-Note: reproduce this result is easy, but you need to tune the hyperparameter alpha to
-see the improvement, since for even same dataset, the split of the dataset could cause
-huge difference of the hyper-parameter requirement. We suggest to use 50% of the training
-data to train and validation on the others. We also suggest to apply small alpha in order
-to avoid poor generalization issue.
-
- 
+### Single Run
 ```
-================================================================================
-|                              Parameter Setting                               |
-================================================================================
-
-Data Path: datax/
-Train File Name: Rtrain.npz
-Valid File Name: Rvalid.npz
-Algorithm: PLRec
-Mode: Item-based
-Alpha: 10
-Rank: 100
-Lambda: 1.0
-SVD Iteration: 4
-Evaluation Ranking Topk: 10
-================================================================================
-|                                 Loading Data                                 |
-================================================================================
-
-Elapsed: 00:00:00
-Train U-I Dimensions: (6041, 3953)
-================================================================================
-|                                Randomized SVD                                |
-================================================================================
-
-Elapsed: 00:00:01
-================================================================================
-|                          Create Cacheable Matrices                           |
-================================================================================
-
-Elapsed: 00:00:00
-================================================================================
-|                           Item-wised Optimization                            |
-================================================================================
-
-100%|██████████████████████████████████████| 3953/3953 [00:17<00:00, 223.06it/s]
-Elapsed: 00:00:17
-================================================================================
-|                               Save U-V Matrix                                |
-================================================================================
-
-Elapsed: 00:00:00
-================================================================================
-|                                Create Metrics                                |
-================================================================================
-
-100%|██████████████████████████████████████| 6041/6041 [00:08<00:00, 694.76it/s]
--
-NDCG :0.182108679494
-R-Precision :0.078431372549
-Clicks :0.0
-Elapsed: 00:00:08
-
+python main.py -d datax/ -m VAE-CF -i 200 -l 0.0000001 -r 100
 ```
 
-# Popularity Analysis
-![NDCG](figures/Density_hist_pop.png) <!-- .element height="50%" width="50%" -->
+### Hyper-parameter Tuning and Paper Result Reproduction
+
+Split data in experiment setting, and tune hyper parameters based on yaml files in `config` folder
+```
+python getmovielens.py --implicit -r 0.5,0.2,0.3 -d datax/ -n ml-1m/ratings.csv
+python tune_parameters.py -d datax/ -n movielens1m/autorec.csv -y config/autorec.yml -gpu
+python tune_parameters.py -d datax/ -n movielens1m/bpr.csv -y config/bpr.yml -gpu
+python tune_parameters.py -d datax/ -n movielens1m/cdae.csv -y config/cdae.yml -gpu
+python tune_parameters.py -d datax/ -n movielens1m/cml.csv -y config/cml.yml -gpu
+python tune_parameters.py -d datax/ -n movielens1m/vae.csv -y config/vae.yml -gpu
+python tune_parameters.py -d datax/ -n movielens1m/wrmf.csv -y config/wrmf.yml -gpu
+python tune_parameters.py -d datax/ -n movielens1m/puresvd.csv -y config/puresvd.yml -gpu
+python tune_parameters.py -d datax/ -n movielens1m/nceplrec.csv -y config/nceplrec.yml -gpu
+python tune_parameters.py -d datax/ -n movielens1m/plrec.csv -y config/plrec.yml -gpu
+```
+
+Please check out the `cluster_bash` folder for further command details
+
+Resplit data into two datasets: one for train, one for test. Note the train dataset includes validation set in previous split
+```
+python getmovielens.py --implicit -r 0.7,0.3,0.0 -d datax/ -n ml-1m/ratings.csv
+python reproduce_paper_results.py -p tables/movielens1m -d datax/ -v Rvalid.npz -n movielens1m_test_result.csv -gpu
+python reproduce_paper_results.py
+```
+
 

@@ -1,5 +1,5 @@
 from utils.io import save_numpy, load_pandas, save_array
-from utils.argument import shape, ratio
+from utils.argcheck import shape, ratio
 from providers.split import time_ordered_split
 import argparse
 from utils.progress import WorkSplitter
