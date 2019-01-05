@@ -17,7 +17,9 @@ def main(args):
     rtrain, rvalid, rtest, nonzero_index, rtime = time_ordered_split(rating_matrix=rating_matrix,
                                                                      timestamp_matrix=timestamp_matrix,
                                                                      ratio=args.ratio,
-                                                                     implicit=args.implicit)
+                                                                     implicit=args.implicit,
+                                                                     sampling=True,
+                                                                     percentage=0.2)
     progress.section("Save NPZ")
     save_numpy(rtrain, args.path, "Rtrain")
     save_numpy(rvalid, args.path, "Rvalid")

@@ -4,7 +4,7 @@ from experiment.execute import execute
 from utils.io import load_numpy, save_dataframe_csv, find_best_hyperparameters, load_yaml
 from utils.modelnames import models
 from plots.rec_plots import precision_recall_curve
-
+import timeit
 
 def main(args):
     table_path = load_yaml('config/global.yml', key='path')['tables']
@@ -21,11 +21,14 @@ def main(args):
 
     frame = []
     for idx, row in df.iterrows():
+        start = timeit.default_timer()
         row = row.to_dict()
         row['metric'] = ['R-Precision', 'NDCG', 'Precision', 'Recall', "MAP"]
         row['topK'] = topK
         result = execute(R_train, R_test, row, models[row['model']],
                          measure=row['similarity'], gpu_on=args.gpu, folder=args.model_folder)
+        stop = timeit.default_timer()
+        print('Time: ', stop - start)
         frame.append(result)
 
     results = pd.concat(frame)

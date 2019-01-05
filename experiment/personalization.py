@@ -52,6 +52,8 @@ def personalization(Rtrain, Rvalid, df_input, topK, problem, model_folder, gpu_o
 
         df = pd.concat(giant_dataframes[k])
 
+        df.to_csv('caches/personalization_at_{0}.csv'.format(k))
+
         pandas_ridge_plot(df, 'model', 'pop', k, folder='analysis/{0}/personalization'.format(problem),
                           name="personalization_at_{0}".format(k))
 
