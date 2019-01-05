@@ -21,6 +21,16 @@ Noise Contrastive Estimation Projected Linear Recommender(NCE-PLRec)
 ![](https://img.shields.io/badge/pyyaml-4.1-blue.svg)
 
 
+If you are interested in building up your research on this work, please cite:
+```
+@ARTICLE {wuga18nceplrec,
+    author  = "Ga Wu, Maksims Volkovs, Chee Loong Soon, Scott Sanner, Himanshu Rai",
+    title   = "Noise Contrastive Estimation for Scalable Linear Models for One-Class Collaborative Filtering",
+    journal = "arXiv: 1811.00697",
+    year    = "2018"
+}
+```
+
 
 # Algorithm Implemented
 1. Noise Contrastive Estimation Projected Linear Recommender(NCE-PLRec)
