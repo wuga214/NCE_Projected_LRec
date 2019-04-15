@@ -34,7 +34,7 @@ If you are interested in building up your research on this work, please cite:
 # Author Affiliate
 <p align="center">
 <a href="https://www.utoronto.ca//"><img src="https://github.com/wuga214/NCE_Projected_LRec/blob/master/logos/U-of-T-logo.svg" width="140"></a> | 
-<a href="https://layer6.ai/"><img src="https://github.com/wuga214/NCE_Projected_LRec/blob/master/logos/logo.svg" width="140"></a> | 
+<a href="https://layer6.ai/"><img src="https://github.com/wuga214/NCE_Projected_LRec/blob/master/logos/logo.svg" width="120"></a> | 
 <a href="https://vectorinstitute.ai/"><img src="https://github.com/wuga214/NCE_Projected_LRec/blob/master/logos/vectorlogo.svg" width="140"></a>
 </p>
 
