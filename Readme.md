@@ -26,10 +26,18 @@ If you are interested in building up your research on this work, please cite:
 @ARTICLE {wuga18nceplrec,
     author  = "Ga Wu, Maksims Volkovs, Chee Loong Soon, Scott Sanner, Himanshu Rai",
     title   = "Noise Contrastive Estimation for Scalable Linear Models for One-Class Collaborative Filtering",
-    journal = "arXiv: 1811.00697",
-    year    = "2018"
+    journal = "The 42th International ACM SIGIR Conference on Research and Development in Information Retrieval",
+    year    = "2019"
 }
 ```
+
+# Author Affiliate
+<p align="center">
+<a href="https://www.utoronto.ca//"><img src="https://github.com/wuga214/NCE_Projected_LRec/blob/master/logos/U-of-T-logo.svg" width="140"></a>
+<a href="https://layer6.ai/"><img src="https://github.com/wuga214/NCE_Projected_LRec/blob/master/logos/logo.svg" width="140"></a>
+<a href="https://vectorinstitute.ai/"><img src="https://github.com/wuga214/NCE_Projected_LRec/blob/master/logos/vectorlogo.svg" width="140"></a>
+</p>
+
 
 
 # Algorithm Implemented
@@ -69,7 +77,8 @@ python main.py -d datax/ -m VAE-CF -i 200 -l 0.0000001 -r 100
 
 ### Hyper-parameter Tuning and Paper Result Reproduction
 
-Split data in experiment setting, and tune hyper parameters based on yaml files in `config` folder
+Split data in experiment setting, and tune hyper parameters based on yaml files in `config` folder. 
+Please note the `reproduce_paper_results.py` will load pretrained model for Movielens1m from `latent` folder if that folder is not given in parameter.
 ```
 python getmovielens.py --implicit -r 0.5,0.2,0.3 -d datax/ -n ml-1m/ratings.csv
 python tune_parameters.py -d datax/ -n movielens1m/autorec.csv -y config/autorec.yml -gpu
