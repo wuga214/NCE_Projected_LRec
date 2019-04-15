@@ -50,7 +50,7 @@ If you are interested in building up your research on this work, please cite:
 7. Pure SVD Recommender(PureSVD)
 8. Bayesian Personalized Ranking(BPR)
 9. Noise Contrastive Estimation through SVD(NCE-SVD)
-10.Popularity
+10. Popularity
 
 
 # Data
