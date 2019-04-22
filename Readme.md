@@ -24,7 +24,7 @@ Noise Contrastive Estimation Projected Linear Recommender(NCE-PLRec)
 If you are interested in building up your research on this work, please cite:
 ```
 @ARTICLE {wuga18nceplrec,
-    author  = "Ga Wu, Maksims Volkovs, Chee Loong Soon, Scott Sanner, Himanshu Rai",
+    author  = "Wu, Ga and Volkovs, Maksims and Soon, Chee Loong and Sanner, Scott and Rai, Himanshu",
     title   = "Noise Contrastive Estimation for Scalable Linear Models for One-Class Collaborative Filtering",
     journal = "The 42th International ACM SIGIR Conference on Research and Development in Information Retrieval",
     year    = "2019"
