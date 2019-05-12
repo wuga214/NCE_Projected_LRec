@@ -23,11 +23,12 @@ Noise Contrastive Estimation Projected Linear Recommender(NCE-PLRec)
 
 If you are interested in building up your research on this work, please cite:
 ```
-@ARTICLE {wuga18nceplrec,
-    author  = "Wu, Ga and Volkovs, Maksims and Soon, Chee Loong and Sanner, Scott and Rai, Himanshu",
-    title   = "Noise Contrastive Estimation for Scalable Linear Models for One-Class Collaborative Filtering",
-    journal = "The 42th International ACM SIGIR Conference on Research and Development in Information Retrieval",
-    year    = "2019"
+@inproceedings{sigir19a,
+  author    = {Ga Wu and Maksims Volkovs and Chee Loong Soon and Scott Sanner and Himanshu Rai},
+  title     = {Noise Contrastive Estimation for One-Class Collaborative Filtering},
+  booktitle = {Proceedings of the 42nd International {ACM} {SIGIR} Conference on Research and Development in Information Retrieval {(SIGIR-19)}},
+  address   = {Paris, France},
+  year      = {2019}
 }
 ```
 
@@ -58,6 +59,8 @@ If you are interested in building up your research on this work, please cite:
 2. Movielens 20M,
 3. Yahoo 1R,
 4. Netflix,
+
+Experiment result for the validation datasets are listed under `tables` folder. The experiments are conducted on Compute Canada cluster with multiple runs with all valid hyper-parameter combinations. Please use those as benchmark reference if needed.
 
 Data is not suit to submit on github, so please prepare it yourself. It should be numpy npy file directly
 dumped from csr sparse matrix. It should be easy..
