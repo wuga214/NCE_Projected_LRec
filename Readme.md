@@ -59,6 +59,8 @@ If you are interested in building up your research on this work, please cite:
 2. Movielens 20M,
 3. Yahoo 1R,
 4. Netflix,
+5. Amazon Digital Music (2018),
+6. Amazon Video Games (2018)
 
 Experiment result for the validation datasets are listed under `tables` folder. The experiments are conducted on Compute Canada cluster with multiple runs with all valid hyper-parameter combinations. Please use those as benchmark reference if needed.
 
